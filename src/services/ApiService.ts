@@ -152,9 +152,9 @@ class ApiService {
         }
     }
 
-    // auth: POST /auth
+    // auth: POST /full_auth
     public async auth(payload: AuthRequest): Promise<AuthResponse> {
-        return this.request<AuthResponse>("auth", "POST", payload);
+        return this.request<AuthResponse>("full_auth", "POST", payload);
     }
 
     // main: GET /main

@@ -1,0 +1,170 @@
+<template>
+  <button
+      ref="playButton"
+      class="main-button"
+      @pointerenter="onButtonPointerEnter"
+      @pointerleave="onButtonPointerLeave"
+      @pointerdown="onButtonPointerDown"
+      @pointerup="onButtonPointerUp"
+      @click="onButtonClick"
+  >
+    <span class="button-text">Играть на ${{ amount }}</span>
+    <span class="right-content">
+      <span class="separator"></span>
+      <button
+          ref="iconButton"
+          type="button"
+          class="icon-button"
+          @pointerenter.stop="onIconPointerEnter"
+          @pointerleave.stop="onIconPointerLeave"
+          @pointerdown.stop="onIconPointerDown"
+          @pointerup.stop="onIconPointerUp"
+          @click.stop="onIconClick"
+      >
+        <img
+            class="icon-settings"
+            src="@/assets/icons/settings-icon.svg"
+            alt="icon"
+        />
+      </button>
+    </span>
+  </button>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+import gsap from 'gsap';
+import { events } from '@/events.ts'
+
+export default defineComponent({
+  name: 'PlayButton',
+  props: {
+    amount: {
+      type: Number,
+      default: 2.5,
+    },
+  },
+  setup(props) {
+    const playButton = ref<HTMLElement | null>(null);
+    const iconButton = ref<HTMLElement | null>(null);
+
+    const onButtonClick = () => {
+      console.log('Клик по кнопке');
+    };
+
+    const onIconClick = () => {
+      events.emit('showPopup', 'gameSettings');
+      console.log('Клик по иконке');
+    };
+
+    // Анимации для основной кнопки (pointer events)
+    const onButtonPointerEnter = () => {
+      if (playButton.value) {
+        gsap.to(playButton.value, { duration: 0.2, filter: 'brightness(0.9)' });
+      }
+    };
+
+    const onButtonPointerLeave = () => {
+      if (playButton.value) {
+        gsap.to(playButton.value, { duration: 0.2, filter: 'brightness(1)', scale: 1 });
+      }
+    };
+
+    const onButtonPointerDown = () => {
+      if (playButton.value) {
+        gsap.to(playButton.value, { duration: 0.2, filter: 'brightness(0.8)', scale: 0.95 });
+      }
+    };
+
+    const onButtonPointerUp = () => {
+      if (playButton.value) {
+        gsap.to(playButton.value, { duration: 0.2, filter: 'brightness(0.9)', scale: 1 });
+      }
+    };
+
+    // Анимации для кнопки с иконкой (pointer events)
+    const onIconPointerEnter = () => {
+      if (iconButton.value) {
+        gsap.to(iconButton.value, { duration: 0.2, scale: 1.1 });
+      }
+
+      onButtonPointerLeave();
+    };
+
+    const onIconPointerLeave = () => {
+      if (iconButton.value) {
+        gsap.to(iconButton.value, { duration: 0.2, scale: 1 });
+      }
+
+      onButtonPointerEnter();
+    };
+
+    const onIconPointerDown = () => {
+      if (iconButton.value) {
+        gsap.to(iconButton.value, { duration: 0.2, scale: 0.9 });
+      }
+    };
+
+    const onIconPointerUp = () => {
+      if (iconButton.value) {
+        gsap.to(iconButton.value, { duration: 0.2, scale: 1 });
+      }
+    };
+
+    return {
+      playButton,
+      iconButton,
+      amount: props.amount,
+      onButtonClick,
+      onIconClick,
+      onButtonPointerEnter,
+      onButtonPointerLeave,
+      onButtonPointerDown,
+      onButtonPointerUp,
+      onIconPointerEnter,
+      onIconPointerLeave,
+      onIconPointerDown,
+      onIconPointerUp,
+    };
+  },
+});
+</script>
+
+<style scoped>
+.button-text {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.right-content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 1.8vh;
+  display: flex;
+  align-items: center;
+}
+
+.separator {
+  display: inline-block;
+  width: 1px;
+  height: 60%;
+  background-color: white;
+  margin-right: 1.75vh;
+}
+
+.icon-button {
+  height: 60%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transform: scale(1);
+}
+
+.icon-settings {
+  height: 60%;
+  width: auto;
+  object-fit: contain;
+}
+</style>

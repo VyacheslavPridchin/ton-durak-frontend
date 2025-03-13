@@ -1,0 +1,193 @@
+/* main.css */
+@import url('./base.css');
+
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  box-sizing: border-box;
+  background: var(--background-color);
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Контейнер для общего layout */
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Панели (блоки) */
+.panel {
+  background-color: var(--panel-color);
+  border-radius: 1.2vh;
+  box-shadow: 0 0.2vh 0.6vh rgba(0, 0, 0, 0.2);
+  padding: 2vh 2vh;
+  margin: 0.8vh 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Заголовки */
+h2, h3, h4, h5, h6, a {
+  font-family: "Inter", serif;
+  font-weight: 300;
+  font-size: 2.25vh;
+  color: var(--text-color);
+  transition: background 0.2s, color 0.2s;
+  margin: 0;
+}
+
+h1 {
+  font-family: "Inter", serif;
+  font-weight: 500;
+  font-size: 3vh;
+  color: var(--text-color);
+  transition: background 0.2s, color 0.2s;
+  margin: 0.5vh auto 2vh auto;
+  align-self: center;
+}
+
+button {
+  overflow: hidden;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family: "Inter", serif;
+  font-weight: 350;
+}
+
+.main-button {
+  position: relative;
+  height: 7vh;
+  background: var(--blue-gradient);
+  font-size: 2vh;
+  color: var(--white-color);
+  border-radius: 1.2vh;
+  box-shadow: 0 0.2vh 0.6vh rgba(0, 0, 0, 0.2);
+  transition: background 0.2s, color 0.2s;
+  margin: 0.8vh 0;
+  overflow: hidden;
+  filter: brightness(1);
+  transform: scale(1);
+}
+
+.secondary-button {
+  width: 50%;
+  height: 4.5vh;
+  background-color: var(--gray-color);
+  color: var(--text-color);
+  transition: background 0.2s, color 0.2s;
+  border-radius: 0.5vh;
+  font-size: 1.8vh;
+  position: relative;
+}
+
+.secondary-text {
+  font-size: 1.5vh;
+  color: var(--secondary-text-color);
+  margin: 0 1vh 0 0;
+  display: block;
+}
+
+.top-right-button,
+.top-left-button {
+  position: absolute;
+  top: 1.8vh;
+  width: 2.4vh;
+  height: 2.4vh;
+  border-radius: 50%;
+  background: var(--gray-color);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, color 0.2s, filter 0.2s;
+}
+
+.top-right-button {
+  right: 2vh;
+}
+
+.top-left-button {
+  left: 2vh;
+}
+
+.top-right-button img,
+.top-left-button img {
+  height: 50%;
+  display: block;
+  transition: color 0.2s, filter 0.2s;
+}
+
+.animate-press {
+  transition: background 0.2s, color 0.2s, filter 0.1s, transform 0.1s;
+}
+
+.animate-press:active {
+  filter: brightness(0.9);
+  transform: scale(0.95);
+}
+
+.list {
+  flex: 1;
+  overflow: auto;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  padding: 0.5vh 250px 1vh;
+  margin-left: -250px;
+  margin-right: -250px;
+}
+
+.list > * {
+  flex-shrink: 0;
+}
+
+.list::-webkit-scrollbar {
+  display: none;
+}
+
+.divider {
+  margin: 1vh 0;
+  border: 0;
+  height: 1px;
+  background-color: var(--gray-color);
+}
+
+.icon{
+ filter: brightness(0) saturate(100%) invert(40%);
+}
+
+.placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 9999;
+  border-radius: 4px;
+  background-size: 200% 100%;
+  animation: gradientFlow 1.5s ease-in-out infinite;
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

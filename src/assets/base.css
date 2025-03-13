@@ -1,0 +1,31 @@
+/* Сброс стилей и глобальные настройки */
+
+:root {
+  /* Светлая тема по умолчанию */
+  --background-color: #F5F4F4;
+  --panel-color: #FFFFFF;
+  --text-color: #000000;
+  --secondary-text-color: #4A4A4A;
+  --white-color: #FFFFFF;
+  --gray-color: #F5F4F4;
+  --blue-gradient: linear-gradient(to right, #2D83EC, #1AC9FF);
+  --bronze-color: #CC7763;
+  --bronze-secondary-color: #FEE7DC;
+}
+
+[data-theme="dark"] {
+  /* Тёмная тема */
+  --background-color: #0C0C0C;
+  --panel-color: #121212;
+  --text-color: #F0F0F0;
+  --secondary-text-color: #B7B7B7;
+  --white-color: #F0F0F0;
+  --gray-color: #222222;
+  --blue-gradient: linear-gradient(to right, #2469BD, #1796C9);
+  --bronze-secondary-color: #504844;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}

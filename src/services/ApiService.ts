@@ -125,7 +125,7 @@ class ApiService {
 
     constructor() {
         this.axiosInstance = axios.create({
-            baseURL: "https://test.game.tondurakgame.com",
+            baseURL: "https://test.api.tondurakgame.com",
             headers: {
                 "Content-Type": "application/json",
             },

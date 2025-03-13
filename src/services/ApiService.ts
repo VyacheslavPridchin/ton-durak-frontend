@@ -139,6 +139,7 @@ class ApiService {
         payload?: any
     ): Promise<T> {
         try {
+            console.log(`Try to request [${method}] ${endpoint} with body ${JSON.stringify(payload)}`);
             const response = await this.axiosInstance.request<T>({
                 url: endpoint,
                 method,

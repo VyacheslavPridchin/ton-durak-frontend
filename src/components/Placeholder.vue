@@ -1,9 +1,12 @@
 <template>
-  <slot/>
-  <slot name="fallback">
-    <!-- Используем internalLoading для управления отображением плейсхолдера с задержкой -->
-    <div v-if="internalLoading" class="default-placeholder" :class="customClass"></div>
-  </slot>
+  <template v-if="internalLoading">
+    <slot name="fallback">
+      <div class="default-placeholder" :class="customClass"></div>
+    </slot>
+  </template>
+  <template v-else>
+    <slot />
+  </template>
 </template>
 
 <script lang="ts">
@@ -27,14 +30,12 @@ export default defineComponent({
         () => props.loading,
         (newVal) => {
           if (newVal) {
-            // Если начинается загрузка — немедленно показываем плейсхолдер
             if (timeoutId) {
               clearTimeout(timeoutId);
               timeoutId = null;
             }
             internalLoading.value = true;
           } else {
-            // Если загрузка закончилась, ждем 3 секунды перед отключением плейсхолдера
             timeoutId = window.setTimeout(() => {
               internalLoading.value = false;
             }, 3000);
@@ -55,31 +56,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.placeholder-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.content {
-  transition: opacity 0.3s ease;
-}
-.loading .content {
-  opacity: 0;
-}
-.placeholder-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 .default-placeholder {
   width: 100%;
   height: 100%;
-  border-radius: 4px;
+  border-radius: 4px; /* можно переопределить через переданный класс */
   background: linear-gradient(90deg, var(--gray-color, #e0e0e0) 25%, var(--secondary-text-color, #f0f0f0) 50%, var(--gray-color, #e0e0e0) 75%);
   background-size: 200% 100%;
   animation: gradientFlow 1.5s ease-in-out infinite;

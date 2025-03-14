@@ -24,14 +24,15 @@ const route = useRoute()
 const roots = ref<string[]>(['/referrals', '/main', '/profile']);
 
 import apiService from "@/services/ApiService.ts";
-import type { AuthRequest, AuthResponse } from "@/services/ApiService.ts";
+import type { AuthRequest, ApiResponse, AuthResponseData } from "@/services/ApiService.ts";
 
-const authData = ref<AuthResponse | null>(null);
+const authData = ref<ApiResponse<AuthResponseData> | null>(null);
 
 const auth = async (init_data: string) => {
   const payload: AuthRequest = { initData: init_data };
   try {
     authData.value = await apiService.auth(payload);
+
     console.log("Auth Response:", authData.value);
   } catch (error) {
     console.error("Authorization error:", error);

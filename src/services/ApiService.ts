@@ -1,16 +1,19 @@
-// apiService.ts
 import axios from "axios";
 import type { AxiosResponse, AxiosInstance } from "axios";
 
-// Интерфейсы запросов и ответов
+// Стандартный интерфейс ответа API
+export interface ApiResponse<T> {
+    success: boolean;
+    data: T;
+    error: string | null;
+}
 
-// auth (POST)
+// Интерфейсы для auth
 export interface AuthRequest {
     initData: string;
 }
 
-export interface AuthResponse {
-    exist: boolean;
+export interface AuthResponseData {
     technical: boolean;
     user_data: {
         jwt: {
@@ -21,107 +24,107 @@ export interface AuthResponse {
     };
 }
 
-// main (GET)
-export interface MainResponse {
-    league: {
-        rank: string;
-        division: number;
-        progress: number; // 0-100%
-    };
-    tournament: {
-        place: number;
-        amount: number;
-        deadline: number; // unix time
-    };
-    finance: {
-        balance: number;
-        bonus: number;
-    };
-}
-
-// tournament (GET)
-export interface TournamentPlayer {
-    place: number;
-    user_id: number;
-    name: string;
-    wins: number;
-    prize: number;
-}
-
-export interface TournamentResponse {
+// Интерфейсы для GET запросов
+export interface ScreenMainData {
     league: {
         rank: string;
         division: number;
         progress: number;
     };
     tournament: {
-        amount: number;
+        place: number;
+        prize_pool: number;
         deadline: number;
     };
-    players: TournamentPlayer[];
-}
-
-// ranks (GET)
-export type RanksResponse = string[];
-
-// referral (GET)
-export interface ReferralTop {
-    place: number;
-    user_id: number;
-    amount: number;
-}
-
-export interface ReferralResponse {
-    link: string;
-    overview: {
-        toClaim: number;
-        referrals: number;
-        claimed: number;
+    finance: {
+        balance: number;
+        bonus_balance: number;
     };
-    top: ReferralTop[];
 }
 
-// referrals_extra_info (GET)
-export interface ReferralOverviewItem {
-    day: string; // пн, вт и т.д.
-    amount: number;
+export interface ScreenReferralData {
+    overview: {
+        link: string;
+        unclaimed: number;
+        claimed: number;
+        referrals: number;
+    };
+    top_referrals: {
+        referrals: Array<{
+            place: number;
+            user_id: number;
+            amount: number;
+        }>;
+    };
 }
 
-export interface ReferralTransaction {
-    type: string; // referral
-    amount: number;
-    ts: number; // unix time
+export interface ScreenReferralGraphData {
+    graph: Array<{
+        index: number;
+        day: string;
+        amount: number;
+    }>;
 }
 
-export interface ReferralsExtraInfoResponse {
-    overview: ReferralOverviewItem[];
-    transactions: ReferralTransaction[];
+export interface ScreenTournamentData {
+    league: {
+        rank: string;
+        division: number;
+        progress: number;
+    };
+    tournament: {
+        place: number;
+        prize_pool: number;
+        deadline: number;
+    };
+    players: Array<{
+        place: number;
+        user_id: number;
+        name: string;
+        wins: number;
+        prize: number;
+    }>;
 }
 
-// profile (GET)
-export interface ProfileStat {
-    stat: string;
-    value: string;
-}
-
-export interface ProfileOverview {
+export interface ScreenProfileData {
     name: string;
-    stats: ProfileStat[];
+    stats: Array<{
+        stat_name: string;
+        value: string;
+    }>;
 }
 
-export interface ProfileResponse {
-    overview: ProfileOverview;
+export interface ScreenFinanceData {
+    balance: number;
+    bonus_balance: number;
 }
 
-// profile_change_name (GET)
-export interface ProfileChangeNameResponse {
+export interface ScreenFinanceTransactionsData {
+    transactions: Array<{
+        tx_type: string;
+        amount: number;
+        ts: number;
+    }>;
+}
+
+export interface ScreenReferralTransactionsData {
+    transactions: Array<{
+        tx_type: string;
+        amount: number;
+        ts: number;
+    }>;
+}
+
+export interface ProfileEditData {
     name_timer: number;
     photo_timer: number;
 }
 
-// Класс для работы с API, реализованный как синглтон-сервис
+// Класс для работы с API как синглтон-сервис с кэшированием токенов
 class ApiService {
     private axiosInstance: AxiosInstance;
+    private accessToken: string | null = null;
+    private refreshToken: string | null = null;
 
     constructor() {
         this.axiosInstance = axios.create({
@@ -130,69 +133,140 @@ class ApiService {
                 "Content-Type": "application/json",
             },
         });
+        this.loadTokensFromCache();
     }
 
-    // Универсальный метод запроса
-    private async request<T>(
-        endpoint: string,
-        method: "GET" | "POST" = "GET",
-        payload?: any
-    ): Promise<T> {
-        try {
-            console.log(`Try to request [${method}] ${endpoint} with body ${JSON.stringify(payload)}`);
-            const response = await this.axiosInstance.request<T>({
-                url: endpoint,
-                method,
-                data: payload,
-            });
-            return response.data;
-        } catch (error) {
-            // Можно расширить обработку ошибок при необходимости
-            throw error;
+    // Загружаем токены из localStorage
+    private loadTokensFromCache(): void {
+        const storedAccess = localStorage.getItem("accessToken");
+        const storedRefresh = localStorage.getItem("refreshToken");
+        if (storedAccess && storedRefresh) {
+            this.accessToken = storedAccess;
+            this.refreshToken = storedRefresh;
         }
     }
 
+    // Сохраняем токены в localStorage
+    private saveTokensToCache(): void {
+        if (this.accessToken && this.refreshToken) {
+            localStorage.setItem("accessToken", this.accessToken);
+            localStorage.setItem("refreshToken", this.refreshToken);
+        }
+    }
+
+    // Универсальный метод запроса с обработкой и оборачиванием ответа в стандартный формат
+    private async request<T>(
+        endpoint: string,
+        method: "GET" | "POST" | "PUT" = "GET",
+        payload?: any,
+        extraHeaders?: Record<string, string>
+    ): Promise<ApiResponse<T>> {
+        try {
+            const headers = {
+                ...this.axiosInstance.defaults.headers.common,
+                ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),
+                ...extraHeaders,
+            };
+
+            console.log(
+                `Requesting [${method}] ${endpoint} with body ${payload ? JSON.stringify(payload) : "{}"}`
+            );
+
+            const response: AxiosResponse = await this.axiosInstance.request({
+                url: endpoint,
+                method,
+                data: payload,
+                headers,
+            });
+            return this.handleResponse<T>(response.data);
+        } catch (error: any) {
+            if (error.response && error.response.data) {
+                return this.handleResponse<T>(error.response.data);
+            } else {
+                return { success: false, data: null, error: error.message } as ApiResponse<T>;
+            }
+        }
+    }
+
+    // Обработчик, обеспечивающий соответствие результата стандартному формату
+    private handleResponse<T>(response: any): ApiResponse<T> {
+        if (
+            response &&
+            typeof response.success === "boolean" &&
+            "data" in response &&
+            "error" in response
+        ) {
+            return response as ApiResponse<T>;
+        }
+        return { success: true, data: response as T, error: null };
+    }
+
     // auth: POST /full_auth
-    public async auth(payload: AuthRequest): Promise<AuthResponse> {
-        return this.request<AuthResponse>("full_auth", "POST", payload);
+    public async auth(payload: AuthRequest): Promise<ApiResponse<AuthResponseData>> {
+        const response = await this.request<AuthResponseData>("full_auth", "POST", payload);
+        if (response.success && response.data?.user_data?.jwt) {
+            this.accessToken = response.data.user_data.jwt.access_token;
+            this.refreshToken = response.data.user_data.jwt.refresh_token;
+            this.saveTokensToCache();
+        }
+        return response;
     }
 
-    // main: GET /main
-    public async getMain(): Promise<MainResponse> {
-        return this.request<MainResponse>("main");
+    // GET /screen/main
+    public async getScreenMain(): Promise<ApiResponse<ScreenMainData>> {
+        return this.request<ScreenMainData>("/screen/main", "GET");
     }
 
-    // tournament: GET /tournament
-    public async getTournament(): Promise<TournamentResponse> {
-        return this.request<TournamentResponse>("tournament");
+    // GET /screen/referral
+    public async getScreenReferral(): Promise<ApiResponse<ScreenReferralData>> {
+        return this.request<ScreenReferralData>("/screen/referral", "GET");
     }
 
-    // ranks: GET /ranks
-    public async getRanks(): Promise<RanksResponse> {
-        return this.request<RanksResponse>("ranks");
+    // GET /screen/referral/graph
+    public async getScreenReferralGraph(): Promise<ApiResponse<ScreenReferralGraphData>> {
+        return this.request<ScreenReferralGraphData>("/screen/referral/graph", "GET");
     }
 
-    // referral: GET /referral
-    public async getReferral(): Promise<ReferralResponse> {
-        return this.request<ReferralResponse>("referral");
+    // GET /screen/tournament
+    public async getScreenTournament(): Promise<ApiResponse<ScreenTournamentData>> {
+        return this.request<ScreenTournamentData>("/screen/tournament", "GET");
     }
 
-    // referrals_extra_info: GET /referrals_extra_info
-    public async getReferralsExtraInfo(): Promise<ReferralsExtraInfoResponse> {
-        return this.request<ReferralsExtraInfoResponse>("referrals_extra_info");
+    // GET /screen/profile
+    public async getScreenProfile(): Promise<ApiResponse<ScreenProfileData>> {
+        return this.request<ScreenProfileData>("/screen/profile", "GET");
     }
 
-    // profile: GET /profile
-    public async getProfile(): Promise<ProfileResponse> {
-        return this.request<ProfileResponse>("profile");
+    // GET /screen/finance
+    public async getScreenFinance(): Promise<ApiResponse<ScreenFinanceData>> {
+        return this.request<ScreenFinanceData>("/screen/finance", "GET");
     }
 
-    // profile_change_name: GET /profile_change_name
-    public async getProfileChangeName(): Promise<ProfileChangeNameResponse> {
-        return this.request<ProfileChangeNameResponse>("profile_change_name");
+    // GET /screen/finance/transactions
+    public async getScreenFinanceTransactions(): Promise<ApiResponse<ScreenFinanceTransactionsData>> {
+        return this.request<ScreenFinanceTransactionsData>("/screen/finance/transactions", "GET");
+    }
+
+    // GET /screen/referral/transactions
+    public async getScreenReferralTransactions(): Promise<ApiResponse<ScreenReferralTransactionsData>> {
+        return this.request<ScreenReferralTransactionsData>("/screen/referral/transactions", "GET");
+    }
+
+    // GET /screen/profile/edit
+    public async getProfileEditTimers(): Promise<ApiResponse<ProfileEditData>> {
+        return this.request<ProfileEditData>("/screen/profile/edit", "GET");
+    }
+
+    // PUT /screen/profile/edit - изменение профиля (например, смена имени или загрузка фото)
+    public async updateProfileEdit(name: string, file: File | Blob): Promise<ApiResponse<null>> {
+        const formData = new FormData();
+        formData.append("fileToUpload", file);
+        // Имя передаётся в query string
+        const endpoint = `/screen/profile/edit?name=${encodeURIComponent(name)}`;
+        return this.request<null>(endpoint, "PUT", formData);
     }
 }
 
-// Экспортируем синглтон-сервис, чтобы не создавать экземпляр каждый раз
+// Экспорт синглтон-сервиса, чтобы не создавать экземпляр каждый раз
 const apiService = new ApiService();
 export default apiService;

@@ -169,7 +169,7 @@ class ApiService {
             };
 
             console.log(
-                `Requesting [${method}] ${endpoint} with body ${payload ? JSON.stringify(payload) : "{}"}`
+                `Requesting [${method}] '/${endpoint}' with body ${payload ? JSON.stringify(payload) : "{}"}`
             );
 
             const response: AxiosResponse = await this.axiosInstance.request({

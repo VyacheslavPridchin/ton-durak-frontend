@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="page">
-      <WalletPanel style="margin-top: 12vh" :bonus="10" :balance="10"/>
+      <WalletPanel ref="walletPanelRef" style="margin-top: 12vh" :bonus="bonus" :balance="balance" />
 
       <h2 style="margin-top: 1vh; margin-bottom: 0.5vh">История транзакций</h2>
       <div class="list">
@@ -20,48 +20,55 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import WalletPanel from '@/components/main-page/WalletPanel.vue';
-import router from "@/router";
-import PlayerItem from "@/components/tournament-page/PlayerItem.vue";
-import TransactionItem from "@/components/wallet-page/TransactionItem.vue";
+import TransactionItem from '@/components/wallet-page/TransactionItem.vue';
+import apiService from '@/services/ApiService';
 
+// Указываем все возможные значения для поля type
 type TransactionType = 'withdraw' | 'loss' | 'tournament' | 'win' | 'deposit' | 'referral';
 
 interface Transaction {
   type: TransactionType;
-  dateTime: number; // изменён на число
+  dateTime: number;
   amount: number;
 }
 
 export default defineComponent({
-  components: { TransactionItem, PlayerItem, WalletPanel },
+  name: 'WalletPage',
+  components: { WalletPanel, TransactionItem },
   setup() {
+    const balance = ref(0);
+    const bonus = ref(0);
     const transactions = ref<Transaction[]>([]);
+    const walletPanelRef = ref<InstanceType<typeof WalletPanel> | null>(null);
 
-    onMounted(() => {
-      // Используем текущий год для формирования дат
-      const year = new Date().getFullYear();
-      transactions.value = [
-        { type: 'withdraw',   dateTime: new Date(year, 2, 4, 17, 31).getTime(), amount: 10 },
-        { type: 'loss',       dateTime: new Date(year, 2, 3, 11, 44).getTime(), amount: 0.5 },
-        { type: 'tournament', dateTime: new Date(year, 2, 2, 13, 59).getTime(), amount: 50 },
-        { type: 'win',        dateTime: new Date(year, 2, 2, 22, 27).getTime(), amount: 0.5 },
-        { type: 'deposit',    dateTime: new Date(year, 2, 1, 19, 33).getTime(), amount: 20 },
-        { type: 'referral',   dateTime: new Date(year, 1, 12, 17, 42).getTime(), amount: 1 },
-        { type: 'referral',   dateTime: new Date(year, 1, 2, 4, 44).getTime(), amount: 1 },
-        { type: 'referral',   dateTime: new Date(year, 0, 26, 9, 52).getTime(), amount: 1 },
-        { type: 'referral',   dateTime: new Date(year, 0, 14, 11, 16).getTime(), amount: 1 },
-        { type: 'referral',   dateTime: new Date(year, 0, 10, 116, 42).getTime(), amount: 1 },
-      ];
+    const loadFinanceData = async () => {
+      const financeResponse = await apiService.getScreenFinance();
+      if (financeResponse.success && financeResponse.data) {
+        balance.value = financeResponse.data.balance;
+        bonus.value = financeResponse.data.bonus_balance;
+      }
+    };
+
+    const loadTransactions = async () => {
+      const txResponse = await apiService.getScreenFinanceTransactions();
+      if (txResponse.success && txResponse.data) {
+        transactions.value = txResponse.data.transactions.map(tx => ({
+          // Приводим строку из API к нашему типу TransactionType
+          type: tx.tx_type as TransactionType,
+          amount: tx.amount,
+          dateTime: tx.ts
+        }));
+      }
+    };
+
+    onMounted(async () => {
+      await loadFinanceData();
+      await loadTransactions();
+
+      walletPanelRef.value.showData();
     });
 
-    const onWalletButtonClick = () => {
-      router.push('/wallet');
-    };
-
-    return {
-      onWalletButtonClick,
-      transactions
-    };
+    return { balance, bonus, transactions, walletPanelRef };
   }
 });
 </script>

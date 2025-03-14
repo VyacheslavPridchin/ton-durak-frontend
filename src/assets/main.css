@@ -192,18 +192,17 @@ button {
   }
 }
 
-.placeholder-container {
-  position: relative; /* Убедитесь, что у родителя есть относительное позиционирование */
-  overflow: hidden; /* Обрезает содержимое внутри границ */
+.placeholder-container.isLoading {
+  position: relative;
+  overflow: hidden;
 }
 
-.placeholder-container::after {
-  position: absolute; /* Абсолютное позиционирование */
+.placeholder-container.isLoading::after {
+  position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  border-radius: inherit;
   content: "";
   background: linear-gradient(90deg, var(--gray-color, #e0e0e0) 25%, var(--secondary-text-color, #f0f0f0) 50%, var(--gray-color, #e0e0e0) 75%);
   background-size: 200% 100%;

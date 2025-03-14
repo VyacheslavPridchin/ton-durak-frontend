@@ -11,8 +11,8 @@
           <img class="icon" src="@/assets/icons/next-icon.svg" alt="Button Icon" />
         </button>
         <h2 class="wallet-title">Игровой баланс</h2>
-        <!-- Только значение баланса с плейсхолдером -->
-        <a class="wallet-balance placeholder-container" :class="{ isLoading: isLoadingWallet }">
+        <!-- Применяем плейсхолдер только к значению баланса -->
+        <a class="wallet-balance placeholder-container" :class="{ isLoading: isLoadingBalance }">
           {{ balanceText }}
         </a>
         <div class="buttons-container">
@@ -26,15 +26,15 @@
     <div class="lower-block" style="padding-top: 2vh" @click="showBonusBalanceInformation">
       <div class="block-background animate-press" style="top: 0"></div>
       <div class="content">
-        <div class="bonus-balance-container placeholder-container" :class="{ isLoading: isLoadingBonus }">
+        <div class="bonus-balance-container">
           <img
               src="@/assets/icons/bonus-dollar-icon.svg"
               alt="Bonus Icon"
               class="bonus-icon"
           />
           <h2 class="bonus-title">Бонусный баланс</h2>
-          <!-- Только значение бонусного баланса с плейсхолдером -->
-          <a class="bonus-amount ">
+          <!-- Применяем плейсхолдер только к значению бонусного баланса -->
+          <a class="bonus-amount placeholder-container" :class="{ isLoading: isLoadingBonus }">
             {{ bonusText }}
           </a>
         </div>
@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import { defineComponent, computed, ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { events } from "@/events.ts";
 
@@ -68,6 +68,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
 
+    // Вычисляемые значения баланса и бонуса
     const balanceText = computed(() => `$${props.balance}`);
     const bonusText = computed(() => `$${props.bonus}`);
 
@@ -87,15 +88,36 @@ export default defineComponent({
       events.emit('showPopup', 'bonusBalanceInformation');
     };
 
-    // Состояния загрузки для значений баланса
-    const isLoadingWallet = ref(true);
+    // Состояния плейсхолдера для значений
+    const isLoadingBalance = ref(true);
     const isLoadingBonus = ref(true);
 
+    // При монтировании ставим состояния загрузки в true (по умолчанию)
     onMounted(() => {
-      // При монтировании сразу снимаем плейсхолдеры для значений
-      isLoadingWallet.value = false;
-      isLoadingBonus.value = false;
+      isLoadingBalance.value = true;
+      isLoadingBonus.value = true;
     });
+
+    // Когда приходят данные, отключаем плейсхолдеры
+    watch(
+        () => props.balance,
+        (newVal) => {
+          if (newVal) {
+            isLoadingBalance.value = false;
+          }
+        },
+        { immediate: true }
+    );
+
+    watch(
+        () => props.bonus,
+        (newVal) => {
+          if (newVal) {
+            isLoadingBonus.value = false;
+          }
+        },
+        { immediate: true }
+    );
 
     return {
       balanceText,
@@ -104,7 +126,7 @@ export default defineComponent({
       goToDeposit,
       goToWithdraw,
       showBonusBalanceInformation,
-      isLoadingWallet,
+      isLoadingBalance,
       isLoadingBonus,
     };
   }
@@ -112,7 +134,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Плейсхолдер через псевдоэлемент ::after для значений */
+/* Универсальный плейсхолдер через псевдоэлемент ::after */
 .placeholder-container {
   position: relative;
   border-radius: inherit;
@@ -134,7 +156,6 @@ export default defineComponent({
   z-index: 1;
 }
 
-/* Стили для панели */
 .block-background {
   position: absolute;
   background: var(--panel-color);
@@ -177,7 +198,7 @@ export default defineComponent({
   background-color: var(--panel-color);
 }
 
-/* Прочие стили */
+/* Остальные стили */
 .wallet-title {
   text-align: left;
   padding-bottom: 0.5vh;

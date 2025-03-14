@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import { defineComponent, computed, ref, watch, onMounted } from 'vue';
 import router from "@/router";
 
 export default defineComponent({
@@ -49,19 +49,57 @@ export default defineComponent({
       router.push('/tournament');
     };
 
-    // Состояния плейсхолдера для заголовка, места и таймера
+    // Состояния плейсхолдера для каждого значения – изначально true
     const isLoadingTitle = ref(true);
     const isLoadingPlace = ref(true);
     const isLoadingTimer = ref(true);
 
-    // При монтировании компонента снимаем плейсхолдеры (без задержки)
+    // При монтировании компонента они остаются true (по умолчанию)
     onMounted(() => {
-      isLoadingTitle.value = false;
-      isLoadingPlace.value = false;
-      isLoadingTimer.value = false;
+      isLoadingTitle.value = true;
+      isLoadingPlace.value = true;
+      isLoadingTimer.value = true;
     });
 
-    return { tournamentTitle, tournamentPlace, onTournamentButtonClick, isLoadingTitle, isLoadingPlace, isLoadingTimer };
+    // Когда данные приходят, обновляем соответствующие состояния
+    watch(
+        () => props.prize,
+        (newVal) => {
+          if (newVal) {
+            isLoadingTitle.value = false;
+          }
+        },
+        { immediate: true }
+    );
+
+    watch(
+        () => props.place,
+        (newVal) => {
+          if (newVal) {
+            isLoadingPlace.value = false;
+          }
+        },
+        { immediate: true }
+    );
+
+    watch(
+        () => props.timer,
+        (newVal) => {
+          if (newVal) {
+            isLoadingTimer.value = false;
+          }
+        },
+        { immediate: true }
+    );
+
+    return {
+      tournamentTitle,
+      tournamentPlace,
+      onTournamentButtonClick,
+      isLoadingTitle,
+      isLoadingPlace,
+      isLoadingTimer,
+    };
   }
 });
 </script>

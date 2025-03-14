@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import {defineComponent, computed, ref, onMounted, watch} from 'vue';
 import { events } from "@/events.ts";
 
 export default defineComponent({
@@ -93,9 +93,29 @@ export default defineComponent({
 
     // В onMounted снимаем плейсхолдеры мгновенно
     onMounted(() => {
-      isLoadingTitle.value = false;
-      isLoadingProgress.value = false;
+      isLoadingTitle.value = true;
+      isLoadingProgress.value = true;
     });
+
+    watch(
+        () => props.rank,
+        (newVal) => {
+          if (newVal) {
+            isLoadingTitle.value = false;
+          }
+        },
+        { immediate: true }
+    );
+
+    watch(
+        () => props.progress,
+        (newVal) => {
+          if (newVal) {
+            isLoadingProgress.value = false;
+          }
+        },
+        { immediate: true }
+    );
 
     return {
       divisionRoman,

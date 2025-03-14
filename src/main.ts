@@ -1,13 +1,13 @@
 import './assets/main.css'
 
-import {createApp, ref} from 'vue'
+import { createApp, ref } from 'vue'
 import App from './App.vue'
 import router from './router'
-import type {ApiResponse, AuthRequest, AuthResponseData} from "@/services/ApiService.ts";
+import type { ApiResponse, AuthRequest, AuthResponseData } from "@/services/ApiService.ts";
 import apiService from "@/services/ApiService.ts";
 
 // @ts-ignore
-const colorScheme = window.Telegram?.WebApp?.colorScheme || 'light'; // По умолчанию 'light'
+const colorScheme = window.Telegram?.WebApp?.colorScheme || 'light';
 document.documentElement.setAttribute('data-theme', colorScheme);
 
 const authData = ref<ApiResponse<AuthResponseData> | null>(null);
@@ -21,13 +21,12 @@ const auth = async (init_data: string) => {
     } catch (error) {
         console.error("Authorization error:", error);
     }
-    return { authData };
+    return authData.value;
 };
 
 // Функция кэширования initData и данных пользователя
 const cacheUserData = (rawInitData: string) => {
     if (rawInitData) {
-        // Сохраняем полную строку initData для будущих обращений
         localStorage.setItem("initData", rawInitData);
     }
     const params = new URLSearchParams(rawInitData);
@@ -36,9 +35,7 @@ const cacheUserData = (rawInitData: string) => {
         try {
             const userJson = decodeURIComponent(userEncoded);
             const userObj = JSON.parse(userJson);
-            // Сохраняем данные пользователя в кэше
             localStorage.setItem("userData", JSON.stringify(userObj));
-            // Также можно положить их в глобальную переменную для быстрого доступа
             // @ts-ignore
             window.userData = userObj;
             console.log("Cached user data:", userObj);
@@ -50,19 +47,20 @@ const cacheUserData = (rawInitData: string) => {
     }
 };
 
-// @ts-ignore
-const telegramInitData = window.Telegram.WebApp.initData || localStorage.getItem("initData");
+// Запускаем аутентификацию, затем приложение
 (async () => {
+    // @ts-ignore
+    const telegramInitData = window.Telegram.WebApp.initData || localStorage.getItem("initData");
+
     if (telegramInitData) {
         cacheUserData(telegramInitData);
         await auth(telegramInitData);
     } else {
         console.error("initData не найден ни в Telegram.WebApp, ни в кэше");
     }
+
+    // Запуск приложения после успешной аутентификации
+    const app = createApp(App);
+    app.use(router);
+    app.mount('#app');
 })();
-
-const app = createApp(App)
-
-app.use(router)
-
-app.mount('#app')

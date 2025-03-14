@@ -2,21 +2,25 @@
   <div class="panel league-panel animate-press">
     <div class="league-header">
       <img class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
-      <a class="league-badge-text">{{ divisionRoman }}</a>
+      <a class="league-badge-text placeholder-container" :class="{ isLoading: isLoadingData }">
+        {{ divisionRoman }}
+      </a>
     </div>
-    <h2 class="league-title">{{ leagueTitle }}</h2>
-    <div class="timer-container">
+    <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingData }">
+      {{ leagueTitle }}
+    </h2>
+    <div class="timer-container placeholder-container" :class="{ isLoading: isLoadingData }">
       <img class="icon" src="@/assets/icons/timer-icon.svg" alt="Timer Icon">
       <a class="timer-text">00:00:00</a>
     </div>
-    <div class="prize-container">
+    <div class="prize-container placeholder-container" :class="{ isLoading: isLoadingData }">
       <a class="timer-text">$100</a>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref, onMounted } from 'vue';
 
 export default defineComponent({
   name: 'LeaguePanel',
@@ -24,15 +28,21 @@ export default defineComponent({
     rank: {
       type: String,
       required: true,
-      validator: (value: string) => ['bronze', 'silver', 'gold', 'platinum', 'diamond'].includes(value),
+      validator: (value: string) =>
+          ['bronze', 'silver', 'gold', 'platinum', 'diamond'].includes(value),
     },
     division: {
       type: Number,
       required: true,
       validator: (value: number) => value >= 1 && value <= 3,
-    }
+    },
   },
   setup(props) {
+    const divisionRoman = computed(() => {
+      const romans = ['I', 'II', 'III'];
+      return romans[props.division - 1];
+    });
+
     const leagueTitle = computed(() => {
       const ranks: Record<string, string> = {
         bronze: 'Бронзовый',
@@ -45,21 +55,30 @@ export default defineComponent({
       return `${rankTitle} турнир`;
     });
 
-    const divisionRoman = computed(() => {
-      const divisionRoman = ['I', 'II', 'III'];
-      return `${divisionRoman[props.division - 1]}`;
+    // Единственная переменная для управления плейсхолдерами текстовых данных
+    const isLoadingData = ref(true);
+
+    // При монтировании компонента устанавливаем значение по умолчанию
+    onMounted(() => {
+      isLoadingData.value = true;
     });
 
-    function capitalize(str: string) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
+    // Метод, который можно вызвать извне для скрытия плейсхолдера данных
+    const showData = () => {
+      isLoadingData.value = false;
+    };
 
-    return { divisionRoman, leagueTitle};
-  }
+    return {
+      divisionRoman,
+      leagueTitle,
+      isLoadingData,
+      showData,
+    };
+  },
 });
 </script>
 
-<style scoped>
++<style scoped>
 .top-right-button img {
   height: 65%;
 }
@@ -82,7 +101,6 @@ export default defineComponent({
   height: auto;
   transform: translateY(-4vh);
   filter: drop-shadow(0 0.2vh 0.4vh rgba(0, 0, 0, 0.3));
-
 }
 
 .league-badge-text {
@@ -94,13 +112,9 @@ export default defineComponent({
   transform: translateY(-1vh);
 }
 
-
 .league-title {
   text-align: center;
-}
-
-.timer-text {
-  font-size: 1.5vh;
+  max-width: 30vh;
 }
 
 .timer-container {

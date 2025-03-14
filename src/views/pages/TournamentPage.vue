@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="page">
-      <LeaguePanel :rank="rank" :division="division" @click="openTournamentInformation"/>
+      <LeaguePanel ref="leaguePanelRef" :rank="rank" :division="division" @click="openTournamentInformation"/>
       <h2 style="margin-top: 1vh; margin-bottom: 0.5vh">Топ-10 игроков</h2>
       <div class="list" ref="playerList">
         <PlayerItem
@@ -65,6 +65,7 @@ export default defineComponent({
     const players = ref<Player[]>([]);
     const playerList = ref<HTMLElement | null>(null);
     const myPlayerItem = ref<any>(null);
+    const leaguePanelRef = ref();
 
     const fetchTournamentData = async () => {
       const response = await apiService.getScreenTournament();
@@ -83,6 +84,10 @@ export default defineComponent({
           wins: p.wins,
           isMe: window.userData ? window.userData.id === p.user_id : false
         }));
+
+        setTimeout(() => {
+          leaguePanelRef.value.showData();
+        }, 300)
       }
     };
 

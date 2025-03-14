@@ -9,14 +9,12 @@
     <div class="profile-header">
       <div class="profile-picture-wrapper">
         <!-- Плейсхолдер для подгружаемой картинки, ждём событие load -->
-        <Placeholder class="profile-picture" :loading="isLoadingImage">
           <img
-              class="profile-picture"
+              class="profile-picture placeholder-container"
               :src="profileImage"
               alt="Profile Picture"
               @load="onImageLoad"
           />
-        </Placeholder>
       </div>
     </div>
     <!-- Плейсхолдер для подгружаемого имени -->

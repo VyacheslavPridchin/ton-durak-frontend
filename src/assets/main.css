@@ -194,6 +194,7 @@ button {
 
 .placeholder-container {
   position: relative; /* Убедитесь, что у родителя есть относительное позиционирование */
+  overflow: hidden; /* Обрезает содержимое внутри границ */
 }
 
 .placeholder-container::after {

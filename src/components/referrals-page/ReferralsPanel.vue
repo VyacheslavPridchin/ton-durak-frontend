@@ -1,44 +1,54 @@
 <template>
   <div class="panel referral-panel" @click="openInformationPopup">
     <div class="block-background animate-press"></div>
-    <div class="content" >
-      <button class="top-right-button"  style="top: 0; right: 0;">
+    <div class="content">
+      <button class="top-right-button" style="top: 0; right: 0;">
         <img class="icon" src="@/assets/icons/info-icon.svg" alt="Button Icon" />
       </button>
       <h2 class="referral-title">Реферальные выплаты</h2>
-      <a class="referral-balance">{{ balanceText }}</a>
-
+      <!-- Плейсхолдер для динамического значения баланса -->
+      <a class="referral-balance placeholder-container" :class="{ isLoading: isLoadingData }">
+        {{ balanceText }}
+      </a>
       <div style="margin-top: 1.5vh" class="bonus-balance-container">
         <h2 class="bonus-title">Рефералы</h2>
-        <a class="bonus-amount">{{ bonusText }}</a>
+        <!-- Плейсхолдер для динамического значения бонуса -->
+        <a class="bonus-amount placeholder-container" :class="{ isLoading: isLoadingData }">
+          {{ bonusText }}
+        </a>
       </div>
-
       <div style="margin-top: 0.5vh" class="bonus-balance-container">
         <h2 class="bonus-title">Зачислено</h2>
-        <a class="bonus-amount">${{ bonusText }}</a>
+        <!-- Плейсхолдер для динамического значения, с символом доллара -->
+        <a class="bonus-amount placeholder-container" :class="{ isLoading: isLoadingData }">
+          ${{ bonusText }}
+        </a>
       </div>
       <hr class="divider" style="margin-top: 1.5vh"/>
     </div>
-
-    <!-- Линия для отделения -->
-
     <div class="buttons-container">
-      <button style="background: var(--blue-gradient); color: white" class="secondary-button animate-press" @click.stop="getMoney">Зачислить</button>
-      <button style="background: var(--blue-gradient); color: var(--white-color)" class="secondary-button animate-press" @click.stop="">Пригласить</button>
+      <button style="background: var(--blue-gradient); color: white" class="secondary-button animate-press" @click.stop="getMoney">
+        Зачислить
+      </button>
+      <button style="background: var(--blue-gradient); color: var(--white-color)" class="secondary-button animate-press" @click.stop="">
+        Пригласить
+      </button>
     </div>
     <div style="margin-top: 0.2vh; padding: 0" class="buttons-container">
-      <button style="width: 100%" class="secondary-button animate-press" @click.stop="pushReferralsDetails">Подробнее</button>
+      <button style="width: 100%" class="secondary-button animate-press" @click.stop="pushReferralsDetails">
+        Подробнее
+      </button>
     </div>
-
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import {events} from "@/events.ts";
+import { events } from "@/events.ts";
 
 export default defineComponent({
+  name: 'ReferralsPanel',
   props: {
     balance: {
       type: Number,
@@ -61,16 +71,40 @@ export default defineComponent({
       router.push('/referrals/details');
     };
 
-
     const getMoney = () => {
-      events.emit('showNotification', {title: "Реферальная выплата!", subtitle: "На ваш баланс зачислено $50.", icon: "referral", sticker: 'money_duck'});
+      events.emit('showNotification', {
+        title: "Реферальная выплата!",
+        subtitle: "На ваш баланс зачислено $50.",
+        icon: "referral",
+        sticker: 'money_duck'
+      });
     };
 
     const openInformationPopup = () => {
-      events.emit('showPopup', "referralsInformation")
-    }
+      events.emit('showPopup', "referralsInformation");
+    };
 
-    return { balanceText, bonusText, pushReferralsDetails, getMoney, openInformationPopup };
+    // Переменная для управления плейсхолдерами текстовых данных
+    const isLoadingData = ref(true);
+
+    // Функция, вызываемая извне, для скрытия плейсхолдера
+    const showData = () => {
+      isLoadingData.value = false;
+    };
+
+    onMounted(() => {
+      isLoadingData.value = true;
+    });
+
+    return {
+      balanceText,
+      bonusText,
+      pushReferralsDetails,
+      getMoney,
+      openInformationPopup,
+      isLoadingData,
+      showData,
+    };
   }
 });
 </script>

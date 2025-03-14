@@ -197,22 +197,24 @@ button {
   overflow: hidden;
 }
 
-.placeholder-container.isLoading::after {
+.placeholder-container::after {
+  content: "";
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  content: "";
+  transition: opacity 0.5s ease-in-out;
+}
+
+.placeholder-container.isLoading::after {
   background: linear-gradient(90deg, var(--gray-color, #e0e0e0) 25%, var(--secondary-text-color, #f0f0f0) 50%, var(--gray-color, #e0e0e0) 75%);
   background-size: 200% 100%;
   animation: gradientFlow 1.5s ease-in-out infinite;
   z-index: 2;
   opacity: 1;
-  transition: opacity 0.5s ease-in-out; /* Плавное исчезновение */
 }
 
-/* Когда isLoading пропадает, плавно скрываем */
 .placeholder-container:not(.isLoading)::after {
   opacity: 0;
 }

@@ -9,7 +9,7 @@
     <div class="profile-header">
       <div class="profile-picture-wrapper">
         <!-- Плейсхолдер для подгружаемой картинки, ждём событие load -->
-        <Placeholder :loading="isLoadingImage">
+        <Placeholder class="profile-picture" :loading="isLoadingImage">
           <img
               class="profile-picture"
               :src="profileImage"

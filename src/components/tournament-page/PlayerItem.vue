@@ -1,7 +1,7 @@
 <template>
   <div :class="['panel', 'player-item', { selected: select }]">
-    <div class="player-avatar">
-      <img class="player-avatar" :src="avatar" alt="avatar" />
+    <div class="player-avatar placeholder-container" :class="{ isLoading: isLoadingImage }">
+      <img class="player-avatar" :src="avatar" @load="onImageLoad" alt="avatar" />
     </div>
     <h1 class="tournament-place">#{{ place }}</h1>
     <h2 class="player-name">{{ name }}</h2>
@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   name: 'TournamentPanel',
@@ -46,6 +46,15 @@ export default defineComponent({
       }
     },
   },
+  setup(){
+    const isLoadingImage = ref(true);
+
+    const onImageLoad = () => {
+      isLoadingImage.value = false;
+    }
+
+    return { isLoadingImage, onImageLoad };
+  }
 })
 </script>
 

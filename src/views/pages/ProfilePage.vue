@@ -57,7 +57,7 @@ export default defineComponent({
 
         setTimeout(() => {
           profilePanelRef.value.showData();
-        }, 10000)
+        }, 300)
       }
     };
 

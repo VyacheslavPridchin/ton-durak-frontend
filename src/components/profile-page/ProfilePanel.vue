@@ -20,17 +20,11 @@
       </div>
     </div>
     <!-- Плейсхолдер для подгружаемого имени -->
-    <Placeholder class="profile-name" :loading="isLoadingName">
-      <h2 class="profile-name" style="margin-bottom: 2vh">{{ profileName }}</h2>
-    </Placeholder>
+    <h2 class="profile-name placeholder-container" style="margin-bottom: 2vh">{{ profileName }}</h2>
     <div v-for="(stat, index) in stats" :key="index" class="details-row">
       <!-- Плейсхолдеры для каждого элемента статистики -->
-      <Placeholder class="details-title" :loading="isLoadingStats">
         <h2 class="details-title">{{ stat.title }}</h2>
-      </Placeholder>
-      <Placeholder class="details-value" :loading="isLoadingStats">
         <a class="details-value">{{ stat.value }}</a>
-      </Placeholder>
     </div>
   </div>
 </template>

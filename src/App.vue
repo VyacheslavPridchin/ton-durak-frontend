@@ -70,17 +70,19 @@ onMounted(async () => {
   window.Telegram.WebApp.disableVerticalSwipes();
   // @ts-ignore
   window.Telegram.WebApp.enableClosingConfirmation();
+
+
   // @ts-ignore
-  window.Telegram.WebApp.expand();
-  // @ts-ignore
-  window.Telegram.WebApp.requestFullscreen();
+  if(window.Telegram.WebApp.platform !== "tdesktop"){
+    // @ts-ignore
+    window.Telegram.WebApp.expand();
+
+    // @ts-ignore
+    window.Telegram.WebApp.requestFullscreen();
+  }
+
   // @ts-ignore
   window.Telegram.WebApp.lockOrientation();
-
-  // @ts-ignore
-  console.log(window.Telegram.WebApp.platform)
-
-
 
   // Пытаемся получить initData из Telegram.WebApp или из кэша
   // @ts-ignore

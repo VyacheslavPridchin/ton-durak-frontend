@@ -128,27 +128,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Плейсхолдер через псевдоэлемент ::after */
-.placeholder-container {
-  position: relative;
-  border-radius: inherit;
-}
-.placeholder-container.isLoading::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-      90deg,
-      var(--gray-color, #e0e0e0) 25%,
-      var(--secondary-text-color, #f0f0f0) 50%,
-      var(--gray-color, #e0e0e0) 75%
-  );
-  background-size: 200% 100%;
-  animation: gradientFlow 1.5s ease-in-out infinite;
-  z-index: 1;
-}
-
 .top-right-button img {
   height: 65%;
 }

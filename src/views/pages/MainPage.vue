@@ -32,7 +32,7 @@ export default defineComponent({
     const walletBalance = ref(-1);
     const walletBonus = ref(-1);
 
-    const playAmount = ref(-1);
+    const playAmount = ref(0);
 
     const fetchScreenMain = async () => {
       const response = await apiService.getScreenMain();

@@ -8,7 +8,7 @@
     </button>
     <div class="profile-header">
       <div class="profile-picture-wrapper placeholder-container" :class="{ isLoading: isLoadingImage }">
-        <!-- Плейсхолдер для подгружаемой картинки, ждём событие load -->
+        <!-- Плейсхолдер для подгружаемой картинки -->
         <img
             class="profile-picture"
             :src="profileImage"
@@ -18,15 +18,15 @@
       </div>
     </div>
     <!-- Плейсхолдер для подгружаемого имени -->
-    <h2 class="profile-name placeholder-container" :class="{ isLoading: isLoadingName }" style="margin-bottom: 2vh">
+    <h2 class="profile-name placeholder-container" :class="{ isLoading: isLoadingData }" style="margin-bottom: 2vh">
       {{ profileName }}
     </h2>
     <div v-for="(stat, index) in stats" :key="index" class="details-row">
       <!-- Плейсхолдеры для каждого элемента статистики -->
-      <h2 class="details-title placeholder-container" :class="{ isLoading: isLoadingStats }">
+      <h2 class="details-title placeholder-container" :class="{ isLoading: isLoadingData }">
         {{ stat.title }}
       </h2>
-      <a class="details-value placeholder-container" :class="{ isLoading: isLoadingStats }">
+      <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">
         {{ stat.value }}
       </a>
     </div>
@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 interface Stat {
@@ -62,36 +62,21 @@ export default defineComponent({
     stats: {
       type: Array as PropType<Stat[]>,
       required: false,
-      default: () => [[
+      default: () => [
         { title: "Статистика #1: ", value: "0" },
         { title: "Статистика #2: ", value: "0" },
-        { title: "Статистика #3: ", value: "0" }]],
+        { title: "Статистика #3: ", value: "0" }
+      ],
     },
   },
   setup(props) {
     const router = useRouter();
-    // Состояния загрузки для каждого элемента
+
+    // Состояния загрузки для каждого элемента – изначально true
     const isLoadingImage = ref(true);
-    const isLoadingName = ref(true);
-    const isLoadingStats = ref(true);
+    const isLoadingData = ref(true);
 
-    // Если изображение меняется, включаем загрузку
-    watch(() => props.profileImage, (newVal, oldVal) => {
-      if (newVal !== oldVal) {
-        isLoadingImage.value = true;
-      }
-    }, { immediate: true });
-
-    // Когда profileName присутствует, отключаем плейсхолдер для имени
-    watch(() => props.profileName, (newVal) => {
-      if (newVal) isLoadingName.value = false;
-    }, { immediate: true });
-
-    // Если stats присутствуют и не пусты, отключаем плейсхолдер для статистики
-    watch(() => props.stats, (newVal) => {
-      if (newVal && newVal.length > 0) isLoadingStats.value = false;
-    }, { immediate: true });
-
+    // Функция onImageLoad не отключает плейсхолдер автоматически
     const onImageLoad = () => {
       isLoadingImage.value = false;
     };
@@ -107,21 +92,26 @@ export default defineComponent({
       document.documentElement.setAttribute('data-theme', colorScheme);
     };
 
-    return { openEdit, changeTheme, isLoadingImage, isLoadingName, isLoadingStats, onImageLoad };
+    // Функция, которую можно вызывать из другого скрипта, чтобы скрыть все плейсхолдеры
+    const showData = () => {
+      isLoadingData.value = false;
+    };
+
+    return { openEdit, changeTheme, isLoadingImage, isLoadingData, onImageLoad, showData };
   },
 });
 </script>
 
 <style scoped>
-/* Стили плейсхолдера через ::after */
+/* Плейсхолдер реализован через псевдоэлемент ::after */
 .placeholder-container {
   position: relative;
-  border-radius: inherit; /* Наследуем скругление, если задано */
+  border-radius: inherit; /* Наследует скругление, если задано */
 }
 .placeholder-container.isLoading::after {
   content: "";
   position: absolute;
-  inset: 0; /* top: 0; right: 0; bottom: 0; left: 0 */
+  inset: 0;
   border-radius: inherit;
   background: linear-gradient(
       90deg,

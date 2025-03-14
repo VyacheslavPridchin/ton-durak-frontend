@@ -2,6 +2,7 @@
   <div class="container">
     <div class="page">
       <ProfilePanel
+          :ref="profilePanelRef"
           :username="username"
           :profile-name="profileName"
           :profile-image="profileImage"
@@ -29,13 +30,10 @@ export default defineComponent({
   components: { ProfilePanel },
   setup() {
     const username = ref('');
-    const profileName = ref('default_profile_name');
+    const profileName = ref('');
     const profileImage = ref('');
-    const stats = ref<Array<{ title: string; value: string }>>([
-      { title: "Статистика #1: ", value: "0" },
-      { title: "Статистика #2: ", value: "0" },
-      { title: "Статистика #3: ", value: "0" }]);
-
+    const stats = ref<Array<{ title: string; value: string }>>();
+    const profilePanelRef = ref();
     const onWalletButtonClick = () => {
       router.push('/wallet');
     };
@@ -45,16 +43,19 @@ export default defineComponent({
       if (response.success && response.data) {
         profileName.value = response.data.name;
         username.value = "unknown";
-        // Используем userData для формирования ссылки на фото профиля
+
         if (window.userData && window.userData.id) {
           profileImage.value = `https://tondurakgame.com/users/photo?user_id=${window.userData.id}`;
         } else {
           profileImage.value = "https://xsgames.co/randomusers/assets/avatars/male/11.jpg";
         }
+
         stats.value = response.data.stats.map(item => ({
           title: item.stat_name,
           value: item.value
         }));
+
+        profilePanelRef.value.showData();
       }
     };
 
@@ -62,7 +63,7 @@ export default defineComponent({
       loadProfileData();
     });
 
-    return { onWalletButtonClick, username, profileName, profileImage, stats };
+    return { onWalletButtonClick, profilePanelRef, username, profileName, profileImage, stats };
   }
 });
 </script>

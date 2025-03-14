@@ -2,7 +2,7 @@
   <div class="container">
     <div class="page">
       <ProfilePanel
-          :ref="profilePanelRef"
+          ref="profilePanelRef"
           :username="username"
           :profile-name="profileName"
           :profile-image="profileImage"

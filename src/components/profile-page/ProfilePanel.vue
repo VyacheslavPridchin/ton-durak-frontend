@@ -8,7 +8,7 @@
     </button>
     <div class="profile-header">
       <div class="profile-picture-wrapper">
-        <!-- Плейсхолдер для подгружаемой картинки с задержкой 2 секунды -->
+        <!-- Плейсхолдер для подгружаемой картинки, ждём событие load -->
         <Placeholder :loading="isLoadingImage">
           <img
               class="profile-picture"
@@ -19,16 +19,16 @@
         </Placeholder>
       </div>
     </div>
-    <!-- Плейсхолдер для подгружаемого имени с задержкой 2 секунды -->
+    <!-- Плейсхолдер для подгружаемого имени -->
     <Placeholder :loading="isLoadingName">
       <h2 class="profile-name" style="margin-bottom: 2vh">{{ profileName }}</h2>
     </Placeholder>
     <div v-for="(stat, index) in stats" :key="index" class="details-row">
-      <!-- Плейсхолдеры для каждого элемента статистики с задержкой 2 секунды -->
-      <Placeholder :loading="isLoadingStats">
+      <!-- Плейсхолдеры для каждого элемента статистики -->
+      <Placeholder class="details-title" :loading="isLoadingStats">
         <h2 class="details-title">{{ stat.title }}</h2>
       </Placeholder>
-      <Placeholder :loading="isLoadingStats">
+      <Placeholder class="details-value" :loading="isLoadingStats">
         <a class="details-value">{{ stat.value }}</a>
       </Placeholder>
     </div>
@@ -79,36 +79,23 @@ export default defineComponent({
     const isLoadingName = ref(true);
     const isLoadingStats = ref(true);
 
-    // Если ссылка на изображение меняется, включаем состояние загрузки
+    // Если изображение меняется, заново включаем загрузку
     watch(() => props.profileImage, (newVal, oldVal) => {
       if (newVal !== oldVal) {
         isLoadingImage.value = true;
       }
     }, { immediate: true });
 
-    // Для имени: если оно есть, отключаем плейсхолдер через 2 секунды
     watch(() => props.profileName, (newVal) => {
-      if (newVal) {
-        setTimeout(() => {
-          isLoadingName.value = false;
-        }, 2000);
-      }
+      if (newVal) isLoadingName.value = false;
     }, { immediate: true });
 
-    // Для статистики: если массив не пуст, отключаем плейсхолдер через 2 секунды
     watch(() => props.stats, (newVal) => {
-      if (newVal && newVal.length > 0) {
-        setTimeout(() => {
-          isLoadingStats.value = false;
-        }, 2000);
-      }
+      if (newVal && newVal.length > 0) isLoadingStats.value = false;
     }, { immediate: true });
 
-    // Когда изображение загрузилось, ждем 2 секунды и затем отключаем плейсхолдер
     const onImageLoad = () => {
-      setTimeout(() => {
-        isLoadingImage.value = false;
-      }, 2000);
+      isLoadingImage.value = false;
     };
 
     const openEdit = () => {

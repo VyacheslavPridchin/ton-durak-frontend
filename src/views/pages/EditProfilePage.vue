@@ -56,7 +56,7 @@ export default defineComponent({
       setTimeout(() => {
         events.emit('showNotification', { title: "Успешно!", subtitle: "Профиль сохранен.", icon: "profile", sticker: 'profile_duck' })
 
-      }, 300)
+      }, 23)
     };
 
     const changePicture = () => {

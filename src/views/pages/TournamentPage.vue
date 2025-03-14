@@ -87,7 +87,7 @@ export default defineComponent({
 
         setTimeout(() => {
           leaguePanelRef.value.showData();
-        }, 300)
+        }, 23)
       }
     };
 

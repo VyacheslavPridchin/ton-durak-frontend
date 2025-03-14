@@ -65,6 +65,7 @@ export default defineComponent({
     const router = useRouter();
 
     const balanceText = computed(() => `$${props.balance}`);
+    const claimedText = computed(() => `${props.bonus}`);
     const bonusText = computed(() => `${props.bonus}`);
 
     const pushReferralsDetails = () => {

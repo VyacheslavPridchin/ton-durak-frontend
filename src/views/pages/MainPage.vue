@@ -66,7 +66,7 @@ export default defineComponent({
           leaguePanelRef.value.showData();
           tournamentPanelRef.value.showData();
           walletPanelRef.value.showData();
-        }, 300);
+        }, 23);
       }
     };
 

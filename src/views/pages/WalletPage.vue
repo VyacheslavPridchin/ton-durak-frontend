@@ -64,8 +64,10 @@ export default defineComponent({
     onMounted(async () => {
       await loadFinanceData();
       await loadTransactions();
-
-      walletPanelRef.value.showData();
+      // Вызов метода showData из WalletPanel для отключения плейсхолдера текстовых данных
+      if (walletPanelRef.value && typeof walletPanelRef.value.showData === 'function') {
+        walletPanelRef.value.showData();
+      }
     });
 
     return { balance, bonus, transactions, walletPanelRef };

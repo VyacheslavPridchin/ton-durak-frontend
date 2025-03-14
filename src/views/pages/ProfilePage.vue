@@ -29,11 +29,12 @@ export default defineComponent({
   components: { ProfilePanel },
   setup() {
     const username = ref('');
-    const profileName = ref('');
+    const profileName = ref('default_profile_name');
     const profileImage = ref('');
-    const stats = ref<Array<{ title: string; value: string }>>([{ title: "Статистика: ", value: "0" },
-      { title: "Статистика: ", value: "0" },
-      { title: "Статистика: ", value: "0" }]);
+    const stats = ref<Array<{ title: string; value: string }>>([
+      { title: "Статистика #1: ", value: "0" },
+      { title: "Статистика #2: ", value: "0" },
+      { title: "Статистика #3: ", value: "0" }]);
 
     const onWalletButtonClick = () => {
       router.push('/wallet');

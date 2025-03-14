@@ -53,6 +53,7 @@ export default defineComponent({
     profileName: {
       type: String,
       required: true,
+      default: 'default_profile_name',
     },
     username: {
       type: String,
@@ -60,7 +61,11 @@ export default defineComponent({
     },
     stats: {
       type: Array as PropType<Stat[]>,
-      required: false
+      required: false,
+      default: () => [[
+        { title: "Статистика #1: ", value: "0" },
+        { title: "Статистика #2: ", value: "0" },
+        { title: "Статистика #3: ", value: "0" }]],
     },
   },
   setup(props) {

@@ -2,9 +2,7 @@
   <div class="placeholder-wrapper" :class="{ loading }">
     <!-- Контент всегда отрисовывается, чтобы сохранялись размеры и положение,
          но стиль передается через customClass -->
-    <div class="content" >
       <slot :class="customClass"/>
-    </div>
     <!-- Абсолютно позиционированный плейсхолдер -->
     <div v-if="loading" class="placeholder-overlay">
       <slot name="fallback">

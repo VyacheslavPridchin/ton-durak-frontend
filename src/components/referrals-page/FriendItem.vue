@@ -8,8 +8,8 @@
       </div>
       <a class="currency">${{ formattedCurrency }}</a>
     </div>
-    <div class="profile-picture-wrapper">
-      <img class="profile-picture" :src="avatar" alt="avatar" />
+    <div class="profile-picture-wrapper placeholder-container" :class="{ isLoading: isLoadingImage }">
+      <img class="profile-picture" :src="avatar" @load="" alt="avatar" />
     </div>
   </div>
 </template>
@@ -29,11 +29,18 @@ export default defineComponent({
   },
   setup(props) {
     const animatedWidth = ref(60);
+    const isLoadingImage = ref(true);
+
     onMounted(() => {
       animatedWidth.value = props.percent;
     });
+
+    const onImageLoad = () => {
+      isLoadingImage.value = false;
+    };
+
     const formattedCurrency = computed(() => props.currencyAmount);
-    return { formattedCurrency, animatedWidth };
+    return { formattedCurrency, animatedWidth, isLoadingImage, onImageLoad };
   },
 });
 </script>

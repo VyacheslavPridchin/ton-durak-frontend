@@ -1,6 +1,8 @@
 <template>
   <div :class="['panel', 'player-item', { selected: select }]">
-    <img class="player-avatar" :src="avatar" alt="avatar" />
+    <div class="player-avatar">
+      <img class="player-avatar" :src="avatar" alt="avatar" />
+    </div>
     <h1 class="tournament-place">#{{ place }}</h1>
     <h2 class="player-name">{{ name }}</h2>
     <div v-if="prize > 0" class="prize-container">

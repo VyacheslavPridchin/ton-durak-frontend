@@ -7,11 +7,9 @@
       <img class="icon" src="@/assets/icons/light-icon.svg" alt="Change Theme" />
     </button>
     <div class="profile-header">
-      <div class="profile-picture-wrapper">
-        <!-- Плейсхолдер для подгружаемой картинки -->
+      <div class="profile-picture-wrapper placeholder-container" :class="{ isLoading: isLoadingImage }">
         <img
-            class="profile-picture placeholder-container"
-            :class="{ isLoading: isLoadingImage }"
+            class="profile-picture "
             :src="profileImage"
             alt="Profile Picture"
             @load="onImageLoad"

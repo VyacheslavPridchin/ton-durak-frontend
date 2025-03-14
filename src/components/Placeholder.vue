@@ -1,7 +1,7 @@
 <template>
   <slot/>
   <slot name="fallback">
-    <div v-if="loading" class="default-placeholder" :class="customClass"></div>
+    <div v-if="loading" class="placeholder-overlay default-placeholder" :class="customClass"></div>
   </slot>
 </template>
 

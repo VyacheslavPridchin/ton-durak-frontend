@@ -114,7 +114,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 .top-right-button img {
   height: 50%;
 }

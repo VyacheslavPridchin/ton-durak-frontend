@@ -208,12 +208,12 @@ button {
   background-size: 200% 100%;
   z-index: 2;
   opacity: 0;
-  transition: opacity 0.5s ease-in-out; /* Плавное исчезновение */
+  transition: opacity 0.3s ease-in-out; /* Плавное исчезновение */
+  animation: gradientFlow 1.5s ease-in-out infinite;
   pointer-events: none;
 }
 
 .placeholder-container.isLoading::after {
   opacity: 1;
-  animation: gradientFlow 1.5s ease-in-out infinite;
   transition: none; /* Появление мгновенно */
 }

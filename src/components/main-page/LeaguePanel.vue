@@ -9,8 +9,6 @@
       <a class="league-badge-text">{{ divisionRoman }}</a>
     </div>
     <div style="display: flex; justify-content: center;">
-      <!-- Заголовок лиги с плейсхолдером через ::after;
-           для текстовых данных используется одна переменная isLoadingData -->
       <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingData }">
         {{ leagueTitle }}
       </h2>

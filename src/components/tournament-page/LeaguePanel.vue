@@ -6,9 +6,11 @@
         {{ divisionRoman }}
       </a>
     </div>
-    <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingData }">
-      {{ leagueTitle }}
-    </h2>
+    <div style="display: flex; justify-content: center;">
+      <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingData }">
+        {{ leagueTitle }}
+      </h2>
+    </div>
     <div class="timer-container placeholder-container" :class="{ isLoading: isLoadingData }">
       <img class="icon" src="@/assets/icons/timer-icon.svg" alt="Timer Icon">
       <a class="timer-text">00:00:00</a>
@@ -117,6 +119,10 @@ export default defineComponent({
   max-width: 30vh;
 }
 
+.timer-text {
+  font-size: 1.5vh;
+}
+
 .timer-container {
   display: flex;
   align-items: center;
@@ -129,6 +135,7 @@ export default defineComponent({
   padding: 0.5vh 1vh;
   margin: 0.5vh 1vh;
 }
+
 
 .timer-container img {
   width: 1.5vh;

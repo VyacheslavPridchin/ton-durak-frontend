@@ -29,9 +29,9 @@ import apiService from '@/services/ApiService.ts';
 export default defineComponent({
   components: { ProfilePanel },
   setup() {
-    const username = ref('');
-    const profileName = ref('');
-    const profileImage = ref('');
+    const username = ref();
+    const profileName = ref();
+    const profileImage = ref();
     const stats = ref<Array<{ title: string; value: string }>>();
     const profilePanelRef = ref();
     const onWalletButtonClick = () => {

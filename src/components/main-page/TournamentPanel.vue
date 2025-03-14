@@ -3,17 +3,24 @@
     <button class="top-right-button">
       <img class="icon" src="@/assets/icons/next-icon.svg" alt="Button Icon" />
     </button>
-    <h2 class="tournament-title">{{ tournamentTitle }}</h2>
-    <a class="tournament-place">{{ tournamentPlace }}</a>
-    <div class="timer-container">
-      <img class="icon" src="@/assets/icons/timer-icon.svg" alt="Timer Icon">
+    <!-- Заголовок турнира с плейсхолдером -->
+    <h2 class="tournament-title placeholder-container" :class="{ isLoading: isLoadingTitle }">
+      {{ tournamentTitle }}
+    </h2>
+    <!-- Место турнира с плейсхолдером -->
+    <a class="tournament-place placeholder-container" :class="{ isLoading: isLoadingPlace }">
+      {{ tournamentPlace }}
+    </a>
+    <!-- Таймер с плейсхолдером -->
+    <div class="timer-container placeholder-container" :class="{ isLoading: isLoadingTimer }">
+      <img class="icon" src="@/assets/icons/timer-icon.svg" alt="Timer Icon" />
       <a class="timer-text">00:00:00</a>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref, onMounted } from 'vue';
 import router from "@/router";
 
 export default defineComponent({
@@ -42,12 +49,40 @@ export default defineComponent({
       router.push('/tournament');
     };
 
-    return { tournamentTitle, tournamentPlace, onTournamentButtonClick };
+    // Состояния плейсхолдера для заголовка, места и таймера
+    const isLoadingTitle = ref(true);
+    const isLoadingPlace = ref(true);
+    const isLoadingTimer = ref(true);
+
+    // При монтировании компонента снимаем плейсхолдеры (без задержки)
+    onMounted(() => {
+      isLoadingTitle.value = false;
+      isLoadingPlace.value = false;
+      isLoadingTimer.value = false;
+    });
+
+    return { tournamentTitle, tournamentPlace, onTournamentButtonClick, isLoadingTitle, isLoadingPlace, isLoadingTimer };
   }
 });
 </script>
 
 <style scoped>
+/* Универсальный плейсхолдер через псевдоэлемент ::after */
+.placeholder-container {
+  position: relative;
+  border-radius: inherit;
+}
+.placeholder-container.isLoading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--gray-color, #e0e0e0) 25%, var(--secondary-text-color, #f0f0f0) 50%, var(--gray-color, #e0e0e0) 75%);
+  background-size: 200% 100%;
+  animation: gradientFlow 1.5s ease-in-out infinite;
+  z-index: 1;
+}
+
 .tournament-panel {
   position: relative;
 }
@@ -84,5 +119,14 @@ export default defineComponent({
   width: 1.5vh;
   height: 1.5vh;
   object-fit: contain;
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 </style>

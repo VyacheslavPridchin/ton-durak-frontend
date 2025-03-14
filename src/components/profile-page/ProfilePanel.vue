@@ -82,16 +82,23 @@ export default defineComponent({
     // Если изображение меняется, заново включаем загрузку
     watch(() => props.profileImage, (newVal, oldVal) => {
       if (newVal !== oldVal) {
-        isLoadingImage.value = true;
+        setTimeout(() => {
+          isLoadingImage.value = true;
+        }, 3000)
       }
     }, { immediate: true });
 
     watch(() => props.profileName, (newVal) => {
-      if (newVal) isLoadingName.value = false;
+      setTimeout(() => {
+        if (newVal) isLoadingName.value = false;
+      }, 3000);
+
     }, { immediate: true });
 
     watch(() => props.stats, (newVal) => {
-      if (newVal && newVal.length > 0) isLoadingStats.value = false;
+      setTimeout(() => {
+        if (newVal && newVal.length > 0) isLoadingStats.value = false;
+      }, 3000);
     }, { immediate: true });
 
     const onImageLoad = () => {

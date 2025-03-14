@@ -77,6 +77,11 @@ onMounted(async () => {
   // @ts-ignore
   window.Telegram.WebApp.lockOrientation();
 
+  // @ts-ignore
+  console.log(window.Telegram.WebApp.platform)
+
+
+
   // Пытаемся получить initData из Telegram.WebApp или из кэша
   // @ts-ignore
   const telegramInitData = window.Telegram.WebApp.initData || localStorage.getItem("initData");

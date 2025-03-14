@@ -1,16 +1,16 @@
 <template>
   <slot/>
   <slot name="fallback">
-    <div v-if="loading" class="default-placeholder" :class="customClass"></div>
+    <!-- Используем internalLoading для управления отображением плейсхолдера с задержкой -->
+    <div v-if="internalLoading" class="default-placeholder" :class="customClass"></div>
   </slot>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref, watch, onUnmounted } from 'vue';
 
 export default defineComponent({
   name: 'UniversalPlaceholder',
-  // Не наследуем атрибуты, чтобы можно было вручную перенаправить классы
   inheritAttrs: false,
   props: {
     loading: {
@@ -18,10 +18,38 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(_, { attrs }) {
-    // Извлекаем только класс, чтобы применить его к внутренним элементам
+  setup(props, { attrs }) {
     const customClass = computed(() => attrs.class);
-    return { customClass };
+    const internalLoading = ref(props.loading);
+    let timeoutId: number | null = null;
+
+    watch(
+        () => props.loading,
+        (newVal) => {
+          if (newVal) {
+            // Если начинается загрузка — немедленно показываем плейсхолдер
+            if (timeoutId) {
+              clearTimeout(timeoutId);
+              timeoutId = null;
+            }
+            internalLoading.value = true;
+          } else {
+            // Если загрузка закончилась, ждем 3 секунды перед отключением плейсхолдера
+            timeoutId = window.setTimeout(() => {
+              internalLoading.value = false;
+            }, 3000);
+          }
+        },
+        { immediate: true }
+    );
+
+    onUnmounted(() => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    });
+
+    return { customClass, internalLoading };
   },
 });
 </script>
@@ -49,6 +77,9 @@ export default defineComponent({
   justify-content: center;
 }
 .default-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
   background: linear-gradient(90deg, var(--gray-color, #e0e0e0) 25%, var(--secondary-text-color, #f0f0f0) 50%, var(--gray-color, #e0e0e0) 75%);
   background-size: 200% 100%;
   animation: gradientFlow 1.5s ease-in-out infinite;

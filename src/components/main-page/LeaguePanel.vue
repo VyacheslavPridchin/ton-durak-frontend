@@ -8,10 +8,12 @@
       <img class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
       <a class="league-badge-text">{{ divisionRoman }}</a>
     </div>
-    <!-- Заголовок лиги с плейсхолдером через ::after -->
-    <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingTitle }">
-      {{ leagueTitle }}
-    </h2>
+    <div style="display: flex; justify-content: center;">
+      <!-- Заголовок лиги с плейсхолдером через ::after -->
+      <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingTitle }">
+        {{ leagueTitle }}
+      </h2>
+    </div>
     <!-- Прогресс-бар с плейсхолдером через ::after -->
     <div class="progress-bar-container">
       <div class="progress-bar-wrapper">
@@ -163,6 +165,7 @@ export default defineComponent({
 
 .league-title {
   text-align: center;
+  max-width: 30vh;
 }
 
 .progress-bar-container {

@@ -208,7 +208,7 @@ button {
   background-size: 200% 100%;
   z-index: 2;
   opacity: 0;
-  transition: opacity 0.3s ease-in-out; /* Плавное исчезновение */
+  transition: opacity 1s ease;
   animation: gradientFlow 1.5s ease-in-out infinite;
   pointer-events: none;
   border-radius: 0.5vh;

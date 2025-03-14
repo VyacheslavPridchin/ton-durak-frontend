@@ -11,7 +11,6 @@
         <!-- Плейсхолдер для подгружаемой картинки, ждём событие load -->
         <Placeholder class="profile-picture" :loading="isLoadingImage">
           <img
-              class="profile-picture"
               :src="profileImage"
               alt="Profile Picture"
               @load="onImageLoad"
@@ -20,7 +19,7 @@
       </div>
     </div>
     <!-- Плейсхолдер для подгружаемого имени -->
-    <Placeholder :loading="isLoadingName">
+    <Placeholder class="profile-name" :loading="isLoadingName">
       <h2 class="profile-name" style="margin-bottom: 2vh">{{ profileName }}</h2>
     </Placeholder>
     <div v-for="(stat, index) in stats" :key="index" class="details-row">

@@ -52,12 +52,14 @@ const cacheUserData = (rawInitData: string) => {
 
 // @ts-ignore
 const telegramInitData = window.Telegram.WebApp.initData || localStorage.getItem("initData");
-if (telegramInitData) {
-    cacheUserData(telegramInitData);
-    await auth(telegramInitData);
-} else {
-    console.error("initData не найден ни в Telegram.WebApp, ни в кэше");
-}
+(async () => {
+    if (telegramInitData) {
+        cacheUserData(telegramInitData);
+        await auth(telegramInitData);
+    } else {
+        console.error("initData не найден ни в Telegram.WebApp, ни в кэше");
+    }
+})();
 
 const app = createApp(App)
 

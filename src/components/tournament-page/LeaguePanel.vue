@@ -1,8 +1,8 @@
 <template>
   <div class="panel league-panel animate-press">
     <div class="league-header">
-      <img class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
-      <a class="league-badge-text placeholder-container" :class="{ isLoading: isLoadingData }">
+      <img v-if="rank" class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
+      <a v-if="rank" class="league-badge-text">
         {{ divisionRoman }}
       </a>
     </div>

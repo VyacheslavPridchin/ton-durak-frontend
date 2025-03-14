@@ -50,17 +50,15 @@ export default defineComponent({
     };
 
     // Единственная переменная для плейсхолдера текстовых данных – изначально true
-    const isLoadingData = ref(true);
-
-    // В onMounted оставляем значение isLoadingData=true;
-    // Плейсхолдеры будут скрыты только при вызове showData из другого скрипта.
-    onMounted(() => {
-      isLoadingData.value = true;
-    });
+    const isLoadingData = ref(false);
 
     // Функция, которую можно вызвать извне, чтобы скрыть плейсхолдеры
     const showData = () => {
       isLoadingData.value = false;
+    };
+
+    const hideData = () => {
+      isLoadingData.value = true;
     };
 
     return {
@@ -69,6 +67,7 @@ export default defineComponent({
       onTournamentButtonClick,
       isLoadingData,
       showData,
+      hideData
     };
   },
 });

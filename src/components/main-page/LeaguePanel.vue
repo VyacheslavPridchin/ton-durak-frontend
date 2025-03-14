@@ -81,7 +81,11 @@ export default defineComponent({
     };
 
     // Одна переменная для управления плейсхолдерами текстовых данных
-    const isLoadingData = ref(true);
+    const isLoadingData = ref(false);
+
+    const hideData = () => {
+      isLoadingData.value = false;
+    };
 
     // Функция, которую можно вызывать извне, чтобы скрыть плейсхолдеры
     const showData = () => {
@@ -97,6 +101,7 @@ export default defineComponent({
       openLeagueInformation,
       isLoadingData,
       showData,
+      hideData,
     };
   },
 });

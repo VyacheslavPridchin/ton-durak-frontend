@@ -73,17 +73,16 @@ export default defineComponent({
     const goToWithdraw = () => router.push('/withdraw-options');
     const showBonusBalanceInformation = () => events.emit('showPopup', 'bonusBalanceInformation');
 
-    const isLoadingData = ref(true);
+    const isLoadingData = ref(false);
 
     // Функция, которую можно вызвать извне для отключения плейсхолдера текстовых данных
     const showData = () => {
       isLoadingData.value = false;
     };
 
-    // При монтировании устанавливаем состояния загрузки по умолчанию
-    onMounted(() => {
+    const hideData = () => {
       isLoadingData.value = true;
-    });
+    };
 
     return {
       balanceText,

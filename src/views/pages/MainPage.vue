@@ -17,10 +17,12 @@ import WalletPanel from "@/components/main-page/WalletPanel.vue";
 import PlayButton from "@/components/main-page/PlayButton.vue";
 import apiService from '@/services/ApiService.ts';
 
+const CACHE_KEY = 'screenMainData';
+
 export default defineComponent({
   components: { LeaguePanel, TournamentPanel, WalletPanel, PlayButton },
   setup() {
-    // Инициализация рефов для данных
+    // Рефы для данных
     const rank = ref();
     const division = ref();
     const progress = ref(0);
@@ -34,34 +36,55 @@ export default defineComponent({
 
     const playAmount = ref(0);
 
-    // ---
-
+    // Рефы для компонентов
     const leaguePanelRef = ref();
     const tournamentPanelRef = ref();
     const walletPanelRef = ref();
 
+    // Функция обновления данных в реактивных переменных
+    const updateData = (data: any) => {
+      // LeaguePanel
+      rank.value = data.league.rank;
+      division.value = data.league.division;
+      progress.value = data.league.progress * 100; // переводим в проценты
+
+      // TournamentPanel
+      tournamentPrize.value = data.tournament.prize_pool;
+      tournamentPlace.value = data.tournament.place;
+      const currentTime = Math.floor(Date.now() / 1000);
+      tournamentTimer.value = Math.max(0, data.tournament.deadline - currentTime);
+
+      // WalletPanel
+      walletBalance.value = data.finance.balance;
+      walletBonus.value = data.finance.bonus_balance;
+
+      // PlayButton (пример)
+      playAmount.value = 3.14;
+    };
+
+    // Функции работы с кэшем
+    const loadCachedData = () => {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch (e) {
+          console.error('Ошибка парсинга кэша', e);
+        }
+      }
+      return null;
+    };
+
+    const saveCachedData = (data: any) => {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    };
+
+    // Запрос данных с сервера
     const fetchScreenMain = async () => {
       const response = await apiService.getScreenMain();
       if (response.success && response.data) {
-        // Обновляем данные для LeaguePanel
-        rank.value = response.data.league.rank;
-        division.value = response.data.league.division;
-        // Если progress приходит в виде доли (например, 0.445), переводим в проценты
-        progress.value = response.data.league.progress * 100;
-
-        // Обновляем данные для TournamentPanel
-        tournamentPrize.value = response.data.tournament.prize_pool;
-        tournamentPlace.value = response.data.tournament.place;
-        // Расчет оставшегося времени (deadline - текущее время в секундах)
-        const currentTime = Math.floor(Date.now() / 1000);
-        tournamentTimer.value = Math.max(0, response.data.tournament.deadline - currentTime);
-
-        // Обновляем данные для WalletPanel
-        walletBalance.value = response.data.finance.balance;
-        walletBonus.value = response.data.finance.bonus_balance;
-
-        // Пример playAmount (можно заменить на актуальное значение)
-        playAmount.value = 3.14;
+        updateData(response.data);
+        saveCachedData(response); // кэшируем полный ответ
         setTimeout(() => {
           leaguePanelRef.value.showData();
           tournamentPanelRef.value.showData();
@@ -71,6 +94,18 @@ export default defineComponent({
     };
 
     onMounted(() => {
+      // Сначала пытаемся загрузить данные из кэша
+      const cachedResponse = loadCachedData();
+      if (cachedResponse && cachedResponse.data) {
+        updateData(cachedResponse.data);
+      }
+      else
+      {
+        leaguePanelRef.value.hideData();
+        tournamentPanelRef.value.hideData();
+        walletPanelRef.value.hideData();
+      }
+      // Запрос обновления данных с сервера (параллельно)
       fetchScreenMain();
     });
 
@@ -85,8 +120,8 @@ export default defineComponent({
       walletBonus,
       playAmount,
       leaguePanelRef,
-      walletPanelRef,
       tournamentPanelRef,
+      walletPanelRef,
     };
   }
 });

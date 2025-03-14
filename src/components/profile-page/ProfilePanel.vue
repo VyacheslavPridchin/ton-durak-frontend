@@ -11,56 +11,28 @@
         <img class="profile-picture" :src="profileImage" alt="Profile Picture" />
       </div>
     </div>
-    <Placeholder :loading="isLoading" style="margin-top: 0.5vh; height: 2.25vh" @click="test">
-      <h2 class="profile-name">{{ profileName }}</h2>
-    </Placeholder>
-    <div v-if="gamesCount" class="details-row" style="margin-top: 2vh">
-      <h2 class="details-title">Количество игр:</h2>
-      <a class="details-value">{{ gamesCount }}</a>
+    <h2 class="profile-name" style="margin-bottom: 2vh">{{ profileName }}</h2>
+    <div v-for="(stat, index) in stats" :key="index" class="details-row">
+      <h2 class="details-title">{{ stat.title }}</h2>
+      <a class="details-value">{{ stat.value }}</a>
     </div>
-    <div v-if="winsCount" class="details-row">
-      <h2 class="details-title">Побед:</h2>
-      <a class="details-value">{{ winsCount }}</a>
-    </div>
-    <div v-if="earnings" class="details-row">
-      <h2 class="details-title">Заработок:</h2>
-      <a class="details-value">${{ earnings }}</a>
-    </div>
-<!--    <h2 class="profile-username">@{{ username }}</h2>-->
   </div>
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
 import Placeholder from "@/components/Placeholder.vue";
-const router = useRouter()
 
+interface Stat {
+  title: string;
+  value: string | number;
+}
 
 export default defineComponent({
   name: 'ProfilePanel',
-  components: {Placeholder},
-  setup() {
-    const router = useRouter(); // Получаем доступ к роутеру
-    const isLoading = ref(false);
-    const openEdit = () => {
-      router.push("/profile/edit"); // Навигация к странице редактирования профиля
-    };
-
-    //@ts-ignore
-    let colorScheme = window.Telegram?.WebApp?.colorScheme || 'light';
-
-    const changeTheme = () => {
-      colorScheme = colorScheme == 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', colorScheme);
-    };
-
-    const test = () => {
-      isLoading.value = false;
-    }
-
-    return { openEdit, changeTheme, isLoading, test};
-  },
+  components: { Placeholder },
   props: {
     profileImage: {
       type: String,
@@ -74,15 +46,28 @@ export default defineComponent({
       type: String,
       required: true
     },
-    gamesCount:{
-      type: Number,
-    },
-    winsCount:{
-      type: Number,
-    },
-    earnings:{
-      type: Number,
+    stats: {
+      type: Array as PropType<Stat[]>,
+      required: false,
+      default: () => []
     }
+  },
+  setup() {
+    const router = useRouter();
+    const isLoading = ref(false);
+    const openEdit = () => {
+      router.push("/profile/edit");
+    };
+
+    //@ts-ignore
+    let colorScheme = window.Telegram?.WebApp?.colorScheme || 'light';
+
+    const changeTheme = () => {
+      colorScheme = colorScheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', colorScheme);
+    };
+
+    return { openEdit, changeTheme, isLoading };
   },
 });
 </script>

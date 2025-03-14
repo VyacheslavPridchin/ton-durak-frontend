@@ -73,7 +73,7 @@ export default defineComponent({
         rank.value = response.data.league.rank;
         division.value = response.data.league.division;
         progress.value = response.data.league.progress * 100;
-        // Обновляем список игроков
+        // Обновляем список игроков и определяем isMe через сравнение id
         players.value = response.data.players.map((p) => ({
           id: p.user_id,
           place: p.place,
@@ -81,12 +81,8 @@ export default defineComponent({
           avatar: `https://tondurakgame.com/users/photo?user_id=${p.user_id}`,
           name: p.name,
           wins: p.wins,
-          isMe: false
+          isMe: window.userData ? window.userData.id === p.user_id : false
         }));
-        // Пример: отметить первого игрока как "я"
-        if (players.value.length > 0) {
-          players.value[0].isMe = true;
-        }
       }
     };
 

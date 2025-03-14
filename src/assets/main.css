@@ -192,7 +192,7 @@ button {
   }
 }
 
-.placeholder-container.isLoading {
+.placeholder-container {
   position: relative;
   overflow: hidden;
 }
@@ -208,4 +208,11 @@ button {
   background-size: 200% 100%;
   animation: gradientFlow 1.5s ease-in-out infinite;
   z-index: 2;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out; /* Плавное исчезновение */
+}
+
+/* Когда isLoading пропадает, плавно скрываем */
+.placeholder-container:not(.isLoading)::after {
+  opacity: 0;
 }

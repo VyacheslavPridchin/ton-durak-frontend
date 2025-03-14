@@ -8,9 +8,14 @@
     </button>
     <div class="profile-header">
       <div class="profile-picture-wrapper">
-        <!-- Плейсхолдер только для подгружаемого фото -->
+        <!-- Плейсхолдер для подгружаемой картинки, ждём событие load -->
         <Placeholder :loading="isLoadingImage">
-          <img class="profile-picture" :src="profileImage" alt="Profile Picture" />
+          <img
+              class="profile-picture"
+              :src="profileImage"
+              alt="Profile Picture"
+              @load="onImageLoad"
+          />
         </Placeholder>
       </div>
     </div>
@@ -60,7 +65,11 @@ export default defineComponent({
     stats: {
       type: Array as PropType<Stat[]>,
       required: false,
-      default: () => []
+      default: () => [
+        { title: "Статистика: ", value: "0" },
+        { title: "Статистика: ", value: "0" },
+        { title: "Статистика: ", value: "0" }
+      ]
     }
   },
   setup(props) {
@@ -70,9 +79,11 @@ export default defineComponent({
     const isLoadingName = ref(true);
     const isLoadingStats = ref(true);
 
-    // При наличии данных меняем состояние загрузки
-    watch(() => props.profileImage, (newVal) => {
-      if (newVal) isLoadingImage.value = false;
+    // Если изображение меняется, заново включаем загрузку
+    watch(() => props.profileImage, (newVal, oldVal) => {
+      if (newVal !== oldVal) {
+        isLoadingImage.value = true;
+      }
     }, { immediate: true });
 
     watch(() => props.profileName, (newVal) => {
@@ -82,6 +93,10 @@ export default defineComponent({
     watch(() => props.stats, (newVal) => {
       if (newVal && newVal.length > 0) isLoadingStats.value = false;
     }, { immediate: true });
+
+    const onImageLoad = () => {
+      isLoadingImage.value = false;
+    };
 
     const openEdit = () => {
       router.push("/profile/edit");
@@ -95,7 +110,7 @@ export default defineComponent({
       document.documentElement.setAttribute('data-theme', colorScheme);
     };
 
-    return { openEdit, changeTheme, isLoadingImage, isLoadingName, isLoadingStats };
+    return { openEdit, changeTheme, isLoadingImage, isLoadingName, isLoadingStats, onImageLoad };
   },
 });
 </script>

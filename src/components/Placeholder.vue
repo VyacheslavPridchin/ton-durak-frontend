@@ -36,7 +36,7 @@ export default defineComponent({
             }
             internalLoading.value = true;
           } else {
-            timeoutId = window.setTimeout(() => {
+            timeoutId = setTimeout(() => {
               internalLoading.value = false;
             }, 3000);
           }
@@ -57,9 +57,6 @@ export default defineComponent({
 
 <style scoped>
 .default-placeholder {
-  width: 100%;
-  height: 100%;
-  border-radius: 4px; /* можно переопределить через переданный класс */
   background: linear-gradient(90deg, var(--gray-color, #e0e0e0) 25%, var(--secondary-text-color, #f0f0f0) 50%, var(--gray-color, #e0e0e0) 75%);
   background-size: 200% 100%;
   animation: gradientFlow 1.5s ease-in-out infinite;

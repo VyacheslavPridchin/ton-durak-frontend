@@ -189,6 +189,14 @@ export default defineComponent({
   transition: width 0.3s ease-in-out;
 }
 
+.progress-bar-wrapper:nth-child(2) .progress-bar {
+  transition-delay: 0.3s;
+}
+
+.progress-bar-wrapper:nth-child(3) .progress-bar {
+  transition-delay: 0.6s;
+}
+
 @keyframes gradientFlow {
   0% {
     background-position: 200% 0;

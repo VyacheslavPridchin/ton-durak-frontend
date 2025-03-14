@@ -112,12 +112,15 @@ export default defineComponent({
 .tournament-title {
   text-align: left;
   padding-bottom: 0.5vh;
+  max-width: 30vh;
 }
 
 .tournament-place {
   font-size: 3.5vh;
   font-weight: 600;
   text-align: left;
+  max-width: 15vh;
+  margin-top: 1vh;
 }
 
 .timer-text {

@@ -7,20 +7,23 @@
       <img class="icon" src="@/assets/icons/light-icon.svg" alt="Change Theme" />
     </button>
     <div class="profile-header">
-      <div class="profile-picture-wrapper placeholder-container" :class="{ isLoading: isLoadingImage }">
+      <div class="profile-picture-wrapper">
         <!-- Плейсхолдер для подгружаемой картинки -->
         <img
-            class="profile-picture"
+            class="profile-picture placeholder-container"
+            :class="{ isLoading: isLoadingImage }"
             :src="profileImage"
             alt="Profile Picture"
             @load="onImageLoad"
         />
       </div>
     </div>
-    <!-- Плейсхолдер для подгружаемого имени -->
-    <h2 class="profile-name placeholder-container" :class="{ isLoading: isLoadingData }" style="margin-bottom: 2vh">
-      {{ profileName }}
-    </h2>
+    <div style="display: flex; justify-content: center;">
+      <h2 class="profile-name placeholder-container" :class="{ isLoading: isLoadingData }" style="margin-bottom: 2vh">
+        {{ profileName }}
+      </h2>
+    </div>
+
     <div v-for="(stat, index) in stats" :key="index" class="details-row">
       <!-- Плейсхолдеры для каждого элемента статистики -->
       <h2 class="details-title placeholder-container" :class="{ isLoading: isLoadingData }">
@@ -63,9 +66,9 @@ export default defineComponent({
       type: Array as PropType<Stat[]>,
       required: false,
       default: () => [
-        { title: "Статистика #1: ", value: "0" },
-        { title: "Статистика #2: ", value: "0" },
-        { title: "Статистика #3: ", value: "0" }
+        { title: "Статистика #1: ", value: "Данные" },
+        { title: "Статистика #2: ", value: "Данные" },
+        { title: "Статистика #3: ", value: "Данные" }
       ],
     },
   },
@@ -143,6 +146,7 @@ export default defineComponent({
 .profile-name {
   text-align: center;
   margin-top: 0.5vh;
+  max-width: 15vh;
 }
 
 .top-left-button img {

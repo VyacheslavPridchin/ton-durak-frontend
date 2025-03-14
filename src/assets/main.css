@@ -44,6 +44,7 @@ h2, h3, h4, h5, h6, a {
   color: var(--text-color);
   transition: background 0.2s, color 0.2s;
   margin: 0;
+  display: block;
 }
 
 h1 {
@@ -54,6 +55,7 @@ h1 {
   transition: background 0.2s, color 0.2s;
   margin: 0.5vh auto 2vh auto;
   align-self: center;
+  display: block;
 }
 
 button {
@@ -180,25 +182,23 @@ button {
 .placeholder-container::after {
   content: "";
   position: absolute;
-  top: -1px;
-  right: -1px;
-  bottom: -1px;
-  left: -1px;
-  background: linear-gradient(90deg,
-  var(--gray-color, #e0e0e0) 25%,
-  var(--secondary-text-color, #f0f0f0) 50%,
-  var(--gray-color, #e0e0e0) 75%);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--placeholder-gradient);
   background-size: 200% 100%;
-  border-radius: 50%;
+  border-radius: 1vh;
   z-index: 2;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease, background 0.5s ease;
   animation: none;
 }
 
 /* При загрузке: мгновенное появление плейсхолдера и скрытие контента */
 .placeholder-container.isLoading {
+  transition: background 0.5s ease;
   color: transparent; /* скрывает текст или другой контент */
 }
 
@@ -206,7 +206,7 @@ button {
   opacity: 1;
   animation: gradientFlow 1.5s ease-in-out infinite;
   /* Появление псевдоэлемента – без задержки */
-  transition: opacity 0s;
+  transition: opacity 0s, background 0.5s ease;
 }
 
 /* Анимация градиентного потока */

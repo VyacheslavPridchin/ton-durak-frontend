@@ -11,6 +11,7 @@
   --blue-gradient: linear-gradient(to right, #2D83EC, #1AC9FF);
   --bronze-color: #CC7763;
   --bronze-secondary-color: #FEE7DC;
+  --placeholder-gradient: linear-gradient(90deg, var(--gray-color) 5%, #e1e1e1 50%, var(--gray-color) 95%);
 }
 
 [data-theme="dark"] {
@@ -22,6 +23,8 @@
   --white-color: #F0F0F0;
   --gray-color: #222222;
   --blue-gradient: linear-gradient(to right, #2469BD, #1796C9);
+
+  --placeholder-gradient: linear-gradient(90deg, var(--gray-color) 5%, #151515 50%, var(--gray-color) 95%);
   --bronze-secondary-color: #504844;
 }
 

@@ -188,6 +188,7 @@ export default defineComponent({
   font-weight: 600;
   text-align: left;
   pointer-events: none;
+  max-width: 15vh;
 }
 
 .buttons-container {

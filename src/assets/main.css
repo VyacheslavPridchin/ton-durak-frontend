@@ -193,6 +193,12 @@ button {
 }
 
 .placeholder-container::after {
+  position: inherit;
+  top: inherit;
+  bottom: inherit;
+  left: inherit;
+  right: inherit;
+  border-radius: inherit;
   content: "";
   background: linear-gradient(90deg, var(--gray-color, #e0e0e0) 25%, var(--secondary-text-color, #f0f0f0) 50%, var(--gray-color, #e0e0e0) 75%);
   background-size: 200% 100%;

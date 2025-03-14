@@ -1,27 +1,38 @@
 <template>
   <div class="panel profile-panel">
     <button class="top-right-button animate-press" @click="openEdit">
-      <img class="icon" src="@/assets/icons/edit-icon.svg" alt="Settings Icon" />
+      <img class="icon" src="@/assets/icons/edit-icon.svg" alt="Edit" />
     </button>
     <button class="top-left-button animate-press" @click="changeTheme">
-      <img class="icon" src="@/assets/icons/light-icon.svg" alt="Settings Icon" />
+      <img class="icon" src="@/assets/icons/light-icon.svg" alt="Change Theme" />
     </button>
     <div class="profile-header">
       <div class="profile-picture-wrapper">
-        <img class="profile-picture" :src="profileImage" alt="Profile Picture" />
+        <!-- Плейсхолдер только для подгружаемого фото -->
+        <Placeholder :loading="isLoadingImage">
+          <img class="profile-picture" :src="profileImage" alt="Profile Picture" />
+        </Placeholder>
       </div>
     </div>
-    <h2 class="profile-name" style="margin-bottom: 2vh">{{ profileName }}</h2>
+    <!-- Плейсхолдер для подгружаемого имени -->
+    <Placeholder :loading="isLoadingName">
+      <h2 class="profile-name" style="margin-bottom: 2vh">{{ profileName }}</h2>
+    </Placeholder>
     <div v-for="(stat, index) in stats" :key="index" class="details-row">
-      <h2 class="details-title">{{ stat.title }}</h2>
-      <a class="details-value">{{ stat.value }}</a>
+      <!-- Плейсхолдеры для каждого элемента статистики -->
+      <Placeholder :loading="isLoadingStats">
+        <h2 class="details-title">{{ stat.title }}</h2>
+      </Placeholder>
+      <Placeholder :loading="isLoadingStats">
+        <a class="details-value">{{ stat.value }}</a>
+      </Placeholder>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import Placeholder from "@/components/Placeholder.vue";
 
@@ -52,9 +63,26 @@ export default defineComponent({
       default: () => []
     }
   },
-  setup() {
+  setup(props) {
     const router = useRouter();
-    const isLoading = ref(false);
+    // Переменные загрузки для отдельных подгружаемых элементов
+    const isLoadingImage = ref(true);
+    const isLoadingName = ref(true);
+    const isLoadingStats = ref(true);
+
+    // При наличии данных меняем состояние загрузки
+    watch(() => props.profileImage, (newVal) => {
+      if (newVal) isLoadingImage.value = false;
+    }, { immediate: true });
+
+    watch(() => props.profileName, (newVal) => {
+      if (newVal) isLoadingName.value = false;
+    }, { immediate: true });
+
+    watch(() => props.stats, (newVal) => {
+      if (newVal && newVal.length > 0) isLoadingStats.value = false;
+    }, { immediate: true });
+
     const openEdit = () => {
       router.push("/profile/edit");
     };
@@ -67,7 +95,7 @@ export default defineComponent({
       document.documentElement.setAttribute('data-theme', colorScheme);
     };
 
-    return { openEdit, changeTheme, isLoading };
+    return { openEdit, changeTheme, isLoadingImage, isLoadingName, isLoadingStats };
   },
 });
 </script>

@@ -1,81 +1,67 @@
 <template>
-  <div class="loader-wrapper">
-    <transition name="fade">
-      <template v-if="loading">
-        <slot name="fallback">
-          <div class="placeholder" :style="{ height: `${contentHeight}px` }"></div>
-        </slot>
-      </template>
-      <template v-else>
-        <div ref="content" class="content">
-          <slot />
-        </div>
-      </template>
-    </transition>
+  <div class="placeholder-wrapper" :class="{ loading }">
+    <!-- Контент всегда отрисовывается, чтобы сохранялись размеры и положение -->
+    <div class="content">
+      <slot />
+    </div>
+    <!-- Абсолютно позиционированный placeholder -->
+    <div v-if="loading" class="placeholder-overlay">
+      <slot name="fallback">
+        <div class="default-placeholder"></div>
+      </slot>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch, nextTick } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'Placeholder',
+  name: 'UniversalPlaceholder',
   props: {
     loading: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
-  setup(props) {
-    const contentHeight = ref(0);
-    const content = ref<HTMLElement | null>(null);
-
-    const updateHeight = () => {
-      if (content.value) {
-        contentHeight.value = content.value.offsetHeight;
-      }
-    };
-
-    onMounted(() => {
-      updateHeight();
-      const observer = new ResizeObserver(updateHeight);
-      if (content.value) observer.observe(content.value);
-    });
-
-    watch(() => props.loading, async (newVal) => {
-      if (!newVal) {
-        await nextTick(); // Ждём рендеринг контента
-        updateHeight();
-      }
-    });
-
-    return { contentHeight, content };
-  }
 });
 </script>
 
 <style scoped>
-.loader-wrapper {
+.placeholder-wrapper {
   position: relative;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.placeholder {
-  width: 40%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 1.5vh;
-  border-radius: 0.5vh;
-  background: linear-gradient(90deg, var(--gray-color) 25%, var(--secondary-text-color) 50%, var(--gray-color) 75%);
-  background-size: 200% 100%;
-  animation: gradientFlow 1.5s ease-in-out infinite;
+  /* По умолчанию размеры задаются контентом */
 }
 
 .content {
+  transition: opacity 0.3s ease;
+}
+
+/* Когда loading, контент скрываем (но он занимает место) */
+.loading .content {
+  opacity: 0;
+}
+
+/* Placeholder накладывается поверх всего контента */
+.placeholder-overlay {
   position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Стандартная анимация для placeholder */
+.default-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--gray-color, #e0e0e0) 25%, var(--secondary-text-color, #f0f0f0) 50%, var(--gray-color, #e0e0e0) 75%);
+  background-size: 200% 100%;
+  animation: gradientFlow 1.5s ease-in-out infinite;
 }
 
 @keyframes gradientFlow {
@@ -85,12 +71,5 @@ export default defineComponent({
   100% {
     background-position: -200% 0;
   }
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease-in-out;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
 }
 </style>

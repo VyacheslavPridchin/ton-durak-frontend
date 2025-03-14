@@ -38,7 +38,8 @@ export default defineComponent({
 <style scoped>
 .placeholder-wrapper {
   position: relative;
-  /* Внешний контейнер остается нейтральным */
+  width: 100%;
+  height: 100%;
 }
 .content {
   transition: opacity 0.3s ease;

@@ -93,6 +93,7 @@ export default defineComponent({
       showBonusBalanceInformation,
       isLoadingData,
       showData,
+      hideData
     };
   },
 });

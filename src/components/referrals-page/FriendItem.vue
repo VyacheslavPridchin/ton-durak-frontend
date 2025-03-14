@@ -9,7 +9,7 @@
       <a class="currency">${{ formattedCurrency }}</a>
     </div>
     <div class="profile-picture-wrapper placeholder-container" :class="{ isLoading: isLoadingImage }">
-      <img class="profile-picture" :src="avatar" @load="" alt="avatar" />
+      <img class="profile-picture" :src="avatar" @load="onImageLoad" alt="avatar" />
     </div>
   </div>
 </template>

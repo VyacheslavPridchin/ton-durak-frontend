@@ -140,6 +140,7 @@ export default defineComponent({
       myPlayerOutsideTop,
       playerList,
       myPlayerItem,
+      leaguePanelRef,
       openTournamentInformation
     };
   }

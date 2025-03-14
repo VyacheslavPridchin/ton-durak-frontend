@@ -211,6 +211,7 @@ button {
   transition: opacity 0.3s ease-in-out; /* Плавное исчезновение */
   animation: gradientFlow 1.5s ease-in-out infinite;
   pointer-events: none;
+  border-radius: 1.2vh;
 }
 
 .placeholder-container.isLoading::after {

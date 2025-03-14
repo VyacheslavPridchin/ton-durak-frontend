@@ -31,7 +31,9 @@ export default defineComponent({
     const username = ref('');
     const profileName = ref('');
     const profileImage = ref('');
-    const stats = ref<Array<{ title: string; value: string }>>([]);
+    const stats = ref<Array<{ title: string; value: string }>>([{ title: "Статистика: ", value: "0" },
+      { title: "Статистика: ", value: "0" },
+      { title: "Статистика: ", value: "0" }]);
 
     const onWalletButtonClick = () => {
       router.push('/wallet');

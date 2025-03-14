@@ -60,12 +60,7 @@ export default defineComponent({
     },
     stats: {
       type: Array as PropType<Stat[]>,
-      required: false,
-      default: () => [
-        { title: "Статистика: ", value: "0" },
-        { title: "Статистика: ", value: "0" },
-        { title: "Статистика: ", value: "0" }
-      ],
+      required: false
     },
   },
   setup(props) {

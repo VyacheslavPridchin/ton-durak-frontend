@@ -21,18 +21,18 @@ export default defineComponent({
   components: { LeaguePanel, TournamentPanel, WalletPanel, PlayButton },
   setup() {
     // Инициализация рефов для данных
-    const rank = ref('bronze');
-    const division = ref(0);
-    const progress = ref(0);
+    const rank = ref('');
+    const division = ref(-1);
+    const progress = ref(-1);
 
-    const tournamentPrize = ref(0);
-    const tournamentPlace = ref(0);
-    const tournamentTimer = ref(0);
+    const tournamentPrize = ref(-1);
+    const tournamentPlace = ref(-1);
+    const tournamentTimer = ref(-1);
 
-    const walletBalance = ref(0);
-    const walletBonus = ref(0);
+    const walletBalance = ref(-1);
+    const walletBonus = ref(-1);
 
-    const playAmount = ref(0);
+    const playAmount = ref(-1);
 
     const fetchScreenMain = async () => {
       const response = await apiService.getScreenMain();

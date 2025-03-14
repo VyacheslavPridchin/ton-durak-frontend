@@ -36,19 +36,15 @@ export default defineComponent({
   props: {
     rank: {
       type: String,
-      required: true,
-      validator: (value: string) =>
-          ['bronze', 'silver', 'gold', 'platinum', 'diamond'].includes(value),
+      required: true
     },
     division: {
       type: Number,
-      required: true,
-      validator: (value: number) => value >= 1 && value <= 3,
+      required: true
     },
     progress: {
       type: Number,
-      required: true,
-      validator: (value: number) => value >= 0 && value <= 100,
+      required: true
     },
   },
   setup(props) {

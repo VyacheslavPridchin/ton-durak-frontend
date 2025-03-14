@@ -4,15 +4,15 @@
       <img class="icon" src="@/assets/icons/next-icon.svg" alt="Button Icon" />
     </button>
     <!-- Заголовок турнира с плейсхолдером -->
-    <h2 class="tournament-title placeholder-container" :class="{ isLoading: isLoadingTitle }">
+    <h2 class="tournament-title placeholder-container" :class="{ isLoading: isLoadingData }">
       {{ tournamentTitle }}
     </h2>
     <!-- Место турнира с плейсхолдером -->
-    <a class="tournament-place placeholder-container" :class="{ isLoading: isLoadingPlace }">
+    <a class="tournament-place placeholder-container" :class="{ isLoading: isLoadingData }">
       {{ tournamentPlace }}
     </a>
     <!-- Таймер с плейсхолдером -->
-    <div class="timer-container placeholder-container" :class="{ isLoading: isLoadingTimer }">
+    <div class="timer-container placeholder-container" :class="{ isLoading: isLoadingData }">
       <img class="icon" src="@/assets/icons/timer-icon.svg" alt="Timer Icon" />
       <a class="timer-text">00:00:00</a>
     </div>
@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch, onMounted } from 'vue';
+import { defineComponent, computed, ref, onMounted } from 'vue';
 import router from "@/router";
 
 export default defineComponent({
@@ -49,58 +49,28 @@ export default defineComponent({
       router.push('/tournament');
     };
 
-    // Состояния плейсхолдера для каждого значения – изначально true
-    const isLoadingTitle = ref(true);
-    const isLoadingPlace = ref(true);
-    const isLoadingTimer = ref(true);
+    // Единственная переменная для плейсхолдера текстовых данных – изначально true
+    const isLoadingData = ref(true);
 
-    // При монтировании компонента они остаются true (по умолчанию)
+    // В onMounted оставляем значение isLoadingData=true;
+    // Плейсхолдеры будут скрыты только при вызове showData из другого скрипта.
     onMounted(() => {
-      isLoadingTitle.value = true;
-      isLoadingPlace.value = true;
-      isLoadingTimer.value = true;
+      isLoadingData.value = true;
     });
 
-    // Когда данные приходят, обновляем соответствующие состояния
-    watch(
-        () => props.prize,
-        (newVal) => {
-          if (newVal) {
-            isLoadingTitle.value = false;
-          }
-        },
-        { immediate: true }
-    );
-
-    watch(
-        () => props.place,
-        (newVal) => {
-          if (newVal) {
-            isLoadingPlace.value = false;
-          }
-        },
-        { immediate: true }
-    );
-
-    watch(
-        () => props.timer,
-        (newVal) => {
-          if (newVal) {
-            isLoadingTimer.value = false;
-          }
-        },
-        { immediate: true }
-    );
+    // Функция, которую можно вызвать извне, чтобы скрыть плейсхолдеры
+    const showData = () => {
+      isLoadingData.value = false;
+    };
 
     return {
       tournamentTitle,
       tournamentPlace,
       onTournamentButtonClick,
-      isLoadingTitle,
-      isLoadingPlace,
-      isLoadingTimer,
+      isLoadingData,
+      showData,
     };
-  }
+  },
 });
 </script>
 
@@ -144,14 +114,5 @@ export default defineComponent({
   width: 1.5vh;
   height: 1.5vh;
   object-fit: contain;
-}
-
-@keyframes gradientFlow {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
 }
 </style>

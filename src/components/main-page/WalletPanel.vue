@@ -11,8 +11,8 @@
           <img class="icon" src="@/assets/icons/next-icon.svg" alt="Button Icon" />
         </button>
         <h2 class="wallet-title">Игровой баланс</h2>
-        <!-- Применяем плейсхолдер только к значению баланса -->
-        <a class="wallet-balance placeholder-container" :class="{ isLoading: isLoadingBalance }">
+        <!-- Плейсхолдер для значения баланса -->
+        <a class="wallet-balance placeholder-container" :class="{ isLoading: isLoadingData }">
           {{ balanceText }}
         </a>
         <div class="buttons-container">
@@ -33,8 +33,8 @@
               class="bonus-icon"
           />
           <h2 class="bonus-title">Бонусный баланс</h2>
-          <!-- Применяем плейсхолдер только к значению бонусного баланса -->
-          <a class="bonus-amount placeholder-container" :class="{ isLoading: isLoadingBonus }">
+          <!-- Плейсхолдер для значения бонусного баланса -->
+          <a class="bonus-amount placeholder-container" :class="{ isLoading: isLoadingData }">
             {{ bonusText }}
           </a>
         </div>
@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch, onMounted } from 'vue';
+import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { events } from "@/events.ts";
 
@@ -63,12 +63,11 @@ export default defineComponent({
     showTopButton: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   setup(props) {
     const router = useRouter();
 
-    // Вычисляемые значения баланса и бонуса
     const balanceText = computed(() => `$${props.balance}`);
     const bonusText = computed(() => `$${props.bonus}`);
 
@@ -88,32 +87,20 @@ export default defineComponent({
       events.emit('showPopup', 'bonusBalanceInformation');
     };
 
-    // Состояния плейсхолдера для значений
-    const isLoadingBalance = ref(true);
-    const isLoadingBonus = ref(true);
+    // Используем одну переменную для управления плейсхолдерами текстовых данных
+    const isLoadingData = ref(true);
 
-    // При монтировании ставим состояния загрузки в true (по умолчанию)
     onMounted(() => {
-      isLoadingBalance.value = true;
-      isLoadingBonus.value = true;
+      // При монтировании по умолчанию данные загружаются, поэтому ставим isLoadingData в true.
+      isLoadingData.value = true;
     });
 
-    // Когда приходят данные, отключаем плейсхолдеры
+    // Когда оба значения (balance и bonus) приходят, отключаем плейсхолдер
     watch(
-        () => props.balance,
-        (newVal) => {
-          if (newVal) {
-            isLoadingBalance.value = false;
-          }
-        },
-        { immediate: true }
-    );
-
-    watch(
-        () => props.bonus,
-        (newVal) => {
-          if (newVal) {
-            isLoadingBonus.value = false;
+        [() => props.balance, () => props.bonus],
+        ([newBalance, newBonus]) => {
+          if (newBalance && newBonus) {
+            isLoadingData.value = false;
           }
         },
         { immediate: true }
@@ -126,13 +113,13 @@ export default defineComponent({
       goToDeposit,
       goToWithdraw,
       showBonusBalanceInformation,
-      isLoadingBalance,
-      isLoadingBonus,
+      isLoadingData,
     };
-  }
+  },
 });
 </script>
 
+<!-- Стили для .placeholder-container и @keyframes gradientFlow описаны в main.css -->
 <style scoped>
 .block-background {
   position: absolute;
@@ -236,14 +223,5 @@ export default defineComponent({
 .animate-press:active {
   filter: brightness(0.9);
   transform: scale(1);
-}
-
-@keyframes gradientFlow {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
 }
 </style>

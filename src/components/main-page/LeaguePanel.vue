@@ -5,16 +5,17 @@
     </button>
     <div class="league-header">
       <!-- Иконка лиги без плейсхолдера -->
-      <img class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
+      <img v-if="rank" class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
       <a class="league-badge-text">{{ divisionRoman }}</a>
     </div>
     <div style="display: flex; justify-content: center;">
-      <!-- Заголовок лиги с плейсхолдером через ::after -->
-      <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingTitle }">
+      <!-- Заголовок лиги с плейсхолдером через ::after;
+           для текстовых данных используется одна переменная isLoadingData -->
+      <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingData }">
         {{ leagueTitle }}
       </h2>
     </div>
-    <!-- Прогресс-бар с плейсхолдером через ::after -->
+    <!-- Прогресс-бар (без плейсхолдера, т.к. здесь отображается визуальная инфа) -->
     <div class="progress-bar-container">
       <div class="progress-bar-wrapper">
         <div class="progress-bar" :style="{ width: segment1 + '%' }"></div>
@@ -30,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, computed, ref, onMounted, watch} from 'vue';
+import { defineComponent, computed, ref } from 'vue';
 import { events } from "@/events.ts";
 
 export default defineComponent({
@@ -38,15 +39,15 @@ export default defineComponent({
   props: {
     rank: {
       type: String,
-      required: true
+      required: true,
     },
     division: {
       type: Number,
-      required: true
+      required: true,
     },
     progress: {
       type: Number,
-      required: true
+      required: true,
     },
   },
   setup(props) {
@@ -71,11 +72,7 @@ export default defineComponent({
         props.progress > 33.33 ? 100 : (props.progress / 33.33) * 100
     );
     const segment2 = computed(() =>
-        props.progress > 66.66
-            ? 100
-            : props.progress > 33.33
-                ? ((props.progress - 33.33) / 33.33) * 100
-                : 0
+        props.progress > 66.66 ? 100 : props.progress > 33.33 ? ((props.progress - 33.33) / 33.33) * 100 : 0
     );
     const segment3 = computed(() =>
         props.progress > 66.66 ? ((props.progress - 66.66) / 33.34) * 100 : 0
@@ -85,35 +82,13 @@ export default defineComponent({
       events.emit('showPopup', 'leagueInformation');
     };
 
-    // Изначально устанавливаем состояния загрузки в true
-    const isLoadingTitle = ref(true);
-    const isLoadingProgress = ref(true);
+    // Одна переменная для управления плейсхолдерами текстовых данных
+    const isLoadingData = ref(true);
 
-    // В onMounted снимаем плейсхолдеры мгновенно
-    onMounted(() => {
-      isLoadingTitle.value = true;
-      isLoadingProgress.value = true;
-    });
-
-    watch(
-        () => props.rank,
-        (newVal) => {
-          if (newVal) {
-            isLoadingTitle.value = false;
-          }
-        },
-        { immediate: true }
-    );
-
-    watch(
-        () => props.progress,
-        (newVal) => {
-          if (newVal) {
-            isLoadingProgress.value = false;
-          }
-        },
-        { immediate: true }
-    );
+    // Функция, которую можно вызывать извне, чтобы скрыть плейсхолдеры
+    const showData = () => {
+      isLoadingData.value = false;
+    };
 
     return {
       divisionRoman,
@@ -122,8 +97,8 @@ export default defineComponent({
       segment2,
       segment3,
       openLeagueInformation,
-      isLoadingTitle,
-      isLoadingProgress,
+      isLoadingData,
+      showData,
     };
   },
 });
@@ -190,6 +165,10 @@ export default defineComponent({
   border-radius: 0.4vh;
   background-color: var(--bronze-color);
   transition: width 0.3s ease-in-out;
+}
+
+.progress-bar-wrapper:nth-child(2) .progress-bar {
+  transition-delay: 0s;
 }
 
 .progress-bar-wrapper:nth-child(2) .progress-bar {

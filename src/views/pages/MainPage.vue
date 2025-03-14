@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <div class="page">
-      <LeaguePanel :rank="rank" :division="division" :progress="progress" />
-      <TournamentPanel :prize="tournamentPrize" :place="tournamentPlace" :timer="tournamentTimer" />
-      <WalletPanel :balance="walletBalance" :bonus="walletBonus" :showTopButton="true"/>
+      <LeaguePanel ref="leaguePanelRef" :rank="rank" :division="division" :progress="progress" />
+      <TournamentPanel ref="tournamentPanelRef" :prize="tournamentPrize" :place="tournamentPlace" :timer="tournamentTimer" />
+      <WalletPanel ref="walletPanelRef" :balance="walletBalance" :bonus="walletBonus" :showTopButton="true"/>
       <PlayButton :amount="playAmount" />
     </div>
   </div>
@@ -21,18 +21,24 @@ export default defineComponent({
   components: { LeaguePanel, TournamentPanel, WalletPanel, PlayButton },
   setup() {
     // Инициализация рефов для данных
-    const rank = ref('');
-    const division = ref(-1);
-    const progress = ref(-1);
+    const rank = ref();
+    const division = ref();
+    const progress = ref(0);
 
-    const tournamentPrize = ref(-1);
-    const tournamentPlace = ref(-1);
-    const tournamentTimer = ref(-1);
+    const tournamentPrize = ref(0);
+    const tournamentPlace = ref(0);
+    const tournamentTimer = ref(0);
 
-    const walletBalance = ref(-1);
-    const walletBonus = ref(-1);
+    const walletBalance = ref(0);
+    const walletBonus = ref(0);
 
     const playAmount = ref(0);
+
+    // ---
+
+    const leaguePanelRef = ref();
+    const tournamentPanelRef = ref();
+    const walletPanelRef = ref();
 
     const fetchScreenMain = async () => {
       const response = await apiService.getScreenMain();
@@ -56,6 +62,11 @@ export default defineComponent({
 
         // Пример playAmount (можно заменить на актуальное значение)
         playAmount.value = 3.14;
+        setTimeout(() => {
+          leaguePanelRef.value.showData();
+          tournamentPanelRef.value.showData();
+          walletPanelRef.value.showData();
+        }, 300);
       }
     };
 
@@ -72,7 +83,10 @@ export default defineComponent({
       tournamentTimer,
       walletBalance,
       walletBonus,
-      playAmount
+      playAmount,
+      leaguePanelRef,
+      walletPanelRef,
+      tournamentPanelRef,
     };
   }
 });

@@ -217,4 +217,5 @@ button {
 .placeholder-container.isLoading::after {
   opacity: 1;
   transition: none; /* Появление мгновенно */
+  border-radius: 0.5vh;
 }

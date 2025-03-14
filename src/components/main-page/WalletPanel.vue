@@ -11,7 +11,7 @@
           <img class="icon" src="@/assets/icons/next-icon.svg" alt="Button Icon" />
         </button>
         <h2 class="wallet-title">Игровой баланс</h2>
-        <!-- Плейсхолдер для значения баланса -->
+        <!-- Плейсхолдер для текстовых данных (баланса) -->
         <a class="wallet-balance placeholder-container" :class="{ isLoading: isLoadingData }">
           {{ balanceText }}
         </a>
@@ -27,13 +27,9 @@
       <div class="block-background animate-press" style="top: 0"></div>
       <div class="content">
         <div class="bonus-balance-container">
-          <img
-              src="@/assets/icons/bonus-dollar-icon.svg"
-              alt="Bonus Icon"
-              class="bonus-icon"
-          />
+          <img src="@/assets/icons/bonus-dollar-icon.svg" alt="Bonus Icon" class="bonus-icon" />
           <h2 class="bonus-title">Бонусный баланс</h2>
-          <!-- Плейсхолдер для значения бонусного баланса -->
+          <!-- Плейсхолдер для текстовых данных (бонусного баланса) -->
           <a class="bonus-amount placeholder-container" :class="{ isLoading: isLoadingData }">
             {{ bonusText }}
           </a>
@@ -44,11 +40,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted, watch } from 'vue';
+import { defineComponent, computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { events } from "@/events.ts";
 
 export default defineComponent({
+  name: 'WalletPanel',
   props: {
     balance: {
       type: Number,
@@ -63,7 +60,7 @@ export default defineComponent({
     showTopButton: {
       type: Boolean,
       default: false,
-    },
+    }
   },
   setup(props) {
     const router = useRouter();
@@ -71,40 +68,22 @@ export default defineComponent({
     const balanceText = computed(() => `$${props.balance}`);
     const bonusText = computed(() => `$${props.bonus}`);
 
-    const goToWallet = () => {
-      router.push('/wallet');
-    };
+    const goToWallet = () => router.push('/wallet');
+    const goToDeposit = () => router.push('/deposit-options');
+    const goToWithdraw = () => router.push('/withdraw-options');
+    const showBonusBalanceInformation = () => events.emit('showPopup', 'bonusBalanceInformation');
 
-    const goToDeposit = () => {
-      router.push('/deposit-options');
-    };
-
-    const goToWithdraw = () => {
-      router.push('/withdraw-options');
-    };
-
-    const showBonusBalanceInformation = () => {
-      events.emit('showPopup', 'bonusBalanceInformation');
-    };
-
-    // Используем одну переменную для управления плейсхолдерами текстовых данных
     const isLoadingData = ref(true);
 
+    // Функция, которую можно вызвать извне для отключения плейсхолдера текстовых данных
+    const showData = () => {
+      isLoadingData.value = false;
+    };
+
+    // При монтировании устанавливаем состояния загрузки по умолчанию
     onMounted(() => {
-      // При монтировании по умолчанию данные загружаются, поэтому ставим isLoadingData в true.
       isLoadingData.value = true;
     });
-
-    // Когда оба значения (balance и bonus) приходят, отключаем плейсхолдер
-    watch(
-        [() => props.balance, () => props.bonus],
-        ([newBalance, newBonus]) => {
-          if (newBalance && newBonus) {
-            isLoadingData.value = false;
-          }
-        },
-        { immediate: true }
-    );
 
     return {
       balanceText,
@@ -114,12 +93,12 @@ export default defineComponent({
       goToWithdraw,
       showBonusBalanceInformation,
       isLoadingData,
+      showData,
     };
   },
 });
 </script>
 
-<!-- Стили для .placeholder-container и @keyframes gradientFlow описаны в main.css -->
 <style scoped>
 .block-background {
   position: absolute;
@@ -163,7 +142,7 @@ export default defineComponent({
   background-color: var(--panel-color);
 }
 
-/* Остальные стили */
+/* Остальные стили панели */
 .wallet-title {
   text-align: left;
   padding-bottom: 0.5vh;

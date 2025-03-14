@@ -11,6 +11,7 @@
         <!-- Плейсхолдер для подгружаемой картинки, ждём событие load -->
         <Placeholder class="profile-picture" :loading="isLoadingImage">
           <img
+              class="profile-picture"
               :src="profileImage"
               alt="Profile Picture"
               @load="onImageLoad"

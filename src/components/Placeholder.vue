@@ -1,10 +1,8 @@
 <template>
-  <slot :class="customClass"/>
-  <div v-if="loading" class="placeholder-overlay">
-    <slot name="fallback">
-      <div class="default-placeholder" :class="customClass"></div>
-    </slot>
-  </div>
+  <slot/>
+  <slot name="fallback">
+    <div v-if="loading" class="default-placeholder" :class="customClass"></div>
+  </slot>
 </template>
 
 <script lang="ts">

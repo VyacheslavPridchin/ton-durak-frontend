@@ -61,6 +61,7 @@ export default defineComponent({
         gold: 'Золотая',
         platinum: 'Платиновая',
         diamond: 'Алмазная',
+        predator: 'Хищник',
       };
       const rankTitle = ranks[props.rank] || props.rank;
       return `${rankTitle} лига ${divisionRoman.value}`;

@@ -41,8 +41,8 @@ export default defineComponent({
     const closePopup = () => {
       events.emit("hidePopup");
     };
-    const leagues = ['bronze', 'silver', 'gold', 'platinum', 'diamond'];
-    const currentLeague = ref('silver'); // указываем текущую лигу
+    const leagues = ['bronze', 'silver', 'gold', 'platinum', 'predator'];
+    const currentLeague = ref('predator'); // указываем текущую лигу
     const currentIndex = computed(() => leagues.indexOf(currentLeague.value));
 
     return {

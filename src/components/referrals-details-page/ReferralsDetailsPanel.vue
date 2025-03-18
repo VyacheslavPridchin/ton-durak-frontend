@@ -47,7 +47,7 @@ export default defineComponent({
     );
 
     // Изначально все высоты равны 0
-    const animatedHeights = ref<number[]>(props.data.map(() => 0));
+    const animatedHeights = ref<number[]>(props.data.map(() => 0.15));
 
     // Функция для анимации столбиков
     const animate = (dataArr: { day: string; value: number }[]) => {

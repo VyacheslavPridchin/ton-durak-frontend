@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import { defineComponent, computed, ref, watch } from 'vue';
 
 export default defineComponent({
   name: 'WeeklyStatsChart',
@@ -49,26 +49,31 @@ export default defineComponent({
     // Изначально все высоты равны 0
     const animatedHeights = ref<number[]>(props.data.map(() => 0));
 
-    // Функция для конвертации числовой даты в текстовый формат
-    const formatDay = (dateNum: number) => {
-      const date = new Date(dateNum);
-      const day = date.getDay();
-      const days = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
-      return days[day];
-    };
-
-    onMounted(() => {
-      // Начинаем анимацию с задержкой в 1 сек, затем для каждого элемента дополнительная задержка 50 мс
+    // Функция для анимации столбиков
+    const animate = (dataArr: { day: string; value: number }[]) => {
+      // Сброс анимированных высот
+      animatedHeights.value = dataArr.map(() => 0);
+      // Запуск анимации с задержкой
       setTimeout(() => {
-        props.data.forEach((d, index) => {
+        dataArr.forEach((d, index) => {
           setTimeout(() => {
-            animatedHeights.value[index] = Math.max(d.value / maxValue.value, 0.15) * 100;
+            animatedHeights.value[index] =
+                Math.max(d.value / maxValue.value, 0.15) * 100;
           }, index * 50);
         });
       }, 200);
-    });
+    };
 
-    return { maxValue, animatedHeights, formatDay };
+    // Watch на получение данных
+    watch(
+        () => props.data,
+        (newData) => {
+          animate(newData);
+        },
+        { immediate: true, deep: true }
+    );
+
+    return { maxValue, animatedHeights };
   },
 });
 </script>

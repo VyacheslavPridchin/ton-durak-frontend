@@ -180,6 +180,18 @@ export default defineComponent({
   max-width: 75vh;
 }
 
+.main-button{
+  width: 50%;
+  height: 4.5vh;
+  background-color: var(--blue-gradient);
+  color: var(--white-color);
+  transition: background 0.2s, color 0.2s;
+  border-radius: 0.5vh;
+  font-size: 1.8vh;
+  position: relative;
+  margin: 0;
+}
+
 .input-box {
   width: 100%;
   display: flex;
@@ -236,7 +248,7 @@ export default defineComponent({
 }
 
 .cropper-container {
-  background: #fff;
+  background: var(--panel-color);
   padding: 20px;
   border-radius: 8px;
   max-width: 90%;

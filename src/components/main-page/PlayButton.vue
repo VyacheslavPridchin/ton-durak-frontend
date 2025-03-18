@@ -8,7 +8,7 @@
       @pointerup="onButtonPointerUp"
       @click="onButtonClick"
   >
-    <span class="button-text">Играть на ${{ amount }}</span>
+    <span class="button-text">Играть на {{ betText }}</span>
     <span class="right-content">
       <span class="separator"></span>
       <button
@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import gsap from 'gsap';
 import { events } from '@/events.ts'
 
@@ -47,6 +47,19 @@ export default defineComponent({
   setup(props) {
     const playButton = ref<HTMLElement | null>(null);
     const iconButton = ref<HTMLElement | null>(null);
+
+    const betText = ref('');
+
+    onMounted(() => {
+      let selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
+
+      if (selectedBet.length > 1) {
+        betText.value = selectedBet.slice(0, -1).join(', ') + ' или ' + selectedBet[selectedBet.length - 1];
+      } else {
+        betText.value = selectedBet[0] || '';
+      }
+    });
+
 
     const onButtonClick = () => {
       console.log('Клик по кнопке');
@@ -114,6 +127,7 @@ export default defineComponent({
     return {
       playButton,
       iconButton,
+      betText,
       amount: props.amount,
       onButtonClick,
       onIconClick,

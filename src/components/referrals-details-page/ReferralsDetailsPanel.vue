@@ -39,6 +39,7 @@ export default defineComponent({
     data: {
       type: Array as () => { day: string; value: number }[],
       required: true,
+      default: [ {day: "-", value: 0 } ]
     },
   },
   setup(props) {

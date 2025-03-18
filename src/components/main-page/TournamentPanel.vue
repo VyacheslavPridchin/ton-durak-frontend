@@ -72,7 +72,6 @@ export default defineComponent({
 
     // При монтировании компонента устанавливаем значение по умолчанию
     onMounted(() => {
-      isLoadingData.value = true;
       updateTimer();
       timerInterval = setInterval(updateTimer, 1000);
     });

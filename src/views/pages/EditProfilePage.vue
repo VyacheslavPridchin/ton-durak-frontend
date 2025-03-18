@@ -249,16 +249,16 @@ export default defineComponent({
 
 .cropper-container {
   background: var(--panel-color);
-  padding: 20px;
-  border-radius: 8px;
+  padding: 2vh;
+  border-radius: var(--border-radius);
   max-width: 90%;
-  max-height: 90%;
+  max-height: 60%;
   overflow: auto;
 }
 
 .cropper-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 1vh;
 }
 </style>

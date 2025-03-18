@@ -6,8 +6,8 @@
       <a class="secondary-text" style="margin-bottom: 1vh">2. Ожидайте пополнение (5-10 минут)</a>
       <div class="panel">
         <h2 style="margin-bottom: 1vh">Кошелек</h2>
-        <div class="address-box animate-press" @click="copyAddress">
-          <a class="address-text">{{ walletAddress }}</a>
+        <div class="address-box animate-press placeholder-container" :class="{ isLoading: isLoadingData }" @click="copyAddress">
+          <a class="address-text placeholder-container">{{ walletAddress }}</a>
           <button class="copy-button">
             <img src="@/assets/icons/copy-icon.svg" style="filter: brightness(0) saturate(100%) invert(40%)" alt="Copy" />
           </button>
@@ -17,21 +17,17 @@
           Любые другие активы будут безвозвратно утеряны.
         </a>
         <h2 style="margin-bottom: 1vh">Детали</h2>
-<!--        <div class="details-row">-->
-<!--          <h2 class="details-title">Примерный курс (1 {{ cryptoName }}):</h2>-->
-<!--          <a class="details-value">${{ approximateRate }}</a>-->
-<!--        </div>-->
         <div class="details-row">
           <h2 class="details-title">Минимальная сумма:</h2>
-          <a class="details-value">{{ minAmount }} {{ cryptoName }}</a>
+          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">{{ minAmount }} {{ cryptoName }}</a>
         </div>
         <div class="details-row">
           <h2 class="details-title">Рекомендованная сумма:</h2>
-          <a class="details-value">{{ recommendedAmount }} {{ cryptoName }}</a>
+          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">{{ recommendedAmount }} {{ cryptoName }}</a>
         </div>
         <div class="details-row">
           <h2 class="details-title">Комиссия сети:</h2>
-          <a class="details-value">{{ networkFee }} {{ cryptoName }}</a>
+          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">{{ networkFee }} {{ cryptoName }}</a>
         </div>
       </div>
     </div>
@@ -39,12 +35,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import ExpandableItem from "@/components/deposit-page/ExpandableItem.vue";
 import TonIcon from "@/assets/icons/ton-icon.svg";
 import USDTTonIcon from "@/assets/icons/usdt-ton-icon.svg";
-import {events} from "@/events.ts";
+import { events } from "@/events.ts";
+import apiService from "@/services/ApiService.ts";
 
 export default defineComponent({
   components: { ExpandableItem },
@@ -56,37 +53,55 @@ export default defineComponent({
       "USDT TON": "USDT",
       "TON": "TON",
     };
+
     const cryptoName = ref(cryptoMapping[cryptoNetwork.value] || cryptoNetwork.value);
 
-    // Пример адреса для депозита, его можно заменить на реальное значение
-    const walletAddress = ref('0x1234...ABCD');
+    // Изначально включаем плейсхолдеры
+    const isLoadingData = ref(true);
+
+    // Пример адреса для депозита, будет обновлен запросом
+    const walletAddress = ref('');
 
     // Детали депозита
-    const approximateRate = ref(1.23);
-    const minAmount = ref(10);
-    const recommendedAmount = ref(50);
-    const networkFee = ref(0.5);
+    const approximateRate = ref(0);
+    const minAmount = ref(0);
+    const recommendedAmount = ref(0);
+    const networkFee = ref(0);
 
     // Метод копирования адреса
     const copyAddress = () => {
       navigator.clipboard.writeText(walletAddress.value)
           .then(() => {
-            events.emit('showNotification', { title: "Скопировано!", subtitle: "Адрес успешно скопирован.", icon: 'copy', sticker: 'like_duck'});
-
+            events.emit('showNotification', { title: "Скопировано!", subtitle: "Адрес успешно скопирован.", icon: 'copy', sticker: 'like_duck' });
             console.log('Адрес скопирован');
           })
           .catch(err => {
-            events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не получилось скопировать.", icon: 'copy', sticker: 'block_duck'});
+            events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не получилось скопировать.", icon: 'copy', sticker: 'block_duck' });
             console.error('Ошибка копирования адреса:', err);
           });
-
     };
 
-    // Пример работы с ExpandableItem (если потребуется в дальнейшем)
     const activeItem = ref<string | null>(null);
     const handleToggle = (id: string) => {
       activeItem.value = activeItem.value === id ? null : id;
     };
+
+    onMounted(async () => {
+      try {
+        let response = await apiService.getDepositInfo(cryptoMapping[cryptoNetwork.value].toLowerCase());
+        // Устанавливаем данные из ответа
+        walletAddress.value = response.data.address;
+        minAmount.value = response.data.minAmount;
+        recommendedAmount.value = response.data.minAmount * 5;
+        networkFee.value = response.data.fee;
+        approximateRate.value = response.data.price;
+      } catch (error) {
+        events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных депозита.", icon: 'deposit', sticker: 'block_duck' });
+        console.error('Ошибка получения данных депозита:', error);
+      } finally {
+        isLoadingData.value = false; // Отключаем плейсхолдеры
+      }
+    });
 
     return {
       cryptoNetwork,
@@ -96,6 +111,7 @@ export default defineComponent({
       minAmount,
       recommendedAmount,
       networkFee,
+      isLoadingData,
       copyAddress,
       activeItem,
       handleToggle,
@@ -164,5 +180,14 @@ export default defineComponent({
 .details-value {
   margin-left: auto;
   font-size: 1.75vh;
+}
+
+/* Пример стилей для плейсхолдеров */
+.placeholder-container {
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+.isLoading {
+  color: transparent;
 }
 </style>

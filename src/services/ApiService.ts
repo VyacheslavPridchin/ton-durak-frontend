@@ -121,6 +121,14 @@ export interface ProfileEditData {
     photo_timer: number;
 }
 
+
+export interface DepositInfoData {
+    price: number;
+    minAmount: number;
+    fee: number;
+    address: string;
+}
+
 // Класс для работы с API как синглтон-сервис с кэшированием токенов
 class ApiService {
     private axiosInstance: AxiosInstance;
@@ -256,6 +264,11 @@ class ApiService {
     // GET /screen/profile/edit
     public async getProfileEditTimers(): Promise<ApiResponse<ProfileEditData>> {
         return this.request<ProfileEditData>("/screen/profile/edit", "GET");
+    }
+
+    // GET /screen/profile/edit
+    public async getDepositInfo(type: string): Promise<ApiResponse<DepositInfoData>> {
+        return this.request<DepositInfoData>(`/deposit_info/${type}`, "GET");
     }
 
     // PUT /screen/profile/edit - изменение профиля (например, смена имени или загрузка фото)

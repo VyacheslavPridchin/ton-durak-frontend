@@ -23,7 +23,7 @@
             :key="index"
             class="day-container"
         >
-          <a class="day-label">{{ formatDay(item.day) }}</a>
+          <a class="day-label">{{ item.day }}</a>
         </div>
       </div>
     </div>
@@ -37,7 +37,7 @@ export default defineComponent({
   name: 'WeeklyStatsChart',
   props: {
     data: {
-      type: Array as () => { day: number; value: number }[],
+      type: Array as () => { day: string; value: number }[],
       required: true,
     },
   },

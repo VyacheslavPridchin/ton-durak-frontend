@@ -6,7 +6,7 @@
     <div class="league-header">
       <!-- Иконка лиги без плейсхолдера -->
       <img v-if="rank" class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
-      <a class="league-badge-text" :style="{ textShadow: `-0.1vh 0.1vh 0 ${secondaryColor}`, color: primaryColor }">{{ divisionRoman }}</a>
+      <a class="league-badge-text" :style="{ textShadow: `-0.1vh 0.1vh 0 rgba(255, 255, 255, 0.3)`, color: `rgba(255, 255, 255, 0.8)` }">{{ divisionRoman }}</a>
     </div>
     <div style="display: flex; justify-content: center;">
       <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingData }">
@@ -78,8 +78,10 @@ export default defineComponent({
     );
 
     // Динамические цвета для прогресс-бара
-    const primaryColor = computed(() => `rgba(255, 255, 225, 0.8)`);
-    const secondaryColor = computed(() => `rgba(255, 255, 225, 0.3)`);
+    const primaryColor = computed(() => `var(--${props.rank}-color)`);
+    const secondaryColor = computed(() => `var(--${props.rank}-secondary-color)`);
+
+
 
     const openLeagueInformation = () => {
       events.emit('showPopup', 'leagueInformation');

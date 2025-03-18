@@ -26,14 +26,16 @@
           <span style="font-weight: 500;">{{ cryptoNetwork }}</span> адрес.
         </a>
         <h2 style="margin-bottom: 1vh">Сумма вывода</h2>
-        <input
-            type="number"
-            class="input-box"
-            placeholder="Введите сумму"
-            v-model.number="withdrawAmount"
-            style="margin-bottom: 1vh"
-            @keyup.enter="hideKeyboard"
-        />
+        <div class="input-wrapper">
+          <input
+              type="number"
+              class="input-box"
+              placeholder="Введите сумму"
+              v-model.number="withdrawAmount"
+              @keyup.enter="hideKeyboard"
+          />
+          <button type="button" class="max-button" @click="setMaxAmount">Max</button>
+        </div>
         <a class="secondary-text" style="margin-bottom: 1.5vh">
           Укажите сумму больше {{ minAmount }} {{ cryptoName }}
         </a>
@@ -63,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, computed, onMounted} from 'vue';
+import { defineComponent, ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { events } from "@/events.ts";
 import apiService from "@/services/ApiService.ts";
@@ -88,6 +90,7 @@ export default defineComponent({
 
     const minAmount = ref(10);
     const networkFee = ref(0.5);
+    const balance = ref(0);
     const walletAddress = ref('');
     const withdrawAmount = ref(0);
 
@@ -114,6 +117,11 @@ export default defineComponent({
       }
     };
 
+    const setMaxAmount = () => {
+      withdrawAmount.value = balance.value;
+      hideKeyboard();
+    };
+
     const withdraw = () => {
       if (!walletAddress.value.trim()) return;
       if (withdrawAmount.value < minAmount.value) return;
@@ -132,21 +140,34 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-         apiService.getWithdrawalInfo(cryptoTypeMapping[cryptoNetwork.value]).then(response => {
-           if(!response.success) {
-             events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных вывода.", icon: 'withdraw', sticker: 'block_duck' });
-             return;
-           }
+      apiService.getWithdrawalInfo(cryptoTypeMapping[cryptoNetwork.value])
+          .then(response => {
+            if (!response.success) {
+              events.emit('showNotification', {
+                title: "Произошла ошибка!",
+                subtitle: "Ошибка получения данных вывода.",
+                icon: 'withdraw',
+                sticker: 'block_duck'
+              });
+              return;
+            }
 
-           // Устанавливаем данные из ответа
-           minAmount.value = response.data.minAmount;
-           networkFee.value = response.data.fee;
+            // Устанавливаем данные из ответа
+            minAmount.value = response.data.minAmount;
+            networkFee.value = response.data.fee;
+            balance.value = response.data.balance;
 
-           isLoadingData.value = false; // Отключаем плейсхолдеры
-         }).catch(error => {
-           events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных вывода.", icon: 'withdraw', sticker: 'block_duck' });
-           console.error('Ошибка получения данных вывода:', error);
-         });
+            isLoadingData.value = false; // Отключаем плейсхолдеры
+          })
+          .catch(error => {
+            events.emit('showNotification', {
+              title: "Произошла ошибка!",
+              subtitle: "Ошибка получения данных вывода.",
+              icon: 'withdraw',
+              sticker: 'block_duck'
+            });
+            console.error('Ошибка получения данных вывода:', error);
+          });
     });
 
     return {
@@ -161,6 +182,7 @@ export default defineComponent({
       hideKeyboard,
       withdraw,
       isLoadingData,
+      setMaxAmount,
     };
   },
 });
@@ -193,6 +215,23 @@ export default defineComponent({
   font-size: 1.75vh;
   box-sizing: border-box;
   border-color: transparent;
+}
+
+.input-wrapper {
+  position: relative;
+  margin-bottom: 1vh;
+}
+
+.max-button {
+  position: absolute;
+  right: 1vh;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5vh;
+  color: var(--gray-color);
 }
 
 .details-row {

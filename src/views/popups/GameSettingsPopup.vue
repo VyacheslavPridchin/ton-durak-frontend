@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import { events } from "@/events.ts";
 
 export default defineComponent({
@@ -57,10 +57,23 @@ export default defineComponent({
     const betOptions = ['$0.5', '$1'];
     const ruleOptions = ['Переводной', 'Классический'];
 
-    // Начальные выбранные значения
-    const selectedPlayers = ref([3]);
-    const selectedBet = ref(['$0.5']);
-    const selectedRule = ref(['Переводной']);
+    const selectedPlayers = ref<number[]>([]);
+    const selectedBet = ref<string[]>([]);
+    const selectedRule = ref<string[]>([]);
+
+    const loadSettings = () => {
+      selectedPlayers.value = JSON.parse(localStorage.getItem('selectedPlayers') || '[3]');
+      selectedBet.value = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
+      selectedRule.value = JSON.parse(localStorage.getItem('selectedRule') || '["Переводной"]');
+    };
+
+    const saveSettings = () => {
+      localStorage.setItem('selectedPlayers', JSON.stringify(selectedPlayers.value));
+      localStorage.setItem('selectedBet', JSON.stringify(selectedBet.value));
+      localStorage.setItem('selectedRule', JSON.stringify(selectedRule.value));
+      events.emit('hidePopup');
+      console.log({ players: selectedPlayers.value, bet: selectedBet.value, rule: selectedRule.value });
+    };
 
     const togglePlayers = (option: number) => {
       if (selectedPlayers.value.includes(option)) {
@@ -89,14 +102,7 @@ export default defineComponent({
       }
     };
 
-    const saveSettings = () => {
-      events.emit('hidePopup');
-      console.log({
-        players: selectedPlayers.value,
-        bet: selectedBet.value,
-        rule: selectedRule.value
-      });
-    };
+    onMounted(loadSettings);
 
     return {
       playerOptions,

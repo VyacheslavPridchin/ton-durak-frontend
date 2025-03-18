@@ -197,11 +197,7 @@ class ApiService {
             });
             return this.handleResponse<T>(response.data);
         } catch (error: any) {
-            if (error.response && error.response.data) {
-                return this.handleResponse<T>(error.response.data);
-            } else {
-                return { success: false, data: null, error: error.message } as ApiResponse<T>;
-            }
+            return { success: false, data: null, error: error.message } as ApiResponse<T>;
         }
     }
 
@@ -299,11 +295,10 @@ class ApiService {
         }
     }
 
-    // PUT /withdraw
+    // POST /withdraw
     public async withdraw(data: any): Promise<ApiResponse<any>> {
-        // Имя передаётся в query string
         const endpoint = `/withdraw`;
-        return this.request<any>(endpoint, "PUT", data);
+        return this.request<any>(endpoint, "POST", data);
     }
 }
 

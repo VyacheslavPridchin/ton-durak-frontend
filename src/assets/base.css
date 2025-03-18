@@ -45,11 +45,11 @@
   /* Цвета ранка */
 
   --bronze-secondary-color: #504844;
-  --silver-secondary-color: #7D8389;
-  --gold-secondary-color: #867851;
-  --platinum-secondary-color: #6D6C85;
-  --diamond-secondary-color: #71709C;
-  --predator-secondary-color: #F1525A;
+  --silver-secondary-color: #53565a;
+  --gold-secondary-color: #685e3f;
+  --platinum-secondary-color: #49485a;
+  --diamond-secondary-color: #52516e;
+  --predator-secondary-color: #511d1e;
 }
 
 body {

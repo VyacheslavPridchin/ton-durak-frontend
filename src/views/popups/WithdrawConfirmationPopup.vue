@@ -69,10 +69,9 @@ export default defineComponent({
       let data = {
         to_addr: walletAddress.value,
         code: cryptoTypeMapping[cryptoNetwork.value],
-        amount: Number(withdrawAmount)
+        amount: withdrawAmount.value
       }
       apiService.withdraw(data).then(response => {
-
         if(response.success)
           events.emit('showNotification', {title: "Вывод выполнен!", subtitle: `Вывод ${ response.data.balance } ${ cryptoName.value } успешно выполнен.`, icon: "withdraw",  sticker: 'money_duck'});
         else
@@ -82,9 +81,7 @@ export default defineComponent({
         events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `К сожалению, произошла ошибка вывода.`, icon: 'withdraw', sticker: 'block_duck'});
       });
 
-      setTimeout(() => {
         events.emit('showNotification', {title: "Запрос принят!", subtitle: `Запрос на вывод ${ withdrawAmount.value } ${ cryptoName.value } принят.`, icon: "withdraw",  sticker: 'like_duck'});
-      }, 750)
     };
 
     return {

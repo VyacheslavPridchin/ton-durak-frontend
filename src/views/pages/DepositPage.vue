@@ -54,6 +54,11 @@ export default defineComponent({
       "TON": "TON",
     };
 
+    const cryptoTypeMapping: Record<string, string> = {
+      "USDT TON": "usdtton",
+      "TON": "ton",
+    };
+
     const cryptoName = ref(cryptoMapping[cryptoNetwork.value] || cryptoNetwork.value);
 
     // Изначально включаем плейсхолдеры
@@ -88,18 +93,24 @@ export default defineComponent({
 
     onMounted(async () => {
       try {
-        let response = await apiService.getDepositInfo(cryptoMapping[cryptoNetwork.value].toLowerCase());
+        let response = await apiService.getDepositInfo(cryptoTypeMapping[cryptoNetwork.value]);
         // Устанавливаем данные из ответа
         walletAddress.value = response.data.address;
         minAmount.value = response.data.minAmount;
-        recommendedAmount.value = response.data.minAmount * 5;
+        recommendedAmount.value = response.data.minAmount * 6;
         networkFee.value = response.data.fee;
         approximateRate.value = response.data.price;
       } catch (error) {
         events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных депозита.", icon: 'deposit', sticker: 'block_duck' });
         console.error('Ошибка получения данных депозита:', error);
       } finally {
-        isLoadingData.value = false; // Отключаем плейсхолдеры
+
+        if(walletAddress.value == undefined) {
+          events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных депозита.", icon: 'deposit', sticker: 'block_duck' });
+        } else
+        {
+          isLoadingData.value = false; // Отключаем плейсхолдеры
+        }
       }
     });
 

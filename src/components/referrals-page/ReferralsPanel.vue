@@ -82,11 +82,17 @@ export default defineComponent({
 
         events.emit('showNotification', {
           title: "Реферальная выплата!",
-          subtitle: "На ваш баланс зачислено $50.",
+          subtitle: "На ваш баланс успешно зачислена выплата.",
           icon: "referral",
           sticker: 'money_duck'
         });
       }).catch((err) => {
+        events.emit('showNotification', {
+          title: "Произошла ошибка!",
+          subtitle: "Произошла ошибка при зачислении реферальной выплаты.",
+          icon: "referral",
+          sticker: 'block_duck'
+        });
         console.log(err);
       })
     };

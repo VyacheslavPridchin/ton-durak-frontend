@@ -73,7 +73,7 @@ export default defineComponent({
       }
       apiService.withdraw(data).then(response => {
         if(response.success)
-          events.emit('showNotification', {title: "Вывод выполнен!", subtitle: `Вывод ${ response.data.balance } ${ cryptoName.value } успешно выполнен.`, icon: "withdraw",  sticker: 'money_duck'});
+          events.emit('showNotification', {title: "Вывод выполнен!", subtitle: `Вывод успешно выполнен. Ваш баланс: $${ response.data.balance }.`, icon: "withdraw",  sticker: 'money_duck'});
         else
           events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `${response.error}`, icon: 'withdraw', sticker: 'block_duck'});
 

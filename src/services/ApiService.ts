@@ -54,6 +54,7 @@ export interface ScreenReferralData {
             place: number;
             user_id: number;
             amount: number;
+            name: string;
         }>;
     };
 }

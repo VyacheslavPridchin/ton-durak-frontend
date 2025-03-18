@@ -84,7 +84,7 @@ export default defineComponent({
         friends.value = sorted.map((item: any) => ({
           avatar: `https://tondurakgame.com/users/photo?user_id=${item.user_id}`,
           nickname: 'User',
-          username: '@unknown',
+          username: item.name,
           amount: item.amount,
           place: item.place,
           // Не опускаем ниже 60%

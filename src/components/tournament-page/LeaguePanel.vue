@@ -2,7 +2,7 @@
   <div class="panel league-panel animate-press">
     <div class="league-header">
       <img v-if="rank" class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
-      <a v-if="rank" class="league-badge-text" :style="{ textShadow: `-0.1vh 0.1vh 0 rgba(0, 0, 0, 0.3)`, color: `rgba(255, 255, 255, 0.8)` }">
+      <a v-if="rank" class="league-badge-text" :style="{ textShadow: `-0.1vh 0.1vh 0 rgba(0, 0, 0, 0.1)`, color: `rgba(255, 255, 255, 0.8)` }">
         {{ divisionRoman }}
       </a>
     </div>

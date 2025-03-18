@@ -32,7 +32,7 @@ import router from "@/router";
 import TransactionItem from "@/components/wallet-page/TransactionItem.vue";
 import ReferralsDetailsPanel from "@/components/referrals-details-page/ReferralsDetailsPanel.vue";
 
-type TransactionType = 'withdraw' | 'loss' | 'tournament' | 'win' | 'deposit' | 'referral';
+type TransactionType = 'withdraw' | 'loss' | 'tournament' | 'earn' | 'deposit' | 'referral';
 
 interface Transaction {
   type: TransactionType;

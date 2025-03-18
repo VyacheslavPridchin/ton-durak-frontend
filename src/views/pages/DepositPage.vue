@@ -7,7 +7,7 @@
       <div class="panel">
         <h2 style="margin-bottom: 1vh">Кошелек</h2>
         <div class="address-box animate-press placeholder-container" :class="{ isLoading: isLoadingData }" @click="copyAddress">
-          <a class="address-text placeholder-container">{{ walletAddress }}</a>
+          <a class="address-text">{{ walletAddress }}</a>
           <button class="copy-button">
             <img src="@/assets/icons/copy-icon.svg" style="filter: brightness(0) saturate(100%) invert(40%)" alt="Copy" />
           </button>
@@ -180,14 +180,5 @@ export default defineComponent({
 .details-value {
   margin-left: auto;
   font-size: 1.75vh;
-}
-
-/* Пример стилей для плейсхолдеров */
-.placeholder-container {
-  background: #e0e0e0;
-  border-radius: 4px;
-}
-.isLoading {
-  color: transparent;
 }
 </style>

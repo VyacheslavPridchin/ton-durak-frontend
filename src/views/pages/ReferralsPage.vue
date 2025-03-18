@@ -83,7 +83,7 @@ export default defineComponent({
         const maxAmount = sorted[0].amount || 0;
         friends.value = sorted.map((item: any) => ({
           avatar: `https://tondurakgame.com/users/photo?user_id=${item.user_id}`,
-          nickname: 'User',
+          nickname: item.name,
           username: item.name,
           amount: item.amount,
           place: item.place,

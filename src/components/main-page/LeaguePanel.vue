@@ -6,7 +6,7 @@
     <div class="league-header">
       <!-- Иконка лиги без плейсхолдера -->
       <img v-if="rank" class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
-      <a class="league-badge-text" :style="{ textShadow: badgeTextShadow }">{{ divisionRoman }}</a>
+      <a class="league-badge-text" :style="{ textShadow: `-0.1vh 0.1vh 0 ${secondaryColor}`, color: primaryColor }">{{ divisionRoman }}</a>
     </div>
     <div style="display: flex; justify-content: center;">
       <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingData }">
@@ -78,22 +78,8 @@ export default defineComponent({
     );
 
     // Динамические цвета для прогресс-бара
-    const primaryColor = computed(() => `var(--${props.rank}-color)`);
-    const secondaryColor = computed(() => `var(--${props.rank}-secondary-color)`);
-
-    // Вычисляем text-shadow с использованием secondary цвета и прозрачности 0.3
-    const badgeTextShadow = computed(() => {
-      const shadows: Record<string, string> = {
-        bronze: "rgba(254, 231, 220, 0.3)",   // #FEE7DC
-        silver: "rgba(224, 234, 243, 0.3)",   // #E0EAF3
-        gold: "rgba(255, 228, 155, 0.3)",     // #FFE49B
-        platinum: "rgba(213, 212, 251, 0.3)", // #D5D4FB
-        diamond: "rgba(213, 212, 251, 0.3)",  // #D5D4FB
-        predator: "rgba(241, 82, 90, 0.3)"      // #F1525A
-      };
-      const shadowColor = shadows[props.rank] || "rgba(254, 231, 220, 0.3)";
-      return `-0.1vh 0.1vh 0 ${shadowColor}`;
-    });
+    const primaryColor = computed(() => `rgba(255, 255, 225, 0.8)`);
+    const secondaryColor = computed(() => `rgba(255, 255, 225, 0.3)`);
 
     const openLeagueInformation = () => {
       events.emit('showPopup', 'leagueInformation');
@@ -112,7 +98,6 @@ export default defineComponent({
       segment3,
       primaryColor,
       secondaryColor,
-      badgeTextShadow,
       openLeagueInformation,
       isLoadingData,
       showData,

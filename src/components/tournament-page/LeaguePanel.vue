@@ -2,7 +2,7 @@
   <div class="panel league-panel animate-press">
     <div class="league-header">
       <img v-if="rank" class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
-      <a v-if="rank" class="league-badge-text">
+      <a v-if="rank" class="league-badge-text" :style="{ textShadow: `-0.1vh 0.1vh 0 ${secondaryColor}`, color: primaryColor }">
         {{ divisionRoman }}
       </a>
     </div>
@@ -66,6 +66,9 @@ export default defineComponent({
       return `${rankTitle} турнир`;
     });
 
+    const primaryColor = computed(() => `rgba(255, 255, 225, 0.8)`);
+    const secondaryColor = computed(() => `rgba(255, 255, 225, 0.3)`);
+
     // Единственная переменная для управления плейсхолдерами текстовых данных
     const isLoadingData = ref(false);
     const formattedTime = ref('00:00:00');
@@ -74,6 +77,7 @@ export default defineComponent({
     const updateTimer = () => {
       const now = Math.floor(Date.now() / 1000);
       const timeLeft = props.deadline - now;
+      console.log(timeLeft);
       if (timeLeft <= 0) {
         formattedTime.value = '00:00:00';
         if (timerInterval) clearInterval(timerInterval);
@@ -111,6 +115,8 @@ export default defineComponent({
       leagueTitle,
       isLoadingData,
       formattedTime,
+      primaryColor,
+      secondaryColor,
       hideData,
       showData,
     };

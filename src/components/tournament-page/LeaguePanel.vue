@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted, onUnmounted} from 'vue';
+import {defineComponent, computed, ref, onMounted, onUnmounted, nextTick} from 'vue';
 
 export default defineComponent({
   name: 'LeaguePanel',
@@ -77,7 +77,7 @@ export default defineComponent({
     const updateTimer = () => {
       const now = Math.floor(Date.now() / 1000);
       const timeLeft = props.deadline - now;
-      console.log(timeLeft);
+      console.log(props.deadline, now, timeLeft);
       if (timeLeft <= 0) {
         formattedTime.value = '00:00:00';
         if (timerInterval) clearInterval(timerInterval);
@@ -106,8 +106,10 @@ export default defineComponent({
     };
 
     const showData = () => {
-      updateTimer();
-      isLoadingData.value = false;
+      nextTick(() => {
+        isLoadingData.value = false;
+        updateTimer();
+      });
     };
 
     return {

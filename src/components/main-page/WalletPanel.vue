@@ -1,6 +1,6 @@
 <template>
   <div class="panel wallet-panel">
-    <div class="upper-block" @click="goToWallet">
+    <div class="upper-block animate-press" @click="goToWallet">
       <div v-if="showTopButton" class="block-background animate-press" style="bottom: 0"></div>
       <div class="content">
         <button
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="lower-block" style="padding-top: 2vh" @click="showBonusBalanceInformation">
+    <div class="lower-block animate-press" style="padding-top: 2vh" @click="showBonusBalanceInformation">
       <div class="block-background animate-press" style="top: 0"></div>
       <div class="content">
         <div class="bonus-balance-container">

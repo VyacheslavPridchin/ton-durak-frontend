@@ -152,6 +152,6 @@ export default defineComponent({
 .day-label {
   font-size: 1.5vh;
   color: var(--white-color);
-  min-height: 1.5vh;
+  min-height: 2vh;
 }
 </style>

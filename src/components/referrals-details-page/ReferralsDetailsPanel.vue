@@ -23,7 +23,7 @@
             :key="index"
             class="day-container"
         >
-          <a class="day-label">{{ item.day }}</a>
+          <a class="day-label">{{ item.day || "-" }}</a>
         </div>
       </div>
     </div>

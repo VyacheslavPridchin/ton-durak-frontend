@@ -1,21 +1,23 @@
 <template>
-  <div class="friend-item-wrapper" :style="{ width: animatedWidth + '%' }">
-    <div class="panel friend-item">
-      <h1 class="friend-place">#{{ place }}</h1>
-      <div class="friend-text-container">
-        <h2 class="friend-title">{{ nickname }}</h2>
-<!--        <a v-if="username" class="friend-username">{{ username }}</a>-->
+  <transition name="fade">
+    <div class="friend-item-wrapper" :style="{ width: animatedWidth + '%' }">
+      <div class="panel friend-item">
+        <h1 class="friend-place">#{{ place }}</h1>
+        <div class="friend-text-container">
+          <h2 class="friend-title">{{ nickname }}</h2>
+          <!--        <a v-if="username" class="friend-username">{{ username }}</a>-->
+        </div>
+        <a class="currency">${{ formattedCurrency }}</a>
       </div>
-      <a class="currency">${{ formattedCurrency }}</a>
+      <div class="profile-picture-wrapper placeholder-container" :class="{ isLoading: isLoadingImage }">
+        <img class="profile-picture" :src="avatar" @load="onImageLoad" alt="avatar" />
+      </div>
     </div>
-    <div class="profile-picture-wrapper placeholder-container" :class="{ isLoading: isLoadingImage }">
-      <img class="profile-picture" :src="avatar" @load="onImageLoad" alt="avatar" />
-    </div>
-  </div>
+  </transition>
 </template>
 
 <script lang="ts">
-import {defineComponent, computed, ref, onMounted, nextTick} from 'vue';
+import { defineComponent, computed, ref, onMounted } from 'vue';
 
 export default defineComponent({
   name: 'FriendItem',
@@ -46,6 +48,16 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.fade-enter-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from {
+  opacity: 0;
+}
+.fade-enter-to {
+  opacity: 1;
+}
+
 .friend-item-wrapper {
   position: relative;
   display: flex;

@@ -1,21 +1,23 @@
 <template>
-  <div :class="['panel', 'player-item', { selected: select }]">
-    <div class="player-avatar placeholder-container" :class="{ isLoading: isLoadingImage }">
-      <img class="player-avatar" :src="avatar" @load="onImageLoad" alt="avatar" />
+  <transition name="fade">
+    <div :class="['panel', 'player-item', { selected: select }]">
+      <div class="player-avatar placeholder-container" :class="{ isLoading: isLoadingImage }">
+        <img class="player-avatar" :src="avatar" @load="onImageLoad" alt="avatar" />
+      </div>
+      <h1 class="tournament-place">#{{ place }}</h1>
+      <h2 class="player-name">{{ name }}</h2>
+      <div v-if="prize > 0" class="prize-container">
+        <a class="prize-text">$ {{ prize }}</a>
+      </div>
+      <h2 class="wins-text">
+        {{ wins }} {{ winsSuffix }}
+      </h2>
     </div>
-    <h1 class="tournament-place">#{{ place }}</h1>
-    <h2 class="player-name">{{ name }}</h2>
-    <div v-if="prize > 0" class="prize-container">
-      <a class="prize-text">$ {{ prize }}</a>
-    </div>
-    <h2 class="wins-text">
-      {{ wins }} {{ winsSuffix }}
-    </h2>
-  </div>
+  </transition>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'TournamentPanel',
@@ -30,7 +32,6 @@ export default defineComponent({
   computed: {
     winsSuffix(): string {
       const wins = this.wins;
-      // Special case for 11-14
       if (wins % 100 >= 11 && wins % 100 <= 14) {
         return 'побед';
       }
@@ -46,19 +47,28 @@ export default defineComponent({
       }
     },
   },
-  setup(){
+  setup() {
     const isLoadingImage = ref(true);
-
     const onImageLoad = () => {
       isLoadingImage.value = false;
-    }
+    };
 
     return { isLoadingImage, onImageLoad };
   }
-})
+});
 </script>
 
 <style scoped>
+.fade-enter-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from {
+  opacity: 0;
+}
+.fade-enter-to {
+  opacity: 1;
+}
+
 .player-item {
   display: flex;
   align-items: center;

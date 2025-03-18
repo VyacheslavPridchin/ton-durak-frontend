@@ -1,16 +1,18 @@
 <template>
-  <div class="panel transaction-item">
-    <div class="icon-container">
-      <img class="transaction-icon" :src="icon" alt="icon" />
+  <transition name="fade">
+    <div class="panel transaction-item">
+      <div class="icon-container">
+        <img class="transaction-icon" :src="icon" alt="icon" />
+      </div>
+      <div class="transaction-text-container">
+        <h2 class="transaction-title">{{ title }}</h2>
+        <a class="transaction-date">{{ formattedDateTime }}</a>
+      </div>
+      <a :class="[amountColorClass]">
+        {{ sign }}{{ amount }}
+      </a>
     </div>
-    <div class="transaction-text-container">
-      <h2 class="transaction-title">{{ title }}</h2>
-      <a class="transaction-date">{{ formattedDateTime }}</a>
-    </div>
-    <a :class="[amountColorClass]">
-      {{ sign }}{{ amount }}
-    </a>
-  </div>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -32,33 +34,33 @@ export default defineComponent({
   setup(props) {
     const icon = computed(() => {
       switch (props.type) {
-        case 'withdraw':    return WithdrawIcon
-        case 'loss':        return LossIcon
-        case 'tournament':  return TournamentIcon
-        case 'earn':         return WinIcon
-        case 'deposit':     return DepositIcon
-        case 'referral':    return ReferralIcon
+        case 'withdraw':    return WithdrawIcon;
+        case 'loss':        return LossIcon;
+        case 'tournament':  return TournamentIcon;
+        case 'earn':        return WinIcon;
+        case 'deposit':     return DepositIcon;
+        case 'referral':    return ReferralIcon;
       }
-    })
+    });
 
     const title = computed(() => {
       switch (props.type) {
-        case 'withdraw':    return 'Вывод'
-        case 'loss':        return 'Поражение'
-        case 'tournament':  return 'Турнир'
-        case 'earn':         return 'Победа'
-        case 'deposit':     return 'Депозит'
-        case 'referral':    return 'Реферальная выплата'
+        case 'withdraw':    return 'Вывод';
+        case 'loss':        return 'Поражение';
+        case 'tournament':  return 'Турнир';
+        case 'earn':        return 'Победа';
+        case 'deposit':     return 'Депозит';
+        case 'referral':    return 'Реферальная выплата';
       }
-    })
+    });
 
     const sign = computed(() => {
-      return (props.type === 'withdraw' || props.type === 'loss') ? '-$' : '+$'
-    })
+      return (props.type === 'withdraw' || props.type === 'loss') ? '-$' : '+$';
+    });
 
     const amountColorClass = computed(() => {
-      return (props.type === 'withdraw' || props.type === 'loss') ? 'negative' : 'positive'
-    })
+      return (props.type === 'withdraw' || props.type === 'loss') ? 'negative' : 'positive';
+    });
 
     // Форматирование даты в виде "3 марта в 11:44"
     const formattedDateTime = computed(() => {
@@ -86,6 +88,16 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.fade-enter-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from {
+  opacity: 0;
+}
+.fade-enter-to {
+  opacity: 1;
+}
+
 .transaction-item {
   display: flex;
   align-items: center;

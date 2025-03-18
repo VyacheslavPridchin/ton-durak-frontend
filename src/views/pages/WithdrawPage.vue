@@ -40,15 +40,15 @@
         <h2 style="margin-bottom: 1vh">Детали</h2>
         <div class="details-row">
           <h2 class="details-title">Минимальная сумма:</h2>
-          <a class="details-value">{{ minAmount }} {{ cryptoName }}</a>
+          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">{{ minAmount }} {{ cryptoName }}</a>
         </div>
         <div class="details-row" style="margin-bottom: 1.5vh">
           <h2 class="details-title">Комиссия сети:</h2>
-          <a class="details-value">{{ networkFee }} {{ cryptoName }}</a>
+          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">{{ networkFee }} {{ cryptoName }}</a>
         </div>
         <div class="details-row">
           <h2>Итого</h2>
-          <a class="details-value">{{ result }}</a>
+          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">{{ result }}</a>
         </div>
       </div>
       <button
@@ -63,9 +63,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import {defineComponent, ref, computed, onMounted} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { events } from "@/events.ts";
+import apiService from "@/services/ApiService.ts";
 
 export default defineComponent({
   setup() {
@@ -77,12 +78,21 @@ export default defineComponent({
       "USDT TON": "USDT",
       "TON": "TON",
     };
+
+    const cryptoTypeMapping: Record<string, string> = {
+      "USDT TON": "usdtton",
+      "TON": "ton",
+    };
+
     const cryptoName = ref(cryptoMapping[cryptoNetwork.value] || cryptoNetwork.value);
 
     const minAmount = ref(10);
     const networkFee = ref(0.5);
     const walletAddress = ref('');
     const withdrawAmount = ref(0);
+
+    // Изначально включаем плейсхолдеры
+    const isLoadingData = ref(true);
 
     const result = computed(() => {
       const amount = Number(withdrawAmount.value);
@@ -104,7 +114,6 @@ export default defineComponent({
       }
     };
 
-
     const withdraw = () => {
       if (!walletAddress.value.trim()) return;
       if (withdrawAmount.value < minAmount.value) return;
@@ -122,6 +131,26 @@ export default defineComponent({
       }, 200);
     };
 
+    onMounted(async () => {
+      try {
+        let response = await apiService.getWithdrawalInfo(cryptoTypeMapping[cryptoNetwork.value]);
+        // Устанавливаем данные из ответа
+        minAmount.value = response.data.minAmount;
+        networkFee.value = response.data.fee;
+      } catch (error) {
+        events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных вывода.", icon: 'withdraw', sticker: 'block_duck' });
+        console.error('Ошибка получения данных вывода:', error);
+      } finally {
+
+        if(walletAddress.value === undefined || walletAddress.value === null || walletAddress.value === 'None') {
+          events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных вывода.", icon: 'withdraw', sticker: 'block_duck' });
+        } else
+        {
+          isLoadingData.value = false; // Отключаем плейсхолдеры
+        }
+      }
+    });
+
     return {
       cryptoNetwork,
       cryptoName,
@@ -133,6 +162,7 @@ export default defineComponent({
       isButtonDisabled,
       hideKeyboard,
       withdraw,
+      isLoadingData,
     };
   },
 });

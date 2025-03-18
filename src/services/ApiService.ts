@@ -129,6 +129,14 @@ export interface DepositInfoData {
     address: string;
 }
 
+export interface WithdrawalInfoData {
+    balance: number;
+    minAmount: number;
+    fee: number;
+    address: string;
+    price: string;
+}
+
 // Класс для работы с API как синглтон-сервис с кэшированием токенов
 class ApiService {
     private axiosInstance: AxiosInstance;
@@ -266,9 +274,14 @@ class ApiService {
         return this.request<ProfileEditData>("/screen/profile/edit", "GET");
     }
 
-    // GET /screen/profile/edit
+    // GET /deposit_info/{type}
     public async getDepositInfo(type: string): Promise<ApiResponse<DepositInfoData>> {
         return this.request<DepositInfoData>(`/deposit_info/${type}`, "GET");
+    }
+
+    // GET /withdrawal_info/{type}
+    public async getWithdrawalInfo(type: string): Promise<ApiResponse<WithdrawalInfoData>> {
+        return this.request<WithdrawalInfoData>(`/withdrawal_info/${type}`, "GET");
     }
 
     // PUT /screen/profile/edit - изменение профиля (например, смена имени или загрузка фото)
@@ -278,6 +291,13 @@ class ApiService {
         // Имя передаётся в query string
         const endpoint = `/screen/profile/edit?name=${encodeURIComponent(name)}`;
         return this.request<null>(endpoint, "PUT", formData);
+    }
+
+    // PUT /withdraw
+    public async withdraw(data: any): Promise<ApiResponse<any>> {
+        // Имя передаётся в query string
+        const endpoint = `/withdraw`;
+        return this.request<any>(endpoint, "PUT", data);
     }
 }
 

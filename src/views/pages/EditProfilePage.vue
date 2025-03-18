@@ -126,7 +126,24 @@ export default defineComponent({
       if (cropperRef.value) {
         const result = cropperRef.value.getResult();
         if (result && result.canvas) {
-          result.canvas.toBlob((blob: Blob | null) => {
+          const originalCanvas = result.canvas;
+          let targetCanvas = originalCanvas;
+
+          // Если размеры превышают 512 пикселей, масштабируем
+          if (originalCanvas.width > 512 || originalCanvas.height > 512) {
+            const scaleFactor = Math.min(512 / originalCanvas.width, 512 / originalCanvas.height);
+            const newWidth = Math.round(originalCanvas.width * scaleFactor);
+            const newHeight = Math.round(originalCanvas.height * scaleFactor);
+            targetCanvas = document.createElement('canvas');
+            targetCanvas.width = newWidth;
+            targetCanvas.height = newHeight;
+            const ctx = targetCanvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(originalCanvas, 0, 0, newWidth, newHeight);
+            }
+          }
+
+          targetCanvas.toBlob((blob: Blob | null) => {
             if (blob) {
               apiService.updateProfileEdit(newName.value, blob)
                   .then(() => {

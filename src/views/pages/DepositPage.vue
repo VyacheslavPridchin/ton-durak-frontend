@@ -105,7 +105,7 @@ export default defineComponent({
         console.error('Ошибка получения данных депозита:', error);
       } finally {
 
-        if(walletAddress.value == undefined) {
+        if(walletAddress.value === undefined || walletAddress.value === null || walletAddress.value === 'None') {
           events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных депозита.", icon: 'deposit', sticker: 'block_duck' });
         } else
         {

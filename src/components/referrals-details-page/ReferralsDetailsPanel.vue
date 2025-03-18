@@ -1,7 +1,7 @@
 <template>
   <div class="panel">
     <h2 class="stats-title">Статистика за 7 дней</h2>
-    <div class="chart-container">
+    <div class="chart-container placeholder-container" :class="{ isLoading: isLoadingData }">
       <div class="bars">
         <div
             v-for="(item, index) in data"
@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch } from 'vue';
+import { defineComponent, computed, ref, watch, onMounted } from 'vue';
 
 export default defineComponent({
   name: 'WeeklyStatsChart',
@@ -46,8 +46,8 @@ export default defineComponent({
         Math.max(...props.data.map(d => d.value))
     );
 
-    // Изначально все высоты равны 15 (0.15 * 100)
     const animatedHeights = ref<number[]>(props.data.map(() => 15));
+    const isLoadingData = ref(true);
 
     // Функция для анимации столбиков
     const animate = (dataArr: { day: string; value: number }[]) => {
@@ -62,16 +62,21 @@ export default defineComponent({
       });
     };
 
+    onMounted(() => {
+      isLoadingData.value = true;
+    });
+
     // Watch на получение данных
     watch(
         () => props.data,
         (newData) => {
+          isLoadingData.value = false;
           animate(newData);
         },
         { immediate: true, deep: true }
     );
 
-    return { maxValue, animatedHeights };
+    return { maxValue, animatedHeights, isLoadingData };
   },
 });
 </script>

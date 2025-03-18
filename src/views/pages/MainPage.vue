@@ -2,7 +2,7 @@
   <div class="container">
     <div class="page">
       <LeaguePanel ref="leaguePanelRef" :rank="rank" :division="division" :progress="progress" />
-      <TournamentPanel ref="tournamentPanelRef" :prize="tournamentPrize" :place="tournamentPlace" :timer="tournamentDeadline" />
+      <TournamentPanel ref="tournamentPanelRef" :prize="tournamentPrize" :place="tournamentPlace" :deadline="tournamentDeadline" />
       <WalletPanel ref="walletPanelRef" :balance="walletBalance" :bonus="walletBonus" :showTopButton="true"/>
       <PlayButton :amount="playAmount" />
     </div>

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="page">
       <LeaguePanel ref="leaguePanelRef" :rank="rank" :division="division" :progress="progress" />
-      <TournamentPanel ref="tournamentPanelRef" :prize="tournamentPrize" :place="tournamentPlace" :timer="tournamentTimer" />
+      <TournamentPanel ref="tournamentPanelRef" :prize="tournamentPrize" :place="tournamentPlace" :timer="tournamentDeadline" />
       <WalletPanel ref="walletPanelRef" :balance="walletBalance" :bonus="walletBonus" :showTopButton="true"/>
       <PlayButton :amount="playAmount" />
     </div>
@@ -29,7 +29,7 @@ export default defineComponent({
 
     const tournamentPrize = ref(0);
     const tournamentPlace = ref(0);
-    const tournamentTimer = ref(0);
+    const tournamentDeadline = ref(0);
 
     const walletBalance = ref(0);
     const walletBonus = ref(0);
@@ -51,8 +51,7 @@ export default defineComponent({
       // TournamentPanel
       tournamentPrize.value = data.tournament.prize_pool;
       tournamentPlace.value = data.tournament.place;
-      const currentTime = Math.floor(Date.now() / 1000);
-      tournamentTimer.value = Math.max(0, data.tournament.deadline - currentTime);
+      tournamentDeadline.value = data.tournament.deadline;
 
       // WalletPanel
       walletBalance.value = data.finance.balance;
@@ -115,7 +114,7 @@ export default defineComponent({
       progress,
       tournamentPrize,
       tournamentPlace,
-      tournamentTimer,
+      tournamentDeadline,
       walletBalance,
       walletBonus,
       playAmount,

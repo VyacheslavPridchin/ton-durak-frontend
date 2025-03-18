@@ -114,8 +114,6 @@ export default defineComponent({
       leagueTitle,
       isLoadingData,
       formattedTime,
-      primaryColor,
-      secondaryColor,
       hideData,
       showData,
     };

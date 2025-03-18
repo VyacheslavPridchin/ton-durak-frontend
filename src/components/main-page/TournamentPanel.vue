@@ -14,13 +14,13 @@
     <!-- Таймер с плейсхолдером -->
     <div class="timer-container placeholder-container" :class="{ isLoading: isLoadingData }">
       <img class="icon" src="@/assets/icons/timer-icon.svg" alt="Timer Icon" />
-      <a class="timer-text">00:00:00</a>
+      <a class="timer-text">{{ formattedTime }}</a>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import {defineComponent, computed, ref, onMounted, onUnmounted, nextTick} from 'vue';
 import router from "@/router";
 
 export default defineComponent({
@@ -36,7 +36,7 @@ export default defineComponent({
       required: true,
       validator: (value: number) => value >= 1,
     },
-    timer: {
+    deadline: {
       type: Number,
       required: true,
     }
@@ -51,10 +51,41 @@ export default defineComponent({
 
     // Единственная переменная для плейсхолдера текстовых данных – изначально true
     const isLoadingData = ref(false);
+    const formattedTime = ref('00:00:00');
+    let timerInterval: number | null = null;
 
-    // Функция, которую можно вызвать извне, чтобы скрыть плейсхолдеры
+    const updateTimer = () => {
+      const now = Math.floor(Date.now() / 1000);
+      const timeLeft = props.deadline - now;
+      console.log(props.deadline, now, timeLeft);
+      if (timeLeft <= 0) {
+        formattedTime.value = '00:00:00';
+        if (timerInterval) clearInterval(timerInterval);
+        return;
+      }
+
+      const hours = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
+      const minutes = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
+      const seconds = (timeLeft % 60).toString().padStart(2, '0');
+      formattedTime.value = `${hours}:${minutes}:${seconds}`;
+    };
+
+    // При монтировании компонента устанавливаем значение по умолчанию
+    onMounted(() => {
+      isLoadingData.value = true;
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+    });
+
+    onUnmounted(() => {
+      if (timerInterval) clearInterval(timerInterval);
+    });
+
     const showData = () => {
-      isLoadingData.value = false;
+      nextTick(() => {
+        isLoadingData.value = false;
+        updateTimer();
+      });
     };
 
     const hideData = () => {
@@ -64,6 +95,7 @@ export default defineComponent({
     return {
       tournamentTitle,
       tournamentPlace,
+      formattedTime,
       onTournamentButtonClick,
       isLoadingData,
       showData,

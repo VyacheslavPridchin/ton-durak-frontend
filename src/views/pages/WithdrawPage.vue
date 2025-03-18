@@ -231,7 +231,7 @@ export default defineComponent({
   border: none;
   cursor: pointer;
   font-size: 1.5vh;
-  color: var(--gray-color);
+  color: var(--text-color);
 }
 
 .details-row {
@@ -264,5 +264,17 @@ export default defineComponent({
   color: var(--text-color);
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+  /* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 </style>

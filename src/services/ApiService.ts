@@ -285,12 +285,18 @@ class ApiService {
     }
 
     // PUT /screen/profile/edit - изменение профиля (например, смена имени или загрузка фото)
-    public async updateProfileEdit(name: string, file: File | Blob): Promise<ApiResponse<null>> {
-        const formData = new FormData();
-        formData.append("fileToUpload", file);
-        // Имя передаётся в query string
-        const endpoint = `/screen/profile/edit?name=${encodeURIComponent(name)}`;
-        return this.request<null>(endpoint, "PUT", formData);
+    public async updateProfileEdit(name: string, file: File | Blob | undefined | null): Promise<ApiResponse<null>> {
+        if(file !== undefined && file !== null) {
+            const formData = new FormData();
+            formData.append("fileToUpload", file);
+
+            // Имя передаётся в query string
+            const endpoint = `/screen/profile/edit?name=${encodeURIComponent(name)}`;
+            return this.request<null>(endpoint, "PUT", formData);
+        } else {
+            const endpoint = `/screen/profile/edit?name=${encodeURIComponent(name)}`;
+            return this.request<null>(endpoint, "PUT");
+        }
     }
 
     // PUT /withdraw

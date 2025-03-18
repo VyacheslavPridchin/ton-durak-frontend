@@ -10,7 +10,7 @@
         </div>
 
 
-        <h2 style="margin-bottom: 1vh">Имя</h2>
+        <h2 style="margin-bottom: 1vh">Новое имя</h2>
         <input
             type="text"
             class="input-box"
@@ -35,12 +35,13 @@ import { defineComponent, ref } from 'vue';
 import ProfilePanel from '@/components/profile-page/ProfilePanel.vue';
 import { useRouter } from 'vue-router';
 import {events} from "@/events.ts";
+import apiService from "@/services/ApiService.ts";
 
 export default defineComponent({
   components: { ProfilePanel },
   setup() {
     const newName = ref('');
-    const profilePictureSource = ref('https://xsgames.co/randomusers/assets/avatars/male/11.jpg');
+    const profilePictureSource = ref(`https://tondurakgame.com/users/photo?user_id=${window.userData?.id}`);
     const router = useRouter();
 
     const hideKeyboard = () => {
@@ -50,13 +51,15 @@ export default defineComponent({
       }
     };
 
-    const saveSettings = () => {
-      router.push(`/profile`);
-
-      setTimeout(() => {
-        events.emit('showNotification', { title: "Успешно!", subtitle: "Профиль сохранен.", icon: "profile", sticker: 'profile_duck' })
-
-      }, 23)
+    const saveSettings = async () => {
+      apiService.updateProfileEdit(newName.value, undefined).then((data) => {
+        router.push(`/profile`);
+        setTimeout(() => {
+          events.emit('showNotification', { title: "Успешно!", subtitle: "Профиль сохранен.", icon: "profile", sticker: 'profile_duck' })
+        }, 200);
+      }).catch((error) => {
+        events.emit('showNotification', { title: "Ошибка!", subtitle: "Произошла ошибка при сохранении профиля.", icon: "profile", sticker: 'block_duck' })
+      })
     };
 
     const changePicture = () => {

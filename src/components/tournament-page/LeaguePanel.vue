@@ -58,14 +58,17 @@ export default defineComponent({
     });
 
     // Единственная переменная для управления плейсхолдерами текстовых данных
-    const isLoadingData = ref(true);
+    const isLoadingData = ref(false);
 
     // При монтировании компонента устанавливаем значение по умолчанию
     onMounted(() => {
       isLoadingData.value = true;
     });
 
-    // Метод, который можно вызвать извне для скрытия плейсхолдера данных
+    const hideData = () => {
+      isLoadingData.value = false;
+    };
+
     const showData = () => {
       isLoadingData.value = false;
     };
@@ -74,6 +77,7 @@ export default defineComponent({
       divisionRoman,
       leagueTitle,
       isLoadingData,
+      hideData,
       showData,
     };
   },

@@ -24,7 +24,7 @@ import TransactionItem from '@/components/wallet-page/TransactionItem.vue';
 import apiService from '@/services/ApiService';
 
 // Указываем все возможные значения для поля type
-type TransactionType = 'withdraw' | 'loss' | 'tournament' | 'win' | 'deposit' | 'referral';
+type TransactionType = 'withdraw' | 'loss' | 'tournament' | 'earn' | 'deposit' | 'referral';
 
 interface Transaction {
   type: TransactionType;
@@ -37,7 +37,7 @@ export default defineComponent({
   components: { WalletPanel, TransactionItem },
   setup() {
     const balance = ref(0);
-    const bonus = ref(0);
+    const bonus  = ref(0);
     const transactions = ref<Transaction[]>([]);
     const walletPanelRef = ref<InstanceType<typeof WalletPanel> | null>(null);
 
@@ -46,6 +46,7 @@ export default defineComponent({
       if (financeResponse.success && financeResponse.data) {
         balance.value = financeResponse.data.balance;
         bonus.value = financeResponse.data.bonus_balance;
+        walletPanelRef.value?.showData();
       }
     };
 
@@ -62,6 +63,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
+      walletPanelRef.value?.hideData();
       await loadFinanceData();
       await loadTransactions();
       // Вызов метода showData из WalletPanel для отключения плейсхолдера текстовых данных

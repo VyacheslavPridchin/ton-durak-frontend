@@ -21,7 +21,7 @@ import ReferralIcon from "@/assets/icons/transactions/referral-icon.svg"
 import TournamentIcon from "@/assets/icons/transactions/tournament-icon.svg"
 import WinIcon from "@/assets/icons/transactions/win-icon.svg"
 import WithdrawIcon from "@/assets/icons/transactions/withdraw-icon.svg"
-type TransactionType = 'withdraw' | 'loss' | 'tournament' | 'win' | 'deposit' | 'referral';
+type TransactionType = 'withdraw' | 'loss' | 'tournament' | 'earn' | 'deposit' | 'referral';
 
 export default defineComponent({
   props: {
@@ -35,7 +35,7 @@ export default defineComponent({
         case 'withdraw':    return WithdrawIcon
         case 'loss':        return LossIcon
         case 'tournament':  return TournamentIcon
-        case 'win':         return WinIcon
+        case 'earn':         return WinIcon
         case 'deposit':     return DepositIcon
         case 'referral':    return ReferralIcon
       }
@@ -46,7 +46,7 @@ export default defineComponent({
         case 'withdraw':    return 'Вывод'
         case 'loss':        return 'Поражение'
         case 'tournament':  return 'Турнир'
-        case 'win':         return 'Победа'
+        case 'earn':         return 'Победа'
         case 'deposit':     return 'Депозит'
         case 'referral':    return 'Реферальная выплата'
       }

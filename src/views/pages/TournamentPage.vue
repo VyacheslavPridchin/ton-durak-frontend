@@ -85,13 +85,12 @@ export default defineComponent({
           isMe: window.userData ? window.userData.id === p.user_id : false
         }));
 
-        setTimeout(() => {
-          leaguePanelRef.value.showData();
-        }, 23)
+        leaguePanelRef.value.showData();
       }
     };
 
     onMounted(() => {
+      leaguePanelRef.value.hideData();
       fetchTournamentData();
     });
 

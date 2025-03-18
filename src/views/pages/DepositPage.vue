@@ -92,26 +92,24 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      try {
-        let response = await apiService.getDepositInfo(cryptoTypeMapping[cryptoNetwork.value]);
-        // Устанавливаем данные из ответа
-        walletAddress.value = response.data.address;
-        minAmount.value = response.data.minAmount;
-        recommendedAmount.value = response.data.minAmount * 6;
-        networkFee.value = response.data.fee;
-        approximateRate.value = response.data.price;
-      } catch (error) {
-        events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных депозита.", icon: 'deposit', sticker: 'block_duck' });
-        console.error('Ошибка получения данных депозита:', error);
-      } finally {
+       apiService.getDepositInfo(cryptoTypeMapping[cryptoNetwork.value]).then(response => {
+         if(!response.success) {
+           events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных депозита.", icon: 'deposit', sticker: 'block_duck' });
+           return;
+         }
 
-        if(walletAddress.value === undefined || walletAddress.value === null || walletAddress.value === 'None') {
-          events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных депозита.", icon: 'deposit', sticker: 'block_duck' });
-        } else
-        {
-          isLoadingData.value = false; // Отключаем плейсхолдеры
-        }
-      }
+         // Устанавливаем данные из ответа
+         walletAddress.value = response.data.address;
+         minAmount.value = response.data.minAmount;
+         recommendedAmount.value = response.data.minAmount * 6;
+         networkFee.value = response.data.fee;
+         approximateRate.value = response.data.price;
+
+         isLoadingData.value = false;
+       }).catch(error => {
+         events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных депозита.", icon: 'deposit', sticker: 'block_duck' });
+         console.error('Ошибка получения данных депозита:', error);
+       })
     });
 
     return {

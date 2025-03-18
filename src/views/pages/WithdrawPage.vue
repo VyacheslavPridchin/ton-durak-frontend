@@ -132,23 +132,21 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      try {
-        let response = await apiService.getWithdrawalInfo(cryptoTypeMapping[cryptoNetwork.value]);
-        // Устанавливаем данные из ответа
-        minAmount.value = response.data.minAmount;
-        networkFee.value = response.data.fee;
-      } catch (error) {
-        events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных вывода.", icon: 'withdraw', sticker: 'block_duck' });
-        console.error('Ошибка получения данных вывода:', error);
-      } finally {
+         apiService.getWithdrawalInfo(cryptoTypeMapping[cryptoNetwork.value]).then(response => {
+           if(!response.success) {
+             events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных вывода.", icon: 'withdraw', sticker: 'block_duck' });
+             return;
+           }
 
-        if(walletAddress.value === undefined || walletAddress.value === null || walletAddress.value === 'None') {
-          events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных вывода.", icon: 'withdraw', sticker: 'block_duck' });
-        } else
-        {
-          isLoadingData.value = false; // Отключаем плейсхолдеры
-        }
-      }
+           // Устанавливаем данные из ответа
+           minAmount.value = response.data.minAmount;
+           networkFee.value = response.data.fee;
+
+           isLoadingData.value = false; // Отключаем плейсхолдеры
+         }).catch(error => {
+           events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных вывода.", icon: 'withdraw', sticker: 'block_duck' });
+           console.error('Ошибка получения данных вывода:', error);
+         });
     });
 
     return {

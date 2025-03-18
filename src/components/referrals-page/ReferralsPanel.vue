@@ -46,6 +46,7 @@
 import { defineComponent, computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { events } from "@/events.ts";
+import apiService from "@/services/ApiService.ts";
 
 export default defineComponent({
   name: 'ReferralsPanel',
@@ -75,13 +76,19 @@ export default defineComponent({
       router.push('/referrals/details');
     };
 
-    const getMoney = () => {
-      events.emit('showNotification', {
-        title: "Реферальная выплата!",
-        subtitle: "На ваш баланс зачислено $50.",
-        icon: "referral",
-        sticker: 'money_duck'
-      });
+    const getMoney = async () => {
+      apiService.claimReferral().then((response) => {
+        console.log(response);
+
+        events.emit('showNotification', {
+          title: "Реферальная выплата!",
+          subtitle: "На ваш баланс зачислено $50.",
+          icon: "referral",
+          sticker: 'money_duck'
+        });
+      }).catch((err) => {
+        console.log(err);
+      })
     };
 
     const openInformationPopup = () => {

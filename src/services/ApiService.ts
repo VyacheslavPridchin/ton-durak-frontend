@@ -300,6 +300,12 @@ class ApiService {
         const endpoint = `/withdraw`;
         return this.request<any>(endpoint, "POST", data);
     }
+
+    // POST /users/claim
+    public async claimReferral(): Promise<ApiResponse<any>> {
+        const endpoint = `/users/claim`;
+        return this.request<any>(endpoint, "POST");
+    }
 }
 
 // Экспорт синглтон-сервиса, чтобы не создавать экземпляр каждый раз

@@ -5,7 +5,7 @@
         <img class="player-avatar" :src="avatar" @load="onImageLoad" alt="avatar" />
       </div>
       <h1 class="tournament-place">#{{ place }}</h1>
-      <h2 class="player-name">{{ name }}</h2>
+      <h2 class="player-name">{{ name.replace('87**1!a', ' ') }}</h2>
       <div v-if="prize > 0" class="prize-container">
         <a class="prize-text">$ {{ prize }}</a>
       </div>

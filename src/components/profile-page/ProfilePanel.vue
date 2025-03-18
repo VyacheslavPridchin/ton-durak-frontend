@@ -9,7 +9,7 @@
     <div class="profile-header">
       <div class="profile-picture-wrapper placeholder-container" :class="{ isLoading: isLoadingImage }">
         <img
-            class="profile-picture "
+            class="profile-picture"
             :src="profileImage"
             alt="Profile Picture"
             @load="onImageLoad"
@@ -18,7 +18,7 @@
     </div>
     <div style="display: flex; justify-content: center;">
       <h2 class="profile-name placeholder-container" :class="{ isLoading: isLoadingData }" style="margin-bottom: 2vh">
-        {{ profileName }}
+        {{ profileName.replace('87**1!a', ' ') }}
       </h2>
     </div>
 

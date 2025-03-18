@@ -4,7 +4,7 @@
       <div class="panel friend-item">
         <h1 class="friend-place">#{{ place }}</h1>
         <div class="friend-text-container">
-          <h2 class="friend-title">{{ nickname }}</h2>
+          <h2 class="friend-title">{{ nickname.replace('87**1!a', ' ') }}</h2>
           <!--        <a v-if="username" class="friend-username">{{ username }}</a>-->
         </div>
         <a class="currency">${{ formattedCurrency }}</a>

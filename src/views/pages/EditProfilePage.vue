@@ -6,9 +6,13 @@
           <div class="profile-picture-wrapper">
             <img class="profile-picture" :src="profilePictureSource" alt="Profile Picture" />
           </div>
-          <button class="secondary-button animate-press" style="width: auto; padding: 0 2vh" @click="changePicture">Изменить</button>
+          <!-- Кнопка теперь запускает выбор файла -->
+          <button class="secondary-button animate-press" style="width: auto; padding: 0 2vh" @click="triggerFileInput">
+            Изменить
+          </button>
+          <!-- Скрытый input для выбора файла -->
+          <input type="file" ref="fileInputRef" style="display: none" @change="handleFileChange" accept="image/*" />
         </div>
-
 
         <h2 style="margin-bottom: 1vh">Новое имя</h2>
         <input
@@ -18,6 +22,7 @@
             v-model="newName"
             @keyup.enter="hideKeyboard"
         />
+        <!-- Если пользователь не менял фото, можно сохранить профиль как раньше -->
         <button
             class="main-button animate-press"
             style="width: 100%; margin-top: 2vh"
@@ -27,6 +32,22 @@
         </button>
       </div>
     </div>
+
+    <!-- Оверлей cropper -->
+    <div v-if="showCropper" class="cropper-overlay">
+      <div class="cropper-container">
+        <Cropper
+            ref="cropperRef"
+            class="cropper"
+            :src="selectedImage"
+            :stencil-component="Stencil"
+        />
+        <div class="cropper-buttons">
+          <button class="secondary-button" @click="cancelCrop">Отмена</button>
+          <button class="main-button" @click="cropAndSave">Сохранить</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -34,11 +55,16 @@
 import { defineComponent, ref } from 'vue';
 import ProfilePanel from '@/components/profile-page/ProfilePanel.vue';
 import { useRouter } from 'vue-router';
-import {events} from "@/events.ts";
+import { events } from "@/events.ts";
 import apiService from "@/services/ApiService.ts";
 
+// Импортируем cropper и его стили
+import { Cropper } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
+import Stencil from "@/components/Stencil.vue";
+
 export default defineComponent({
-  components: { ProfilePanel },
+  components: { ProfilePanel, Cropper, Stencil },
   setup() {
     const newName = ref('');
     const profilePictureSource = ref(`https://tondurakgame.com/users/photo?user_id=${window.userData?.id}`);
@@ -51,23 +77,90 @@ export default defineComponent({
       }
     };
 
+    // Сохранение без фото (если фото не изменялось)
     const saveSettings = async () => {
-      apiService.updateProfileEdit(newName.value, undefined).then((data) => {
-        router.push(`/profile`);
-        setTimeout(() => {
-          events.emit('showNotification', { title: "Успешно!", subtitle: "Профиль сохранен.", icon: "profile", sticker: 'profile_duck' })
-        }, 200);
-      }).catch((error) => {
-        events.emit('showNotification', { title: "Ошибка!", subtitle: "Произошла ошибка при сохранении профиля.", icon: "profile", sticker: 'block_duck' })
-      })
+      apiService.updateProfileEdit(newName.value, undefined)
+          .then(() => {
+            router.push(`/profile`);
+            setTimeout(() => {
+              events.emit('showNotification', { title: "Успешно!", subtitle: "Профиль сохранен.", icon: "profile", sticker: 'profile_duck' });
+            }, 200);
+          })
+          .catch(() => {
+            events.emit('showNotification', { title: "Ошибка!", subtitle: "Произошла ошибка при сохранении профиля.", icon: "profile", sticker: 'block_duck' });
+          });
     };
 
-    const changePicture = () => {
-      console.log('Change picture triggered');
-      // Добавьте логику изменения аватарки здесь
+    // --- Логика cropper ---
+    const showCropper = ref(false);
+    const selectedImage = ref<string | null>(null);
+    const fileInputRef = ref<HTMLInputElement | null>(null);
+    const cropperRef = ref<any>(null);
+
+    // Триггер выбора файла
+    const triggerFileInput = () => {
+      fileInputRef.value?.click();
     };
 
-    return { newName, profilePictureSource, hideKeyboard, saveSettings, changePicture };
+    // Обработка выбранного файла
+    const handleFileChange = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.files && target.files[0]) {
+        const file = target.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          selectedImage.value = e.target?.result as string;
+          showCropper.value = true;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    // Получаем Blob из cropper и отправляем запрос
+    const cropAndSave = () => {
+      if (cropperRef.value) {
+        const result = cropperRef.value.getResult();
+        if (result && result.canvas) {
+          result.canvas.toBlob((blob: Blob | null) => {
+            if (blob) {
+              apiService.updateProfileEdit(newName.value, blob)
+                  .then(() => {
+                    router.push(`/profile`);
+                    setTimeout(() => {
+                      events.emit('showNotification', { title: "Успешно!", subtitle: "Профиль сохранен.", icon: "profile", sticker: 'profile_duck' });
+                    }, 200);
+                  })
+                  .catch(() => {
+                    events.emit('showNotification', { title: "Ошибка!", subtitle: "Произошла ошибка при сохранении профиля.", icon: "profile", sticker: 'block_duck' });
+                  });
+              showCropper.value = false;
+              selectedImage.value = null;
+            }
+          }, "image/jpeg");
+        }
+      }
+    };
+
+    // Отмена изменения фото
+    const cancelCrop = () => {
+      showCropper.value = false;
+      selectedImage.value = null;
+    };
+
+    return {
+      newName,
+      profilePictureSource,
+      hideKeyboard,
+      saveSettings,
+      triggerFileInput,
+      handleFileChange,
+      showCropper,
+      selectedImage,
+      cropperRef,
+      cropAndSave,
+      cancelCrop,
+      fileInputRef
+    };
   }
 });
 </script>
@@ -94,11 +187,6 @@ export default defineComponent({
   font-size: 1.75vh;
   box-sizing: border-box;
   border-color: transparent;
-}
-
-.right-button img {
-  height: 50%;
-  display: block;
 }
 
 .profile-header {
@@ -128,24 +216,32 @@ export default defineComponent({
   border-radius: 50%;
 }
 
-.avatar-overlay {
-  position: absolute;
+/* Стили для оверлея cropper */
+.cropper-overlay {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  background: rgba(0,0,0,0.5);
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.7);
+  z-index: 1000;
 }
 
-.overlay-button {
-  font-size: 1.5vh;
-  padding: 0.5vh 1vh;
-  border: none;
-  border-radius: 0.5vh;
-  cursor: pointer;
+.cropper-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+}
+
+.cropper-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 </style>

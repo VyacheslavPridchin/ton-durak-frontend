@@ -265,12 +265,20 @@ export default defineComponent({
 }
 
 .cropper-container {
+  display: flex;
+  flex-direction: column;
   background: var(--panel-color);
   padding: 2vh;
   border-radius: 1.2vh;
   max-width: 90%;
-  max-height: 60%;
-  overflow: auto;
+  max-height: 75%;
+  overflow: hidden; /* убираем прокрутку внутри контейнера */
+}
+
+.cropper {
+  flex: 1;       /* занимает всё доступное пространство */
+  width: 100%;   /* растягивается по ширине контейнера */
+  max-height: 100%;
 }
 
 .cropper-buttons {

@@ -36,7 +36,7 @@ export default defineComponent({
   components: { ReferralsDetailsPanel, TransactionItem },
   setup() {
     const transactions = ref<Transaction[]>([]);
-    const graphData = ref<{ day: string; value: number }[]>([]);
+    const graphData = ref<{ day: string; value: number }[]>([ {day: "-", value: 0 } ]);
 
     onMounted(async () => {
       try {

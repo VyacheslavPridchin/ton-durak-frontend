@@ -24,6 +24,13 @@ export interface AuthResponseData {
     };
 }
 
+export interface RefreshResponseData {
+    jwt: {
+        access_token: string;
+        refresh_token: string;
+    };
+}
+
 // Интерфейсы для GET запросов
 export interface ScreenMainData {
     league: {
@@ -176,7 +183,8 @@ class ApiService {
         endpoint: string,
         method: "GET" | "POST" | "PUT" = "GET",
         payload?: any,
-        extraHeaders?: Record<string, string>
+        extraHeaders?: Record<string, string>,
+        retry: boolean = true  // флаг повторной попытки
     ): Promise<ApiResponse<T>> {
         const headers = {
             ...this.axiosInstance.defaults.headers.common,
@@ -199,7 +207,20 @@ class ApiService {
             throw new Error("Произошла ошибка при выполнении запроса!");
         }
 
-        return this.handleResponse<T>(response.data);
+        let apiResponse = this.handleResponse<T>(response.data);
+
+        // Если токен истек и это первая попытка, обновляем токены и повторяем запрос
+        if (!apiResponse.success && apiResponse.error === "jwt_expired" && retry) {
+            const refreshResponse = await this.refreshTokens();
+            if (refreshResponse.success && refreshResponse.data?.jwt) {
+                this.accessToken = refreshResponse.data.jwt.access_token;
+                this.refreshToken = refreshResponse.data.jwt.refresh_token;
+                this.saveTokensToCache();
+                return this.request<T>(endpoint, method, payload, extraHeaders, false);
+            }
+        }
+
+        return apiResponse;
     }
 
     // Обработчик, обеспечивающий соответствие результата стандартному формату
@@ -306,6 +327,13 @@ class ApiService {
     public async claimReferral(): Promise<ApiResponse<any>> {
         const endpoint = `/users/claim`;
         return this.request<any>(endpoint, "POST");
+    }
+
+// POST /refresh
+    public async refreshTokens(): Promise<ApiResponse<RefreshResponseData>> {
+        const endpoint = `/refresh`;
+        // Передаем retry=false, чтобы избежать рекурсии в случае неудачи
+        return this.request<RefreshResponseData>(endpoint, "POST", undefined, undefined, false);
     }
 }
 

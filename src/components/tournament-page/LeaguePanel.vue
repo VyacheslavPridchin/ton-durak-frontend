@@ -16,7 +16,7 @@
       <a class="timer-text">{{ formattedTime }}</a>
     </div>
     <div class="prize-container placeholder-container" :class="{ isLoading: isLoadingData }">
-      <a class="timer-text">${{prize_pool}}}</a>
+      <a class="timer-text">${{prize_pool}}</a>
     </div>
   </div>
 </template>
@@ -102,6 +102,7 @@ export default defineComponent({
     };
 
     const showData = () => {
+      updateTimer();
       isLoadingData.value = false;
     };
 

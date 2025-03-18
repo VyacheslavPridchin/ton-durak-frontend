@@ -6,23 +6,23 @@
     <div class="league-header">
       <!-- Иконка лиги без плейсхолдера -->
       <img v-if="rank" class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
-      <a class="league-badge-text">{{ divisionRoman }}</a>
+      <a class="league-badge-text" :style="{ textShadow: badgeTextShadow }">{{ divisionRoman }}</a>
     </div>
     <div style="display: flex; justify-content: center;">
       <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingData }">
         {{ leagueTitle }}
       </h2>
     </div>
-    <!-- Прогресс-бар (без плейсхолдера, т.к. здесь отображается визуальная инфа) -->
+    <!-- Прогресс-бар с динамическим цветом -->
     <div class="progress-bar-container">
-      <div class="progress-bar-wrapper">
-        <div class="progress-bar" :style="{ width: segment1 + '%' }"></div>
+      <div class="progress-bar-wrapper" :style="{ backgroundColor: secondaryColor }">
+        <div class="progress-bar" :style="{ width: segment1 + '%', backgroundColor: primaryColor }"></div>
       </div>
-      <div class="progress-bar-wrapper">
-        <div class="progress-bar" :style="{ width: segment2 + '%' }"></div>
+      <div class="progress-bar-wrapper" :style="{ backgroundColor: secondaryColor }">
+        <div class="progress-bar" :style="{ width: segment2 + '%', backgroundColor: primaryColor }"></div>
       </div>
-      <div class="progress-bar-wrapper">
-        <div class="progress-bar" :style="{ width: segment3 + '%' }"></div>
+      <div class="progress-bar-wrapper" :style="{ backgroundColor: secondaryColor }">
+        <div class="progress-bar" :style="{ width: segment3 + '%', backgroundColor: primaryColor }"></div>
       </div>
     </div>
   </div>
@@ -77,21 +77,32 @@ export default defineComponent({
         props.progress > 66.66 ? ((props.progress - 66.66) / 33.34) * 100 : 0
     );
 
+    // Динамические цвета для прогресс-бара
+    const primaryColor = computed(() => `var(--${props.rank}-color)`);
+    const secondaryColor = computed(() => `var(--${props.rank}-secondary-color)`);
+
+    // Вычисляем text-shadow с использованием secondary цвета и прозрачности 0.3
+    const badgeTextShadow = computed(() => {
+      const shadows: Record<string, string> = {
+        bronze: "rgba(254, 231, 220, 0.3)",   // #FEE7DC
+        silver: "rgba(224, 234, 243, 0.3)",   // #E0EAF3
+        gold: "rgba(255, 228, 155, 0.3)",     // #FFE49B
+        platinum: "rgba(213, 212, 251, 0.3)", // #D5D4FB
+        diamond: "rgba(213, 212, 251, 0.3)",  // #D5D4FB
+        predator: "rgba(241, 82, 90, 0.3)"      // #F1525A
+      };
+      const shadowColor = shadows[props.rank] || "rgba(254, 231, 220, 0.3)";
+      return `-0.1vh 0.1vh 0 ${shadowColor}`;
+    });
+
     const openLeagueInformation = () => {
       events.emit('showPopup', 'leagueInformation');
     };
 
-    // Одна переменная для управления плейсхолдерами текстовых данных
+    // Управление плейсхолдерами
     const isLoadingData = ref(false);
-
-    const hideData = () => {
-      isLoadingData.value = false;
-    };
-
-    // Функция, которую можно вызывать извне, чтобы скрыть плейсхолдеры
-    const showData = () => {
-      isLoadingData.value = false;
-    };
+    const hideData = () => { isLoadingData.value = false; };
+    const showData = () => { isLoadingData.value = false; };
 
     return {
       divisionRoman,
@@ -99,6 +110,9 @@ export default defineComponent({
       segment1,
       segment2,
       segment3,
+      primaryColor,
+      secondaryColor,
+      badgeTextShadow,
       openLeagueInformation,
       isLoadingData,
       showData,
@@ -138,7 +152,6 @@ export default defineComponent({
   color: #FEE7DC;
   font-size: 2vh;
   font-weight: bolder;
-  text-shadow: -0.1vh 0.1vh 0 rgba(144, 96, 87, 0.3);
   transform: translateY(-1vh);
 }
 
@@ -158,7 +171,6 @@ export default defineComponent({
 .progress-bar-wrapper {
   width: 33.33%;
   height: 0.8vh;
-  background-color: var(--bronze-secondary-color);
   border-radius: 0.4vh;
   position: relative;
   overflow: hidden;
@@ -167,12 +179,7 @@ export default defineComponent({
 .progress-bar {
   height: 100%;
   border-radius: 0.4vh;
-  background-color: var(--bronze-color);
   transition: width 0.3s ease-in-out;
-}
-
-.progress-bar-wrapper:nth-child(2) .progress-bar {
-  transition-delay: 0s;
 }
 
 .progress-bar-wrapper:nth-child(2) .progress-bar {

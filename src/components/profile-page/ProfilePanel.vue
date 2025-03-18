@@ -75,7 +75,7 @@ export default defineComponent({
 
     // Состояния загрузки для каждого элемента – изначально true
     const isLoadingImage = ref(true);
-    const isLoadingData = ref(true);
+    const isLoadingData = ref(false);
 
     // Функция onImageLoad не отключает плейсхолдер автоматически
     const onImageLoad = () => {
@@ -93,12 +93,16 @@ export default defineComponent({
       document.documentElement.setAttribute('data-theme', colorScheme);
     };
 
+    const hideData = () => {
+      isLoadingData.value = false;
+    };
+
     // Функция, которую можно вызывать из другого скрипта, чтобы скрыть все плейсхолдеры
     const showData = () => {
       isLoadingData.value = false;
     };
 
-    return { openEdit, changeTheme, isLoadingImage, isLoadingData, onImageLoad, showData };
+    return { openEdit, changeTheme, isLoadingImage, isLoadingData, onImageLoad, showData, hideData };
   },
 });
 </script>

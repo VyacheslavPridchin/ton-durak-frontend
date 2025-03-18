@@ -26,46 +26,73 @@ import ProfilePanel from '@/components/profile-page/ProfilePanel.vue';
 import router from "@/router";
 import apiService from '@/services/ApiService.ts';
 
+const CACHE_KEY = 'screenProfileData';
+
 export default defineComponent({
   components: { ProfilePanel },
   setup() {
-    const username = ref();
-    const profileName = ref();
-    const profileImage = ref();
-    const stats = ref<Array<{ title: string; value: string }>>();
-    const profilePanelRef = ref();
+    const username = ref('');
+    const profileName = ref('');
+    const profileImage = ref('');
+    const stats = ref<Array<{ title: string; value: string }>>([]);
+    const profilePanelRef = ref<any>(null);
+
     const onWalletButtonClick = () => {
       router.push('/wallet');
     };
 
-    const loadProfileData = async () => {
+    const loadCachedData = () => {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch (e) {
+          console.error('Ошибка парсинга кэша', e);
+        }
+      }
+      return null;
+    };
+
+    const saveCachedData = (data: any) => {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    };
+
+    const updateData = (data: any) => {
+      profileName.value = data.name;
+      username.value = "unknown";
+      if (window.userData && window.userData.id) {
+        profileImage.value = `https://tondurakgame.com/users/photo?user_id=${window.userData.id}`;
+      } else {
+        profileImage.value = "https://xsgames.co/randomusers/assets/avatars/male/11.jpg";
+      }
+      stats.value = data.stats.map((item: any) => ({
+        title: item.stat_name,
+        value: item.value
+      }));
+    };
+
+    const fetchScreenProfile = async () => {
       const response = await apiService.getScreenProfile();
       if (response.success && response.data) {
-        profileName.value = response.data.name;
-        username.value = "unknown";
-
-        if (window.userData && window.userData.id) {
-          profileImage.value = `https://tondurakgame.com/users/photo?user_id=${window.userData.id}`;
-        } else {
-          profileImage.value = "https://xsgames.co/randomusers/assets/avatars/male/11.jpg";
-        }
-
-        stats.value = response.data.stats.map(item => ({
-          title: item.stat_name,
-          value: item.value
-        }));
-
+        updateData(response.data);
+        saveCachedData(response);
         setTimeout(() => {
           profilePanelRef.value.showData();
-        }, 23)
+        }, 23);
       }
     };
 
     onMounted(() => {
-      loadProfileData();
+      const cachedResponse = loadCachedData();
+      if (cachedResponse && cachedResponse.data) {
+        updateData(cachedResponse.data);
+      } else if (profilePanelRef.value?.hideData) {
+        profilePanelRef.value.hideData();
+      }
+      fetchScreenProfile();
     });
 
-    return { onWalletButtonClick, profilePanelRef, username, profileName, profileImage, stats };
+    return { username, profileName, profileImage, stats, profilePanelRef, onWalletButtonClick };
   }
 });
 </script>

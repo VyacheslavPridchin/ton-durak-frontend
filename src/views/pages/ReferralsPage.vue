@@ -6,7 +6,8 @@
           ref="referralsPanelRef"
           style="margin-top: 12vh"
           :balance="balance"
-          :bonus="bonus"
+          :referrals="referrals"
+          :claimed="claimed"
       />
 
       <h2 style="margin-top: 1vh; margin-bottom: 0.5vh">Топ рефералов</h2>
@@ -42,56 +43,86 @@ interface Friend {
   percent: number;
 }
 
+const CACHE_KEY = 'screenReferralData';
+
 export default defineComponent({
   name: 'ReferralsPage',
   components: { FriendItem, ReferralsPanel },
   setup() {
     const balance = ref(0);
-    const bonus = ref(0);
+    const claimed = ref(0);
+    const referrals = ref(0);
     const friends = ref<Friend[]>([]);
     const referralsPanelRef = ref<InstanceType<typeof ReferralsPanel> | null>(null);
 
-    // Функция для загрузки данных о рефералах
-    const loadReferralData = async () => {
-      const response = await apiService.getScreenReferral();
-      if (response.success && response.data) {
-        // Устанавливаем баланс и бонус (например, используем claimed / unclaimed)
-        balance.value = response.data.overview.claimed;
-        bonus.value = response.data.overview.unclaimed;
-
-        // Получаем массив топ-рефералов
-        const topReferrals = response.data.top_referrals.referrals; // place, user_id, amount
-
-        if (topReferrals && topReferrals.length > 0) {
-          // Сортируем по amount (по убыванию), чтобы найти maxAmount
-          const sorted = topReferrals.slice().sort((a, b) => b.amount - a.amount);
-          const maxAmount = sorted[0].amount || 0;
-
-          // Преобразуем в массив Friend
-          friends.value = sorted.map((item) => ({
-            avatar: `https://tondurakgame.com/users/photo?user_id=${item.user_id}`, // Или другой URL
-            nickname: `User`,
-            username: `@unknown`,
-            amount: item.amount,
-            place: item.place,
-            // Используем Math.max, чтобы не опускаться ниже 60%
-            percent: Math.max((item.amount / maxAmount) * 100, 60),
-          }));
+    const loadCachedData = () => {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch (e) {
+          console.error('Ошибка парсинга кэша', e);
         }
+      }
+      return null;
+    };
+
+    const saveCachedData = (data: any) => {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    };
+
+    const updateData = (data: any) => {
+      balance.value = data.overview.unclaimed;
+      claimed.value = data.overview.claimed;
+      referrals.value = data.overview.referrals;
+
+      const topReferrals = data.top_referrals.referrals;
+      if (topReferrals && topReferrals.length > 0) {
+        // Сортируем по количеству заработанных средств (по убыванию)
+        const sorted = topReferrals.slice().sort((a: any, b: any) => b.amount - a.amount);
+        const maxAmount = sorted[0].amount || 0;
+        friends.value = sorted.map((item: any) => ({
+          avatar: `https://tondurakgame.com/users/photo?user_id=${item.user_id}`,
+          nickname: 'User',
+          username: '@unknown',
+          amount: item.amount,
+          place: item.place,
+          // Не опускаем ниже 60%
+          percent: Math.max((item.amount / maxAmount) * 100, 60),
+        }));
       }
     };
 
-    onMounted(async () => {
-      await loadReferralData();
-      // Вызываем showData у панели, чтобы отключить плейсхолдеры
-      if (referralsPanelRef.value && typeof referralsPanelRef.value.showData === 'function') {
-        referralsPanelRef.value.showData();
+    const fetchReferralData = async () => {
+      const response = await apiService.getScreenReferral();
+      if (response.success && response.data) {
+        updateData(response.data);
+        saveCachedData(response);
+        setTimeout(() => {
+          if (referralsPanelRef.value && typeof referralsPanelRef.value.showData === 'function') {
+            referralsPanelRef.value.showData();
+          }
+        }, 23);
       }
+    };
+
+    onMounted(() => {
+      const cachedResponse = loadCachedData();
+      if (cachedResponse && cachedResponse.data) {
+        updateData(cachedResponse.data);
+        if (referralsPanelRef.value && typeof referralsPanelRef.value.showData === 'function') {
+          referralsPanelRef.value.showData();
+        }
+      } else if (referralsPanelRef.value && typeof referralsPanelRef.value.hideData === 'function') {
+        referralsPanelRef.value.hideData();
+      }
+      fetchReferralData();
     });
 
     return {
       balance,
-      bonus,
+      claimed,
+      referrals,
       friends,
       referralsPanelRef,
     };

@@ -9,9 +9,26 @@
   --white-color: #FFFFFF;
   --gray-color: #F5F4F4;
   --blue-gradient: linear-gradient(to right, #2D83EC, #1AC9FF);
+  --placeholder-gradient: linear-gradient(90deg, var(--gray-color) 5%, #e1e1e1 50%, var(--gray-color) 95%);
+
+  /* Цвета ранка */
   --bronze-color: #CC7763;
   --bronze-secondary-color: #FEE7DC;
-  --placeholder-gradient: linear-gradient(90deg, var(--gray-color) 5%, #e1e1e1 50%, var(--gray-color) 95%);
+
+  --silver-color: #92B2BF;
+  --silver-secondary-color: #E0EAF3;
+
+  --gold-color: #DDA244;
+  --gold-secondary-color: #FFE49B;
+
+  --platinum-color: #8680C9;
+  --platinum-secondary-color: #D5D4FB;
+
+  --diamond-color: #4463DD;
+  --diamond-secondary-color: #D5D4FB;
+
+  --predator-color: #A41323;
+  --predator-secondary-color: #F1525A;
 }
 
 [data-theme="dark"] {
@@ -23,9 +40,16 @@
   --white-color: #F0F0F0;
   --gray-color: #222222;
   --blue-gradient: linear-gradient(to right, #2469BD, #1796C9);
-
   --placeholder-gradient: linear-gradient(90deg, var(--gray-color) 5%, #151515 50%, var(--gray-color) 95%);
+
+  /* Цвета ранка */
+
   --bronze-secondary-color: #504844;
+  --silver-secondary-color: #7D8389;
+  --gold-secondary-color: #867851;
+  --platinum-secondary-color: #6D6C85;
+  --diamond-secondary-color: #71709C;
+  --predator-secondary-color: #F1525A;
 }
 
 body {

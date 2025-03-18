@@ -14,14 +14,14 @@
         <h2 class="bonus-title">Рефералы</h2>
         <!-- Плейсхолдер для динамического значения бонуса -->
         <a class="bonus-amount placeholder-container" :class="{ isLoading: isLoadingData }">
-          {{ bonusText }}
+          {{ referralsText }}
         </a>
       </div>
       <div style="margin-top: 0.5vh" class="bonus-balance-container">
         <h2 class="bonus-title">Зачислено</h2>
         <!-- Плейсхолдер для динамического значения, с символом доллара -->
         <a class="bonus-amount placeholder-container" :class="{ isLoading: isLoadingData }">
-          ${{ bonusText }}
+          ${{ claimedText }}
         </a>
       </div>
       <hr class="divider" style="margin-top: 1.5vh"/>
@@ -55,18 +55,21 @@ export default defineComponent({
       required: true,
       validator: (value: number) => value >= 1,
     },
-    bonus: {
+    referrals: {
       type: Number,
       required: true,
-      validator: (value: number) => value >= 1,
+    },
+    claimed: {
+      type: Number,
+      required: true,
     }
   },
   setup(props) {
     const router = useRouter();
 
     const balanceText = computed(() => `$${props.balance}`);
-    const claimedText = computed(() => `${props.bonus}`);
-    const bonusText = computed(() => `${props.bonus}`);
+    const claimedText = computed(() => `${props.claimed}`);
+    const referralsText = computed(() => `${props.referrals}`);
 
     const pushReferralsDetails = () => {
       router.push('/referrals/details');
@@ -85,9 +88,12 @@ export default defineComponent({
       events.emit('showPopup', "referralsInformation");
     };
 
-    // Переменная для управления плейсхолдерами текстовых данных
-    const isLoadingData = ref(true);
+    // Одна переменная для управления плейсхолдерами текстовых данных
+    const isLoadingData = ref(false);
 
+    const hideData = () => {
+      isLoadingData.value = false;
+    };
     // Функция, вызываемая извне, для скрытия плейсхолдера
     const showData = () => {
       isLoadingData.value = false;
@@ -99,12 +105,14 @@ export default defineComponent({
 
     return {
       balanceText,
-      bonusText,
+      referralsText,
+      claimedText,
       pushReferralsDetails,
       getMoney,
       openInformationPopup,
       isLoadingData,
       showData,
+      hideData
     };
   }
 });

@@ -60,14 +60,9 @@ export default defineComponent({
       }
     });
 
-    const onWalletButtonClick = () => {
-      router.push('/wallet');
-    };
-
     return {
       graphData,
       transactions,
-      onWalletButtonClick
     };
   }
 });

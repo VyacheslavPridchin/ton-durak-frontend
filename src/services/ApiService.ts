@@ -195,6 +195,11 @@ class ApiService {
                 data: payload,
                 headers,
             });
+
+            if(response.status !== 200) {
+                return { success: false, data: null, error: "Произошла ошибка при выполнении запроса!" } as ApiResponse<T>;
+            }
+
             return this.handleResponse<T>(response.data);
         } catch (error: any) {
             return { success: false, data: null, error: error.message } as ApiResponse<T>;

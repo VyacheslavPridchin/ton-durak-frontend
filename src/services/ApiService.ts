@@ -178,32 +178,28 @@ class ApiService {
         payload?: any,
         extraHeaders?: Record<string, string>
     ): Promise<ApiResponse<T>> {
-        try {
-            const headers = {
-                ...this.axiosInstance.defaults.headers.common,
-                ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),
-                ...extraHeaders,
-            };
+        const headers = {
+            ...this.axiosInstance.defaults.headers.common,
+            ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),
+            ...extraHeaders,
+        };
 
-            console.log(
-                `Requesting [${method}] '/${endpoint}' with body ${payload ? JSON.stringify(payload) : "{}"}`
-            );
+        console.log(
+            `Requesting [${method}] '/${endpoint}' with body ${payload ? JSON.stringify(payload) : "{}"}`
+        );
 
-            const response: AxiosResponse = await this.axiosInstance.request({
-                url: endpoint,
-                method,
-                data: payload,
-                headers,
-            });
+        const response: AxiosResponse = await this.axiosInstance.request({
+            url: endpoint,
+            method,
+            data: payload,
+            headers,
+        });
 
-            if(response.status !== 200) {
-                return { success: false, data: null, error: "Произошла ошибка при выполнении запроса!" } as ApiResponse<T>;
-            }
-
-            return this.handleResponse<T>(response.data);
-        } catch (error: any) {
-            return { success: false, data: null, error: error.message } as ApiResponse<T>;
+        if (response.status !== 200) {
+            throw new Error("Произошла ошибка при выполнении запроса!");
         }
+
+        return this.handleResponse<T>(response.data);
     }
 
     // Обработчик, обеспечивающий соответствие результата стандартному формату

@@ -102,7 +102,7 @@ export default defineComponent({
     });
 
     const hideData = () => {
-      isLoadingData.value = false;
+      isLoadingData.value = true;
     };
 
     const showData = () => {

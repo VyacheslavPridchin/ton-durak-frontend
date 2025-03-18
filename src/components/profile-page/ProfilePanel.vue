@@ -3,9 +3,9 @@
     <button class="top-right-button animate-press" @click="openEdit">
       <img class="icon" src="@/assets/icons/edit-icon.svg" alt="Edit" />
     </button>
-    <button class="top-left-button animate-press" @click="changeTheme">
-      <img class="icon" src="@/assets/icons/light-icon.svg" alt="Change Theme" />
-    </button>
+<!--    <button class="top-left-button animate-press" @click="changeTheme">-->
+<!--      <img class="icon" src="@/assets/icons/light-icon.svg" alt="Change Theme" />-->
+<!--    </button>-->
     <div class="profile-header">
       <div class="profile-picture-wrapper placeholder-container" :class="{ isLoading: isLoadingImage }">
         <img

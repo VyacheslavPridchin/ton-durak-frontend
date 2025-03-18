@@ -54,14 +54,12 @@ export default defineComponent({
       // Сброс анимированных высот до дефолтного размера 15
       animatedHeights.value = dataArr.map(() => 15);
       // Запуск анимации с задержкой
-      setTimeout(() => {
-        dataArr.forEach((d, index) => {
-          setTimeout(() => {
-            animatedHeights.value[index] =
-                Math.max(d.value / maxValue.value, 0.15) * 100;
-          }, index * 50);
-        });
-      }, 200);
+      dataArr.forEach((d, index) => {
+        setTimeout(() => {
+          animatedHeights.value[index] =
+              Math.max(d.value / maxValue.value, 0.15) * 100;
+        }, index * 50);
+      });
     };
 
     // Watch на получение данных

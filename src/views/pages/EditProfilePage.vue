@@ -64,6 +64,11 @@ import "vue-advanced-cropper/dist/style.css";
 import Stencil from "@/components/Stencil.vue";
 
 export default defineComponent({
+  computed: {
+    Stencil() {
+      return Stencil
+    }
+  },
   components: { ProfilePanel, Cropper, Stencil },
   setup() {
     const newName = ref('');

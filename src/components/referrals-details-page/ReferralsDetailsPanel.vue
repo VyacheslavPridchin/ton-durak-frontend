@@ -46,13 +46,13 @@ export default defineComponent({
         Math.max(...props.data.map(d => d.value))
     );
 
-    // Изначально все высоты равны 0
-    const animatedHeights = ref<number[]>(props.data.map(() => 0.15));
+    // Изначально все высоты равны 15 (0.15 * 100)
+    const animatedHeights = ref<number[]>(props.data.map(() => 15));
 
     // Функция для анимации столбиков
     const animate = (dataArr: { day: string; value: number }[]) => {
-      // Сброс анимированных высот
-      animatedHeights.value = dataArr.map(() => 0);
+      // Сброс анимированных высот до дефолтного размера 15
+      animatedHeights.value = dataArr.map(() => 15);
       // Запуск анимации с задержкой
       setTimeout(() => {
         dataArr.forEach((d, index) => {

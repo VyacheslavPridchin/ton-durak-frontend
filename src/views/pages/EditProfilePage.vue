@@ -250,7 +250,7 @@ export default defineComponent({
 .cropper-container {
   background: var(--panel-color);
   padding: 2vh;
-  border-radius: var(--border-radius);
+  border-radius: 1.2vh;
   max-width: 90%;
   max-height: 60%;
   overflow: auto;

@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+import {defineComponent, ref, onMounted, onUnmounted} from 'vue';
 import gsap from 'gsap';
 import { events } from '@/events.ts'
 
@@ -50,6 +50,16 @@ export default defineComponent({
 
     const betText = ref('');
 
+    const hideHandler = () => {
+      let selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
+
+      if (selectedBet.length > 1) {
+        betText.value = selectedBet.slice(0, -1).join(', ') + ' или ' + selectedBet[selectedBet.length - 1];
+      } else {
+        betText.value = selectedBet[0] || '';
+      }
+    };
+
     onMounted(() => {
       let selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
 
@@ -58,8 +68,13 @@ export default defineComponent({
       } else {
         betText.value = selectedBet[0] || '';
       }
+
+      events.on('hidePopup', hideHandler);
     });
 
+    onUnmounted(() => {
+      events.off('hidePopup', hideHandler);
+    });
 
     const onButtonClick = () => {
       console.log('Клик по кнопке');

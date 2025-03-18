@@ -13,16 +13,16 @@
     </div>
     <div class="timer-container placeholder-container" :class="{ isLoading: isLoadingData }">
       <img class="icon" src="@/assets/icons/timer-icon.svg" alt="Timer Icon">
-      <a class="timer-text">00:00:00</a>
+      <a class="timer-text">{{ formattedTime }}</a>
     </div>
     <div class="prize-container placeholder-container" :class="{ isLoading: isLoadingData }">
-      <a class="timer-text">$100</a>
+      <a class="timer-text">${{prize_pool}}}</a>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import { defineComponent, computed, ref, onMounted, onUnmounted} from 'vue';
 
 export default defineComponent({
   name: 'LeaguePanel',
@@ -38,6 +38,14 @@ export default defineComponent({
       required: true,
       validator: (value: number) => value >= 1 && value <= 3,
     },
+    prize_pool: {
+      type: Number,
+      required: true,
+    },
+    deadline: {
+      type: Number,
+      required: true,
+    },
   },
   setup(props) {
     const divisionRoman = computed(() => {
@@ -51,7 +59,8 @@ export default defineComponent({
         silver: 'Серебряный',
         gold: 'Золотой',
         platinum: 'Платиновый',
-        diamond: 'Алмазный'
+        diamond: 'Алмазный',
+        predator: 'Хищник',
       };
       const rankTitle = ranks[props.rank] || props.rank;
       return `${rankTitle} турнир`;
@@ -59,10 +68,33 @@ export default defineComponent({
 
     // Единственная переменная для управления плейсхолдерами текстовых данных
     const isLoadingData = ref(false);
+    const formattedTime = ref('00:00:00');
+    let timerInterval: number | null = null;
+
+    const updateTimer = () => {
+      const now = Math.floor(Date.now() / 1000);
+      const timeLeft = props.deadline - now;
+      if (timeLeft <= 0) {
+        formattedTime.value = '00:00:00';
+        if (timerInterval) clearInterval(timerInterval);
+        return;
+      }
+
+      const hours = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
+      const minutes = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
+      const seconds = (timeLeft % 60).toString().padStart(2, '0');
+      formattedTime.value = `${hours}:${minutes}:${seconds}`;
+    };
 
     // При монтировании компонента устанавливаем значение по умолчанию
     onMounted(() => {
       isLoadingData.value = true;
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+    });
+
+    onUnmounted(() => {
+      if (timerInterval) clearInterval(timerInterval);
     });
 
     const hideData = () => {
@@ -77,6 +109,7 @@ export default defineComponent({
       divisionRoman,
       leagueTitle,
       isLoadingData,
+      formattedTime,
       hideData,
       showData,
     };

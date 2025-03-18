@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="page">
-      <LeaguePanel ref="leaguePanelRef" :rank="rank" :division="division" @click="openTournamentInformation"/>
+      <LeaguePanel ref="leaguePanelRef" :rank="rank" :division="division" :prize_pool="prize_pool" :deadline="deadline" @click="openTournamentInformation"/>
       <h2 style="margin-top: 1vh; margin-bottom: 0.5vh">Топ-10 игроков</h2>
       <div class="list" ref="playerList">
         <PlayerItem
@@ -62,6 +62,8 @@ export default defineComponent({
     const rank = ref('bronze');
     const division = ref(2);
     const progress = ref(0);
+    const prize_pool = ref(0);
+    const deadline = ref(0);
     const players = ref<Player[]>([]);
     const playerList = ref<HTMLElement | null>(null);
     const myPlayerItem = ref<any>(null);
@@ -74,6 +76,8 @@ export default defineComponent({
         rank.value = response.data.league.rank;
         division.value = response.data.league.division;
         progress.value = response.data.league.progress * 100;
+        prize_pool.value = response.data.tournament.prize_pool;
+        deadline.value = response.data.tournament.deadline;
         // Обновляем список игроков и определяем isMe через сравнение id
         players.value = response.data.players.map((p) => ({
           id: p.user_id,
@@ -140,6 +144,8 @@ export default defineComponent({
       playerList,
       myPlayerItem,
       leaguePanelRef,
+      prize_pool,
+      deadline,
       openTournamentInformation
     };
   }

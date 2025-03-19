@@ -1,8 +1,8 @@
 import { NetworkPacketProcessor } from "./NetworkPacketProcessor";
 import {JoinRequest, LeaveRequest, PingRequest} from "./RequestPackets";
 import PlayerSettingsStorage from "./PlayerSettingsStorage";
-import userService from "../../services/user.service";
-import TokenService from "../../services/token.service";
+// import userService from "../../services/user.service";
+// import TokenService from "../../services/token.service";
 import { EventService, EventType } from "./EventService.ts";
 
 class NetworkManager {
@@ -139,7 +139,7 @@ class NetworkManager {
     private async handleConnect(): Promise<void> {
         await this.RefreshTokens();
 
-        const token = TokenService.getLocalAccessToken();
+        const token = PlayerSettingsStorage.jwt;
         const lobbyId = PlayerSettingsStorage.lobbyId;
 
         EventService.Instance.emit(EventType.Reconnect, false);
@@ -192,7 +192,7 @@ class NetworkManager {
 
     public async RefreshTokens(): Promise<void> {
         try {
-            const refreshToken = TokenService.getLocalRefreshToken();
+            const refreshToken = PlayerSettingsStorage.refreshToken;
             if (!refreshToken) {
                 console.error("No refresh token available");
                 return;
@@ -213,9 +213,6 @@ class NetworkManager {
 
             const data = await response.json();
             if (data.accessToken && data.refreshToken) {
-                TokenService.updateLocalAccessToken(data.accessToken);
-                TokenService.updateLocalRefreshToken(data.refreshToken);
-
                 EventService.Instance.emit(EventType.JwtSet, data.accessToken);
                 EventService.Instance.emit(EventType.RefreshTokenSet, data.refreshToken);
             }
@@ -273,15 +270,15 @@ class NetworkManager {
         }
 
         this.close();
-
-        userService.postCheckToTournament().then(response => {
-            if (response.data.first_time) {
-                userService.postEvent('tournament_seen').then(() => {});
-                router.push('/tournament');
-            } else {
-                router.push('/game');
-            }
-        });
+        router.push('/');
+        // userService.postCheckToTournament().then(response => {
+        //     if (response.data.first_time) {
+        //         userService.postEvent('tournament_seen').then(() => {});
+        //         router.push('/tournament');
+        //     } else {
+        //         router.push('/game');
+        //     }
+        // });
     }
 }
 

@@ -343,6 +343,23 @@ class ApiService {
         // Передаем retry=false, чтобы избежать рекурсии в случае неудачи
         return this.request<RefreshResponseData>(endpoint, "POST", undefined, undefined, false);
     }
+
+    // POST /quickgame
+    public async quickGame(
+        bids: string[],
+        playerAmounts: string[],
+        gameTypes: string[]
+    ): Promise<ApiResponse<any>> {
+        const endpoint = `/quickgame`;
+        const payload = {
+            bids,
+            player_amounts: playerAmounts,
+            game_types: gameTypes,
+        };
+
+        return this.request<any>(endpoint, "POST", payload);
+    }
+
 }
 
 // Экспорт синглтон-сервиса, чтобы не создавать экземпляр каждый раз

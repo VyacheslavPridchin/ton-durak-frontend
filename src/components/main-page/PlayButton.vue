@@ -32,9 +32,11 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, onMounted, onUnmounted} from 'vue';
+import { defineComponent, ref, onMounted, onUnmounted } from 'vue';
 import gsap from 'gsap';
-import { events } from '@/events.ts'
+import { events } from '@/events.ts';
+// Импорт сервиса API (проверьте корректность пути)
+import apiService from '@/services/apiService';
 
 export default defineComponent({
   name: 'PlayButton',
@@ -47,12 +49,10 @@ export default defineComponent({
   setup(props) {
     const playButton = ref<HTMLElement | null>(null);
     const iconButton = ref<HTMLElement | null>(null);
-
     const betText = ref('');
 
     const hideHandler = () => {
-      let selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
-
+      const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
       if (selectedBet.length > 1) {
         betText.value = selectedBet.slice(0, -1).join(', ') + ' или ' + selectedBet[selectedBet.length - 1];
       } else {
@@ -61,14 +61,12 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      let selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
-
+      const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
       if (selectedBet.length > 1) {
         betText.value = selectedBet.slice(0, -1).join(', ') + ' или ' + selectedBet[selectedBet.length - 1];
       } else {
         betText.value = selectedBet[0] || '';
       }
-
       events.on('hidePopup', hideHandler);
     });
 
@@ -76,8 +74,28 @@ export default defineComponent({
       events.off('hidePopup', hideHandler);
     });
 
-    const onButtonClick = () => {
-      console.log('Клик по кнопке');
+    const onButtonClick = async () => {
+      // Получаем данные из localStorage
+      const selectedPlayers = JSON.parse(localStorage.getItem('selectedPlayers') || '[3]');
+      const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
+      const selectedRule = JSON.parse(localStorage.getItem('selectedRule') || '["Переводной"]');
+
+      // Форматируем данные:
+      // Bet: убираем знак доллара
+      const formattedBets = selectedBet.map((bet: string) => bet.replace('$', ''));
+      // Players: приводим к строкам
+      const formattedPlayers = selectedPlayers.map((player: number | string) => String(player));
+      // Rule: "Классический" -> "0", "Переводной" -> "1"
+      const formattedRules = selectedRule.map((rule: string) =>
+          rule === 'Классический' ? '0' : rule === 'Переводной' ? '1' : rule
+      );
+
+      try {
+        const response = await apiService.quickGame(formattedBets, formattedPlayers, formattedRules);
+        console.log('Response from quickGame:', response);
+      } catch (err) {
+        console.error('Error calling quickGame:', err);
+      }
     };
 
     const onIconClick = () => {
@@ -115,7 +133,6 @@ export default defineComponent({
       if (iconButton.value) {
         gsap.to(iconButton.value, { duration: 0.2, scale: 1.1 });
       }
-
       onButtonPointerLeave();
     };
 
@@ -123,7 +140,6 @@ export default defineComponent({
       if (iconButton.value) {
         gsap.to(iconButton.value, { duration: 0.2, scale: 1 });
       }
-
       onButtonPointerEnter();
     };
 

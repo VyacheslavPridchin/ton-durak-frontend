@@ -372,7 +372,7 @@ class ApiService {
         };
 
         // Передаем retry=false, чтобы избежать рекурсии в случае неудачи
-        return this.request<WithdrawalInfoData>(endpoint, "POST", payload, undefined, false, true);
+        return this.request<WithdrawalInfoData>(endpoint, "POST", payload, undefined, false);
     }
 
 }

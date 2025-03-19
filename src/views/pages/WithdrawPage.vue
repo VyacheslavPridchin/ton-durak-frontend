@@ -222,6 +222,7 @@ export default defineComponent({
             }
 
             isLoadingData.value = false;
+            console.log("hasWalletAddress", hasWalletAddress.value);
           })
           .catch(error => {
             events.emit('showNotification', {

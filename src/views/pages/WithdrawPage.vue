@@ -175,11 +175,11 @@ export default defineComponent({
       apiService.postUpdateAddress(walletAddress.value, cryptoTypeMapping[cryptoNetwork.value])
           .then(response => {
             if (response.success) {
-              if (response.data.address === "None") {
+              if (response.data.wallet_address === "None") {
                 hasWalletAddress.value = false;
               } else {
                 hasWalletAddress.value = true;
-                walletAddress.value = response.data.address;
+                walletAddress.value = response.data.wallet_address;
                 minAmount.value = response.data.minAmount;
                 networkFee.value = response.data.fee;
                 balance.value = response.data.balance;
@@ -215,7 +215,7 @@ export default defineComponent({
               hasWalletAddress.value = false;
             } else {
               hasWalletAddress.value = true;
-              walletAddress.value = response.data.address;
+              walletAddress.value = response.data.wallet_address;
               minAmount.value = response.data.minAmount;
               networkFee.value = response.data.fee;
               balance.value = response.data.balance;

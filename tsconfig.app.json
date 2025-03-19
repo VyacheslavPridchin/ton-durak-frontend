@@ -8,8 +8,13 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+
     "strict": false,
     "skipLibCheck": true,
-    "noEmitOnError": false
+    "noEmitOnError": false,
+    "noEmit": false,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   }
 }

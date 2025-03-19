@@ -27,7 +27,7 @@
         </a>
         <h2 style="margin-bottom: 1vh">Сумма вывода</h2>
         <!-- Поле ввода суммы с деактивацией, если кошелек не установлен -->
-        <div class="input-wrapper placeholder-container" :class="{ isLoading: isLoadingData }">
+        <div class="input-wrapper placeholder-container" style="overflow: visible" :class="{ isLoading: isLoadingData }">
           <input
               type="number"
               class="input-box"
@@ -35,6 +35,7 @@
               v-model.number="withdrawAmount"
               @keyup.enter="hideKeyboard"
               :disabled="!hasWalletAddress"
+              :max="balance"
           />
           <button
               type="button"
@@ -45,7 +46,7 @@
             Max
           </button>
         </div>
-        <a class="secondary-text" style="margin-bottom: 1.5vh">
+        <a v-if="hasWalletAddress" class="secondary-text" style="margin-bottom: 1.5vh">
           Укажите сумму больше <span style="font-weight: 500;">{{ displayedMinAmount }}</span>
         </a>
         <h2 style="margin-bottom: 1vh">Детали</h2>
@@ -80,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
+import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { events } from "@/events.ts";
 import apiService from "@/services/ApiService.ts";
@@ -136,7 +137,8 @@ export default defineComponent({
       return (
           !hasWalletAddress.value ||
           String(walletAddress.value || '').trim() === '' ||
-          withdrawAmount.value < minAmount.value
+          withdrawAmount.value < minAmount.value ||
+          withdrawAmount.value > balance.value
       );
     });
 
@@ -154,7 +156,7 @@ export default defineComponent({
 
     const withdraw = () => {
       if (String(walletAddress.value || '').trim() === '') return;
-      if (withdrawAmount.value < minAmount.value) return;
+      if (withdrawAmount.value < minAmount.value || withdrawAmount.value > balance.value) return;
 
       const queryParams = new URLSearchParams({
         amount: withdrawAmount.value.toString(),
@@ -179,6 +181,7 @@ export default defineComponent({
             if (response.success) {
               if (response.data.wallet_address === "None") {
                 hasWalletAddress.value = false;
+                withdrawAmount.value = 0;
               } else {
                 hasWalletAddress.value = true;
                 walletAddress.value = response.data.wallet_address;
@@ -188,6 +191,7 @@ export default defineComponent({
               }
             } else {
               hasWalletAddress.value = false;
+              withdrawAmount.value = 0;
 
               if(response.error === "address_incorrect") {
                 events.emit('showNotification', {
@@ -207,7 +211,6 @@ export default defineComponent({
                 });
               }
             }
-
             isLoadingData.value = false;
           })
           .catch(error => {
@@ -218,11 +221,18 @@ export default defineComponent({
               icon: 'withdraw',
               sticker: 'block_duck'
             });
-
+            withdrawAmount.value = 0;
             hasWalletAddress.value = false;
             isLoadingData.value = false;
           });
     };
+
+    // Следим за изменением withdrawAmount и ограничиваем его значением balance
+    watch(withdrawAmount, (newVal) => {
+      if (newVal > balance.value) {
+        withdrawAmount.value = balance.value;
+      }
+    });
 
     onMounted(async () => {
       apiService.getWithdrawalInfo(cryptoTypeMapping[cryptoNetwork.value])
@@ -238,7 +248,7 @@ export default defineComponent({
             }
 
             // Если address равен "None", оставляем поля как прочерк
-              if (response.data.wallet_address === "None") {
+            if (response.data.wallet_address === "None") {
               hasWalletAddress.value = false;
             } else {
               hasWalletAddress.value = true;

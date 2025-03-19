@@ -275,6 +275,12 @@ export default defineComponent({
   overflow: hidden; /* убираем прокрутку внутри контейнера */
 }
 
+.cropper {
+  flex: 1;
+  height: 50vh;
+  width: 100%;
+}
+
 /* Обеспечиваем, чтобы кнопки в cropper-оверлее были растянуты по горизонтали с отступом 2vh */
 .cropper-buttons {
   display: flex;

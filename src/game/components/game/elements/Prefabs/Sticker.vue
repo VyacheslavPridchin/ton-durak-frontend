@@ -19,14 +19,13 @@
 
 <script setup lang="ts">
 import { ref, defineProps, computed, onMounted, onUnmounted, nextTick, shallowRef } from 'vue';
-import { Vue3Lottie } from 'vue3-lottie';
 import gsap from 'gsap';
 import '../../../../../services/lottie-player';
 
 const props = defineProps<{ emote: string; size: number }>();
 
 const activeSticker = shallowRef<boolean>(false);
-const stickerRef = shallowRef<InstanceType<typeof Vue3Lottie> | null>(null);
+const stickerRef = shallowRef<InstanceType<any> | null>(null);
 const stickerContainerRef = ref<HTMLElement | null>(null);
 const loaderRef = ref<HTMLElement | null>(null);
 

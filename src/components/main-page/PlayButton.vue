@@ -92,13 +92,12 @@ export default defineComponent({
           rule === 'Классический' ? '0' : rule === 'Переводной' ? '1' : rule
       );
 
-      try {
-        const response = await apiService.quickGame(formattedBets, formattedPlayers, formattedRules);
+      apiService.quickGame(formattedBets, formattedPlayers, formattedRules).then((response) => {
         console.log('Response from quickGame:', response);
-      } catch (err) {
+      }).catch((err) => {
         console.error('Error calling quickGame:', err);
-      }
-    };
+      });
+    }
 
     const onIconClick = () => {
       events.emit('showPopup', 'gameSettings');

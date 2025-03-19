@@ -345,11 +345,7 @@ class ApiService {
     }
 
     // POST /quickgame
-    public async quickGame(
-        bids: string[],
-        playerAmounts: string[],
-        gameTypes: string[]
-    ): Promise<ApiResponse<any>> {
+    public async quickGame(bids: string[], playerAmounts: string[], gameTypes: string[]): Promise<ApiResponse<any>> {
         const endpoint = `/quickgame`;
         const payload = {
             bids,

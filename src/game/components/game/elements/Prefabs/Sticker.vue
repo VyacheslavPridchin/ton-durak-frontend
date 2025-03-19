@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { ref, defineProps, computed, onMounted, onUnmounted, nextTick, shallowRef } from 'vue';
 import gsap from 'gsap';
-import '../../../../../services/lottie-player';
+import '@/lottie-player';
 
 const props = defineProps<{ emote: string; size: number }>();
 

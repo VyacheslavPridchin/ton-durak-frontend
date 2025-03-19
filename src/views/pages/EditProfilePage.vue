@@ -145,7 +145,7 @@ export default defineComponent({
 
           targetCanvas.toBlob((blob: Blob | null) => {
             if (blob) {
-              apiService.updateProfileEdit(blob)
+              apiService.updateProfileEdit(undefined, blob)
                   .then(() => {
                     router.push(`/profile`);
                     setTimeout(() => {

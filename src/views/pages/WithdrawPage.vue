@@ -39,7 +39,7 @@
           />
           <button
               type="button"
-              class="max-button"
+              class="max-button animate-press"
               @click="setMaxAmount"
               :disabled="!hasWalletAddress"
           >

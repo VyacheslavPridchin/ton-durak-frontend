@@ -195,6 +195,8 @@ class NetworkManager {
     public async RefreshTokens(): Promise<void> {
         try {
             const refreshToken = ApiService.refreshToken;
+            console.log(refreshToken);
+
             if (!refreshToken) {
                 console.error("Refresh токен недоступен!");
                 return;

@@ -245,6 +245,9 @@ class ApiService {
         if (response.success && response.data?.user_data?.jwt) {
             this.accessToken = response.data.user_data.jwt.access_token;
             this.refreshToken = response.data.user_data.jwt.refresh_token;
+
+            console.log(this.refreshToken);
+
             this.saveTokensToCache();
         }
         return response;

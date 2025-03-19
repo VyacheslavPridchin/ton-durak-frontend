@@ -13,7 +13,6 @@
     "skipLibCheck": true,
     "noEmitOnError": false,
     "noEmit": false,
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "esModuleInterop": true
   }

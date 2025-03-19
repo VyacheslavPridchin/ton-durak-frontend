@@ -83,8 +83,12 @@ export default defineComponent({
       const selectedRule = JSON.parse(localStorage.getItem('selectedRule') || '["Переводной"]');
 
       // Форматируем данные:
-      // Bet: убираем знак доллара
-      const formattedBets = selectedBet.map((bet: string) => bet.replace('$', ''));
+      // Bet: убираем знак доллара и пытаемся спарсить текст в число
+      const formattedBets = selectedBet.map((bet: string) => {
+        const cleaned = bet.replace('$', '');
+        const numberValue = parseFloat(cleaned);
+        return !isNaN(numberValue) ? numberValue : bet;
+      });
       // Players: приводим к строкам
       const formattedPlayers = selectedPlayers.map((player: number | string) => String(player));
       // Rule: "Классический" -> "0", "Переводной" -> "1"
@@ -92,12 +96,14 @@ export default defineComponent({
           rule === 'Классический' ? '0' : rule === 'Переводной' ? '1' : rule
       );
 
-      apiService.quickGame(formattedBets, formattedPlayers, formattedRules).then((response) => {
-        console.log('Response from quickGame:', response);
-      }).catch((err) => {
-        console.error('Error calling quickGame:', err);
-      });
-    }
+      apiService.quickGame(formattedBets, formattedPlayers, formattedRules)
+          .then((response) => {
+            console.log('Response from quickGame:', response);
+          })
+          .catch((err) => {
+            console.error('Error calling quickGame:', err);
+          });
+    };
 
     const onIconClick = () => {
       events.emit('showPopup', 'gameSettings');

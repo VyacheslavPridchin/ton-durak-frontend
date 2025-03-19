@@ -204,7 +204,7 @@ function updateHighlightPositions(isForward: boolean = true) {
   bottom: 0;
 }
 
-/* Анимация для высоты, padding и opacity футера */
+/* Transition для анимации высоты, padding и opacity */
 .footer-transition-enter-active,
 .footer-transition-leave-active {
   transition: height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;

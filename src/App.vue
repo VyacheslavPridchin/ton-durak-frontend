@@ -63,6 +63,7 @@ onMounted(async () => {
       } else {
         NetworkManager.CloseGame(router);
       }
+      return;
     }
 
     router.back();

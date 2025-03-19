@@ -26,7 +26,7 @@
           <span style="font-weight: 500;">{{ cryptoNetwork }}</span> адрес.
         </a>
         <h2 style="margin-bottom: 1vh">Сумма вывода</h2>
-        <!-- Если кошелек не установлен, показываем прочерк -->
+        <!-- Поле ввода суммы с деактивацией, если кошелек не установлен -->
         <div class="input-wrapper">
           <input
               type="number"
@@ -135,7 +135,7 @@ export default defineComponent({
     const isButtonDisabled = computed(() => {
       return (
           !hasWalletAddress.value ||
-          walletAddress.value.trim() === '' ||
+          String(walletAddress.value || '').trim() === '' ||
           withdrawAmount.value < minAmount.value
       );
     });
@@ -153,7 +153,7 @@ export default defineComponent({
     };
 
     const withdraw = () => {
-      if (!walletAddress.value.trim()) return;
+      if (String(walletAddress.value || '').trim() === '') return;
       if (withdrawAmount.value < minAmount.value) return;
 
       const queryParams = new URLSearchParams({
@@ -171,7 +171,7 @@ export default defineComponent({
 
     // Отправка запроса обновления адреса при потере фокуса
     const updateAddress = () => {
-      if (walletAddress.value.trim() === '') return;
+      if (String(walletAddress.value || '').trim() === '') return;
       apiService.postUpdateAddress(walletAddress.value, cryptoTypeMapping[cryptoNetwork.value])
           .then(response => {
             if (response.success) {
@@ -210,7 +210,7 @@ export default defineComponent({
               return;
             }
 
-            // Если wallet_address равен "None", оставляем поля как прочерк
+            // Если address равен "None", оставляем поля как прочерк
             if (response.data.address === "None") {
               hasWalletAddress.value = false;
             } else {

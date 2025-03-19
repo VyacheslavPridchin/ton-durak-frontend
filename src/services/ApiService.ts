@@ -25,10 +25,8 @@ export interface AuthResponseData {
 }
 
 export interface RefreshResponseData {
-    jwt: {
-        access_token: string;
-        refresh_token: string;
-    };
+    access_token: string;
+    refresh_token: string;
 }
 
 // Интерфейсы для GET запросов
@@ -147,8 +145,8 @@ export interface WithdrawalInfoData {
 // Класс для работы с API как синглтон-сервис с кэшированием токенов
 class ApiService {
     private axiosInstance: AxiosInstance;
-    private accessToken: string | null = null;
-    private refreshToken: string | null = null;
+    public accessToken: string | null = null;
+    public refreshToken: string | null = null;
 
     constructor() {
         this.axiosInstance = axios.create({
@@ -184,11 +182,12 @@ class ApiService {
         method: "GET" | "POST" | "PUT" = "GET",
         payload?: any,
         extraHeaders?: Record<string, string>,
-        retry: boolean = true  // флаг повторной попытки
+        retry: boolean = true,  // флаг повторной попытки
+        useRefreshToken: boolean = false,
     ): Promise<ApiResponse<T>> {
         const headers = {
             ...this.axiosInstance.defaults.headers.common,
-            ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),
+            ...(this.accessToken ? { Authorization: `Bearer ${useRefreshToken ? this.refreshToken : this.accessToken}` } : {}),
             ...extraHeaders,
         };
 
@@ -211,16 +210,20 @@ class ApiService {
 
         // Если токен истек и это первая попытка, обновляем токены и повторяем запрос
         if (!apiResponse.success && apiResponse.error === "jwt_expired" && retry) {
-            const refreshResponse = await this.refreshTokens();
-            if (refreshResponse.success && refreshResponse.data?.jwt) {
-                this.accessToken = refreshResponse.data.jwt.access_token;
-                this.refreshToken = refreshResponse.data.jwt.refresh_token;
-                this.saveTokensToCache();
-                return this.request<T>(endpoint, method, payload, extraHeaders, false);
-            }
+            await this.refreshTokens();
+            return this.request<T>(endpoint, method, payload, extraHeaders, false);
         }
 
         return apiResponse;
+    }
+
+    public async refreshTokens(): Promise<void> {
+        const refreshResponse = await this.postRefreshTokens();
+        if (refreshResponse.success) {
+            this.accessToken = refreshResponse.data.access_token;
+            this.refreshToken = refreshResponse.data.refresh_token;
+            this.saveTokensToCache();
+        }
     }
 
     // Обработчик, обеспечивающий соответствие результата стандартному формату
@@ -338,10 +341,10 @@ class ApiService {
     }
 
     // POST /refresh
-    public async refreshTokens(): Promise<ApiResponse<RefreshResponseData>> {
+    public async postRefreshTokens(): Promise<ApiResponse<RefreshResponseData>> {
         const endpoint = `/refresh`;
         // Передаем retry=false, чтобы избежать рекурсии в случае неудачи
-        return this.request<RefreshResponseData>(endpoint, "POST", undefined, undefined, false);
+        return this.request<RefreshResponseData>(endpoint, "POST", undefined, undefined, false, true);
     }
 
     // POST /quickgame

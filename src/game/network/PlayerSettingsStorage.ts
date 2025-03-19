@@ -16,8 +16,8 @@ class PlayerSettingsStorage {
     playerId: '123',
     lobbyId: '',
     bid: 0,
-    jwt: '',
-    refreshToken: '',
+    // jwt: '',
+    // refreshToken: '',
     gameType: 0,
     playerState: '', // Хранит состояние текущего игрока
   };
@@ -34,8 +34,8 @@ class PlayerSettingsStorage {
       { event: EventType.MyPlayerIdSet, key: 'playerId' },
       { event: EventType.LobbyIdSet, key: 'lobbyId' },
       { event: EventType.BidSet, key: 'bid' },
-      { event: EventType.JwtSet, key: 'jwt' },
-      { event: EventType.RefreshTokenSet, key: 'refreshToken' },
+      // { event: EventType.JwtSet, key: 'jwt' },
+      // { event: EventType.RefreshTokenSet, key: 'refreshToken' },
       { event: EventType.GameTypeSet, key: 'gameType' },
     ]);
 
@@ -101,14 +101,14 @@ class PlayerSettingsStorage {
   public get bid(): number {
     return this._data.bid;
   }
-
-  public get jwt(): string {
-    return this._data.jwt;
-  }
-
-  public get refreshToken(): string {
-    return this._data.refreshToken;
-  }
+  //
+  // public get jwt(): string {
+  //   return this._data.jwt;
+  // }
+  //
+  // public get refreshToken(): string {
+  //   return this._data.refreshToken;
+  // }
 
   public get gameType(): number {
     return this._data.gameType;

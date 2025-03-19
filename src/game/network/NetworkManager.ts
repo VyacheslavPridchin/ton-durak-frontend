@@ -4,6 +4,8 @@ import PlayerSettingsStorage from "./PlayerSettingsStorage";
 // import userService from "../../services/user.service";
 // import TokenService from "../../services/token.service";
 import { EventService, EventType } from "./EventService.ts";
+import ApiService from "@/services/ApiService.ts";
+import apiService from "@/services/ApiService.ts";
 
 class NetworkManager {
     private static _instance: NetworkManager | null = null;
@@ -139,7 +141,7 @@ class NetworkManager {
     private async handleConnect(): Promise<void> {
         await this.RefreshTokens();
 
-        const token = PlayerSettingsStorage.jwt;
+        const token = ApiService.accessToken;
         const lobbyId = PlayerSettingsStorage.lobbyId;
 
         EventService.Instance.emit(EventType.Reconnect, false);
@@ -192,30 +194,33 @@ class NetworkManager {
 
     public async RefreshTokens(): Promise<void> {
         try {
-            const refreshToken = PlayerSettingsStorage.refreshToken;
+            const refreshToken = ApiService.refreshToken;
             if (!refreshToken) {
                 console.error("No refresh token available");
                 return;
             }
 
-            const response = await fetch('https://tondurakgame.com/refresh', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${refreshToken}`
-                }
-            });
+            await apiService.refreshTokens();
 
-            if (!response.ok) {
-                console.error("Failed to refresh token");
-                return;
-            }
-
-            const data = await response.json();
-            if (data.accessToken && data.refreshToken) {
-                EventService.Instance.emit(EventType.JwtSet, data.accessToken);
-                EventService.Instance.emit(EventType.RefreshTokenSet, data.refreshToken);
-            }
+            //
+            // const response = await fetch('https://tondurakgame.com/refresh', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Authorization': `Bearer ${refreshToken}`
+            //     }
+            // });
+            //
+            // if (!response.ok) {
+            //     console.error("Failed to refresh token");
+            //     return;
+            // }
+            //
+            // const data = await response.json();
+            // if (data.accessToken && data.refreshToken) {
+            //     EventService.Instance.emit(EventType.JwtSet, data.accessToken);
+            //     EventService.Instance.emit(EventType.RefreshTokenSet, data.refreshToken);
+            // }
         } catch (error) {
             console.error("Error refreshing token:", error);
         }

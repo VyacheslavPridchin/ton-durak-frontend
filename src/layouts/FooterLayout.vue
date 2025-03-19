@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer">
+  <footer v-if="shouldRender" class="footer">
     <div class="buttons-container" ref="containerRef">
       <div
           v-for="(highlight, i) in highlights"
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onUnmounted, nextTick } from 'vue'
+import {ref, onMounted, watch, onUnmounted, nextTick, computed} from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import ReferralsIcon from '@/assets/icons/referrals-menu-icon.svg'
 import MainIcon from '@/assets/icons/main-menu-icon.svg'
@@ -40,6 +40,15 @@ interface Highlight {
   baseTransform: string
   visible: boolean
 }
+
+interface FullscreenLayoutProps {
+  /** Пути, для которых данный лэйаут не отображается */
+  excludePaths: string[]
+}
+
+const props = defineProps<FullscreenLayoutProps>()
+
+const shouldRender = computed(() => !props.excludePaths.includes(route.path))
 
 const links: LinkItem[] = [
   { name: 'Referrals', icon: ReferralsIcon, route: '/referrals' },

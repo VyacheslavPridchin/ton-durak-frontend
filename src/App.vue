@@ -6,7 +6,7 @@
       <FullscreenLayout :excludePaths="roots" />
       <SliderLayout :sliderPaths="roots" />
     </div>
-    <Footer />
+    <Footer :excludePaths="['/game']"/>
   </div>
 </template>
 

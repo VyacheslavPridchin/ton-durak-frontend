@@ -27,7 +27,7 @@
         </a>
         <h2 style="margin-bottom: 1vh">Сумма вывода</h2>
         <!-- Поле ввода суммы с деактивацией, если кошелек не установлен -->
-        <div class="input-wrapper">
+        <div class="input-wrapper placeholder-container" :class="{ isLoading: isLoadingData }">
           <input
               type="number"
               class="input-box"
@@ -172,6 +172,8 @@ export default defineComponent({
     // Отправка запроса обновления адреса при потере фокуса
     const updateAddress = () => {
       if (String(walletAddress.value || '').trim() === '') return;
+      isLoadingData.value = true;
+
       apiService.postUpdateAddress(walletAddress.value, cryptoTypeMapping[cryptoNetwork.value])
           .then(response => {
             if (response.success) {
@@ -184,7 +186,29 @@ export default defineComponent({
                 networkFee.value = response.data.fee;
                 balance.value = response.data.balance;
               }
+            } else {
+              hasWalletAddress.value = false;
+
+              if(response.error === "address_incorrect") {
+                events.emit('showNotification', {
+                  title: "Неверный адрес!",
+                  subtitle: "Введен некорректный адрес.",
+                  icon: 'withdraw',
+                  sticker: 'block_duck'
+                });
+              }
+
+              if(response.error === "address_used") {
+                events.emit('showNotification', {
+                  title: "Неверный адрес!",
+                  subtitle: "Адрес кошелька уже используется на другом аккаунте.",
+                  icon: 'withdraw',
+                  sticker: 'block_duck'
+                });
+              }
             }
+
+            isLoadingData.value = false;
           })
           .catch(error => {
             console.error('Ошибка обновления адреса:', error);
@@ -194,6 +218,9 @@ export default defineComponent({
               icon: 'withdraw',
               sticker: 'block_duck'
             });
+
+            hasWalletAddress.value = false;
+            isLoadingData.value = false;
           });
     };
 
@@ -286,6 +313,7 @@ export default defineComponent({
   box-sizing: border-box;
   border-color: transparent;
   resize: vertical;
+  max-height: 10vh;
 }
 
 .input-wrapper {

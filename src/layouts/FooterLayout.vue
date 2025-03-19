@@ -1,29 +1,31 @@
 <template>
-  <footer v-if="shouldRender" class="footer">
-    <div class="buttons-container" ref="containerRef">
-      <div
-          v-for="(highlight, i) in highlights"
-          :key="i"
-          class="highlight"
-          :style="highlight.style"
-          :ref="el => highlightsRefs[i] = el"
-      ></div>
-      <div
-          v-for="(item, index) in links"
-          :key="item.name"
-          class="icon-wrapper"
-          :class="{ active: currentIndex === index }"
-          @click="navigate(item.route)"
-          :ref="el => iconRefs[index] = el"
-      >
-        <img :src="item.icon" alt="icon" />
+  <transition name="footer-transition">
+    <footer v-if="shouldRender" class="footer">
+      <div class="buttons-container" ref="containerRef">
+        <div
+            v-for="(highlight, i) in highlights"
+            :key="i"
+            class="highlight"
+            :style="highlight.style"
+            :ref="el => highlightsRefs[i] = el"
+        ></div>
+        <div
+            v-for="(item, index) in links"
+            :key="item.name"
+            class="icon-wrapper"
+            :class="{ active: currentIndex === index }"
+            @click="navigate(item.route)"
+            :ref="el => iconRefs[index] = el"
+        >
+          <img :src="item.icon" alt="icon" />
+        </div>
       </div>
-    </div>
-  </footer>
+    </footer>
+  </transition>
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, watch, onUnmounted, nextTick, computed} from 'vue'
+import { ref, onMounted, watch, onUnmounted, nextTick, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import ReferralsIcon from '@/assets/icons/referrals-menu-icon.svg'
 import MainIcon from '@/assets/icons/main-menu-icon.svg'
@@ -47,7 +49,7 @@ interface FullscreenLayoutProps {
 }
 
 const props = defineProps<FullscreenLayoutProps>()
-
+const route = useRoute()
 const shouldRender = computed(() => !props.excludePaths.includes(route.path))
 
 const links: LinkItem[] = [
@@ -57,7 +59,6 @@ const links: LinkItem[] = [
 ]
 
 const router = useRouter()
-const route = useRoute()
 const currentIndex = ref(-1)
 const previousIndex = ref(-1)
 
@@ -65,7 +66,6 @@ const containerRef = ref<HTMLElement | null>(null)
 const iconRefs: (HTMLElement | any)[] = []
 const highlightsRefs: (HTMLElement | any)[]  = []
 
-// Храним оригинальную ширину highlight, не зависящую от scale
 const originalHighlightWidth = ref(0)
 
 const highlights = ref<Highlight[]>(
@@ -78,7 +78,7 @@ const highlights = ref<Highlight[]>(
             transition: 'transform 0.3s ease',
           },
           baseTransform: 'translateX(0px) translateY(0px) rotate(0deg)',
-          visible: true // изначально элементы видны (scale = 1)
+          visible: true
         }))
 )
 
@@ -115,7 +115,7 @@ function updateCurrentIndex() {
 
 function navigate(to: string) {
   // @ts-ignore
-  window.Telegram.WebApp.HapticFeedback.impactOccurred("medium");
+  window.Telegram.WebApp.HapticFeedback.impactOccurred("medium")
   router.push(to)
 }
 
@@ -131,14 +131,12 @@ function onResize() {
 }
 
 function updateHighlightPositions(isForward: boolean = true) {
-  // Если маршрут неизвестный — анимируем scale до 0
   if (currentIndex.value === -1) {
     highlights.value.forEach((highlight, index) => {
       const duration = 0.3 + index * 0.1
       const base = highlight.baseTransform || 'translateX(0px) translateY(0px) rotate(0deg)'
       highlight.style = {
         transform: `${base} scale(0)`,
-
         transition: `transform ${duration}s ease`,
         zIndex: 0
       }
@@ -153,7 +151,6 @@ function updateHighlightPositions(isForward: boolean = true) {
   const containerRect = containerRef.value.getBoundingClientRect()
   const iconRect = iconEl.getBoundingClientRect()
 
-  // Используем сохранённую оригинальную ширину (не зависит от scale)
   const highlightWidth = originalHighlightWidth.value || 0
   const baseLeft = iconRect.left - containerRect.left + iconRect.width / 2 - highlightWidth / 2
   const offset = 20
@@ -168,8 +165,6 @@ function updateHighlightPositions(isForward: boolean = true) {
     const duration = 0.3 + index * 0.1
 
     if (!highlight.visible) {
-      // Если элемент сейчас скрыт (scale = 0), то мгновенно ставим его в нужное место без анимации,
-      // а затем анимируем только масштабирование от 0 до 1.
       highlight.style = {
         transform: `${baseTransform} scale(0)`,
         transition: 'none',
@@ -184,7 +179,6 @@ function updateHighlightPositions(isForward: boolean = true) {
         highlight.visible = true
       }, 20)
     } else {
-      // Если элемент уже виден (scale = 1), анимируем перемещение (translation/rotate)
       highlight.style = {
         transform: `${baseTransform} scale(1)`,
         transition: `transform ${duration}s ease`,
@@ -208,6 +202,21 @@ function updateHighlightPositions(isForward: boolean = true) {
   margin-top: auto;
   padding: 1.5vh 0 2.5vh 0;
   bottom: 0;
+}
+
+/* Transition для анимации высоты футера */
+.footer-transition-enter-active,
+.footer-transition-leave-active {
+  transition: height 0.3s ease;
+  overflow: hidden;
+}
+.footer-transition-enter-from,
+.footer-transition-leave-to {
+  height: 0;
+}
+.footer-transition-enter-to,
+.footer-transition-leave-from {
+  height: 8vh;
 }
 
 .buttons-container {

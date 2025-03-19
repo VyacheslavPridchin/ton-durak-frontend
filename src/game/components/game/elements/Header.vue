@@ -1,9 +1,9 @@
 <template>
   <header class="header">
     <!-- Кнопка слева -->
-    <button class="circle-button" @click="handleButtonClick">
-      <img :src="gameInProgress ? '/assets/icons/flag-icon.svg' : '/assets/icons/exit-icon.svg'" alt="Action Icon" class="icon" />
-    </button>
+<!--    <button class="circle-button" @click="handleButtonClick">-->
+<!--      <img :src="gameInProgress ? '/assets/icons/flag-icon.svg' : '/assets/icons/exit-icon.svg'" alt="Action Icon" class="icon" />-->
+<!--    </button>-->
 
     <!-- Баланс справа -->
     <div v-if="balanceVisible" class="balance-panel">
@@ -27,14 +27,14 @@ const playersCtrl = ref<InstanceType<typeof PlayersController> | null>(null);
 
 const balance = ref('');
 const balanceVisible = ref(false);  // Переменная для отображения панели
-const gameInProgress = ref(false); // Состояние игры
+// const gameInProgress = ref(false); // Состояние игры
 
 const router = useRouter();
 
 const balanceClickCount = ref(0); // Счетчик кликов
 
-const setGameStarted = () => gameInProgress.value = true;
-const setGameEnded = () => gameInProgress.value = false;
+const setGameStarted = () => window.gameInProgress = true;
+const setGameEnded = () => window.gameInProgress = false;
 
 onMounted(() => {
   EventService.Instance.on(EventType.BalanceSet, setBalance);
@@ -61,11 +61,11 @@ function setBalance(extra: string) {
 }
 
 function handleButtonClick() {
-  if (gameInProgress.value) {
-    EventService.Instance.emit(EventType.ShowTryLeavePopup, undefined);
-  } else {
-    NetworkManager.CloseGame(router);
-  }
+  // if (gameInProgress.value) {
+  //   EventService.Instance.emit(EventType.ShowTryLeavePopup, undefined);
+  // } else {
+  //   NetworkManager.CloseGame(router);
+  // }
 }
 //
 // function handleBalanceClick() {
@@ -126,7 +126,7 @@ function handleButtonClick() {
 
 .balance-panel {
   position: absolute;
-  top: 50%;
+  top: 100%;
   right: 16px;
   transform: translateY(-50%);
   display: flex;

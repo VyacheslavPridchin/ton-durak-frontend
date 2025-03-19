@@ -18,6 +18,8 @@ import FullscreenLayout from "@/layouts/FullscreenLayout.vue";
 import SliderLayout from "@/layouts/slider/SliderLayout.vue";
 import Footer from "@/layouts/FooterLayout.vue";
 import NotificationLayout from "@/layouts/NotificationLayout.vue";
+import {EventService, EventType} from "@/game/network/EventService.ts";
+import NetworkManager from "@/game/network/NetworkManager.ts";
 
 const router = useRouter();
 const route = useRoute();
@@ -55,6 +57,14 @@ onMounted(async () => {
 
   // @ts-ignore
   window.Telegram.WebApp.BackButton.onClick(() => {
+    if(route.path === "/game"){
+      if (window.gameInProgress) {
+        EventService.Instance.emit(EventType.ShowTryLeavePopup, undefined);
+      } else {
+        NetworkManager.CloseGame(router);
+      }
+    }
+
     router.back();
   });
 });

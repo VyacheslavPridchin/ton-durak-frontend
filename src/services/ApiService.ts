@@ -25,8 +25,8 @@ export interface AuthResponseData {
 }
 
 export interface RefreshResponseData {
-    access_token: string;
-    refresh_token: string;
+    accessToken: string;
+    refreshToken: string;
 }
 
 // Интерфейсы для GET запросов
@@ -220,8 +220,8 @@ class ApiService {
     public async refreshTokens(): Promise<void> {
         const refreshResponse = await this.postRefreshTokens();
         if (refreshResponse.success) {
-            this.accessToken = refreshResponse.data.access_token;
-            this.refreshToken = refreshResponse.data.refresh_token;
+            this.accessToken = refreshResponse.data.accessToken;
+            this.refreshToken = refreshResponse.data.refreshToken;
             this.saveTokensToCache();
         }
     }

@@ -75,6 +75,8 @@ export default defineComponent({
     });
 
     const onButtonClick = async () => {
+      console.log('Клик по кнопке');
+
       // Получаем данные из localStorage
       const selectedPlayers = JSON.parse(localStorage.getItem('selectedPlayers') || '[3]');
       const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');

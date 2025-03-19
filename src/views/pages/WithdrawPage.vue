@@ -14,12 +14,13 @@
       </a>
       <div class="panel">
         <h2 style="margin-bottom: 0.5vh">Кошелек</h2>
-        <!-- Меняем input на textarea и добавляем событие blur -->
+        <!-- Добавлено @keydown.enter.prevent для скрытия клавиатуры без вставки новой строки -->
         <textarea
             class="input-box"
             placeholder="Введите адрес кошелька"
             v-model="walletAddress"
             @blur="updateAddress"
+            @keydown.enter.prevent="handleWalletEnter"
         ></textarea>
         <a class="secondary-text" style="margin-bottom: 1.5vh">
           Указывайте только
@@ -171,6 +172,12 @@ export default defineComponent({
       }, 200);
     };
 
+    // Обработчик нажатия Enter в поле ввода кошелька: скрывает клавиатуру и предотвращает вставку новой строки
+    const handleWalletEnter = (event: KeyboardEvent) => {
+      event.preventDefault();
+      hideKeyboard();
+    };
+
     // Отправка запроса обновления адреса при потере фокуса
     const updateAddress = () => {
       if (String(walletAddress.value || '').trim() === '') return;
@@ -289,6 +296,7 @@ export default defineComponent({
       setMaxAmount,
       withdraw,
       updateAddress,
+      handleWalletEnter,
       isLoadingData,
     };
   },

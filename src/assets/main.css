@@ -58,6 +58,10 @@ h1 {
   display: block;
 }
 
+div {
+  font-family: "Inter", serif;
+}
+
 button {
   overflow: hidden;
   border: none;

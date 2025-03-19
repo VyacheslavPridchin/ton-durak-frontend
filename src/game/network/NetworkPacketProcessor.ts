@@ -1,5 +1,5 @@
 import { EventService, EventType } from './EventService';
-import {
+import type {
   BasePacket,
   TransferPacket,
   SignatureExpiredPacket,
@@ -19,7 +19,6 @@ import {
 import { CardUtils } from '../utils/CardUtils';
 import PlayerSettingsStorage from './PlayerSettingsStorage';
 import NetworkManager from "./NetworkManager.ts";
-import TokenService from "../../services/token.service";
 import {Validator} from "../utils/Validator.ts";
 
 export class NetworkPacketProcessor {

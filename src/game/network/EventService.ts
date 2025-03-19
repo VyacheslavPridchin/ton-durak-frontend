@@ -1,5 +1,6 @@
 // EventService.ts
-import mitt, { Emitter, Handler } from 'mitt';
+import type { Emitter, Handler } from 'mitt';
+import mitt from 'mitt';
 import { CardUtils } from '../utils/CardUtils';
 
 // Enum для всех пакетов

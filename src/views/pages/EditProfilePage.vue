@@ -277,8 +277,7 @@ export default defineComponent({
 
 .cropper {
   flex: 1;       /* занимает всё доступное пространство */
-  width: 100%;   /* растягивается по ширине контейнера */
-  max-height: 100%;
+  height: 50vh;   /* растягивается по ширине контейнера */
 }
 
 .cropper-buttons {

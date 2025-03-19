@@ -144,8 +144,8 @@ export default defineComponent({
     top: 14%;
     z-index: 1;
     cursor: ne-resize;
-    width: 30px;
-    height: 30px;
+    width: 3vh;
+    height: 3vh;
     display: flex;
     align-items: center;
     justify-content: center;

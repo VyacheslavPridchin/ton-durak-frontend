@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, nextTick, onUnmounted } from "vue";
 import { gsap } from 'gsap';
-import { Vue3Lottie } from "vue3-lottie";
 import { EventService, EventType } from "../../../../network/EventService.ts";
 import { EmoteRequest } from "../../../../network/RequestPackets.ts";
 import NetworkManager from "../../../../network/NetworkManager.ts";
@@ -10,7 +9,7 @@ import Sticker from "../Prefabs/Sticker.vue";
 
 export default defineComponent({
   name: "StickerPopup",
-  components: {Sticker, Vue3Lottie },
+  components: {Sticker },
   setup() {
     const isVisible = ref<boolean>(false);
     const popupRef = ref<HTMLElement | null>(null);

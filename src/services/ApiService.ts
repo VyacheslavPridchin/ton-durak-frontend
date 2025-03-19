@@ -138,7 +138,7 @@ export interface WithdrawalInfoData {
     balance: number;
     minAmount: number;
     fee: number;
-    address: string;
+    wallet_address: string;
     price: string;
 }
 

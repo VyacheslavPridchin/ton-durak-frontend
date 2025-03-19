@@ -211,7 +211,7 @@ export default defineComponent({
             }
 
             // Если address равен "None", оставляем поля как прочерк
-            if (response.data.address === "None") {
+              if (response.data.wallet_address === "None") {
               hasWalletAddress.value = false;
             } else {
               hasWalletAddress.value = true;

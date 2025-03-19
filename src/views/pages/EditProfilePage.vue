@@ -279,6 +279,7 @@ export default defineComponent({
   flex: 1;
   height: 50vh;
   width: 100%;
+  background: transparent;
 }
 
 /* Обеспечиваем, чтобы кнопки в cropper-оверлее были растянуты по горизонтали с отступом 2vh */

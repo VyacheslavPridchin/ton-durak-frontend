@@ -303,15 +303,23 @@ class ApiService {
     }
 
     // PUT /screen/profile/edit - изменение профиля (например, смена имени или загрузка фото)
-    public async updateProfileEdit(name: string, file: File | Blob | undefined | null): Promise<ApiResponse<null>> {
+    public async updateProfileEdit(name: string | undefined, file: File | Blob | undefined | null): Promise<ApiResponse<null>> {
         if(file !== undefined && file !== null) {
             const formData = new FormData();
             formData.append("fileToUpload", file);
 
+            let endpoint = `/screen/profile/edit`;
+
             // Имя передаётся в query string
-            const endpoint = `/screen/profile/edit?name=${encodeURIComponent(name)}`;
+            if(name !== undefined)
+            {
+                endpoint = `/screen/profile/edit?name=${encodeURIComponent(name)}`;
+            }
+
             return this.request<null>(endpoint, "PUT", formData);
         } else {
+            if(name === undefined) throw new Error("Имя не указано!");
+
             const endpoint = `/screen/profile/edit?name=${encodeURIComponent(name)}`;
             return this.request<null>(endpoint, "PUT");
         }
@@ -329,7 +337,7 @@ class ApiService {
         return this.request<any>(endpoint, "POST");
     }
 
-// POST /refresh
+    // POST /refresh
     public async refreshTokens(): Promise<ApiResponse<RefreshResponseData>> {
         const endpoint = `/refresh`;
         // Передаем retry=false, чтобы избежать рекурсии в случае неудачи

@@ -37,6 +37,7 @@ import gsap from 'gsap';
 import { events } from '@/events.ts';
 // Импорт сервиса API (проверьте корректность пути)
 import apiService from '@/services/ApiService.ts';
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: 'PlayButton',
@@ -50,7 +51,7 @@ export default defineComponent({
     const playButton = ref<HTMLElement | null>(null);
     const iconButton = ref<HTMLElement | null>(null);
     const betText = ref('');
-
+    const router = useRouter();
     const hideHandler = () => {
       const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
       if (selectedBet.length > 1) {
@@ -98,10 +99,20 @@ export default defineComponent({
 
       apiService.quickGame(formattedBets, formattedPlayers, formattedRules)
           .then((response) => {
-            console.log('Response from quickGame:', response);
+            if(response.success == false) {
+              if(response.error == "no_balance") {
+                events.emit('showNotification', { title: "Недостаточно средств!", subtitle: "Пополните баланс для игры.", icon: 'deposit', sticker: 'block_duck' });
+                return;
+              }
+
+              events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не удалось начать игру.", icon: 'loss', sticker: 'block_duck' });
+              return;
+            }
+
+            router.push(`/game?host=${response.data.host}&lobbyId=${response.data.lobby_id}&playerId=${window.userData?.id}&language=ru`);
           })
           .catch((err) => {
-            console.error('Error calling quickGame:', err);
+            events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не удалось начать игру.", icon: 'loss', sticker: 'block_duck' });
           });
     };
 

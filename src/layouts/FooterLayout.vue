@@ -204,19 +204,23 @@ function updateHighlightPositions(isForward: boolean = true) {
   bottom: 0;
 }
 
-/* Transition для анимации высоты футера */
+/* Анимация для высоты, padding и opacity футера */
 .footer-transition-enter-active,
 .footer-transition-leave-active {
-  transition: height 0.3s ease;
+  transition: height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
   overflow: hidden;
 }
 .footer-transition-enter-from,
 .footer-transition-leave-to {
   height: 0;
+  padding: 0;
+  opacity: 0;
 }
 .footer-transition-enter-to,
 .footer-transition-leave-from {
   height: 8vh;
+  padding: 1.5vh 0 2.5vh 0;
+  opacity: 1;
 }
 
 .buttons-container {

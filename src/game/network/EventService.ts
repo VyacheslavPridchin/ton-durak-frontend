@@ -62,7 +62,7 @@ type Events = {
 };
 
 // Специфичные типы аргументов для событий
-type EventPayloads = {
+export type EventPayloads = {
   [EventType.StartApplication]: void;
   [EventType.RefreshStates]: boolean;
   [EventType.WelcomeOrReconnectionWelcome]: void;
@@ -153,7 +153,6 @@ export class EventService {
       handlerKeyOrMethod: string | Handler<EventPayloads[K]>,
       handler?: Handler<EventPayloads[K]>
   ) {
-    //console.log("on listener ", event);
 
     // Если передан строковый ключ, используем словарь для хранения обработчика
     if (typeof handlerKeyOrMethod === 'string') {
@@ -181,7 +180,6 @@ export class EventService {
       event: K,
       handlerKeyOrMethod: string | Handler<EventPayloads[K]>
   ) {
-    //console.log("off listener ", event, handlerKeyOrMethod);
 
     // Если передан строковый ключ, ищем обработчик в словаре
     if (typeof handlerKeyOrMethod === 'string') {

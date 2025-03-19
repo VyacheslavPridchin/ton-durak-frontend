@@ -1,3 +1,4 @@
+import type { EventPayloads } from './EventService'
 import { EventService, EventType } from './EventService';
 
 class PlayerSettingsStorage {
@@ -45,8 +46,7 @@ class PlayerSettingsStorage {
   // Универсальный метод подписки
   private subscribeToEvents(subscriptions: { event: EventType; key: string }[]): void {
     subscriptions.forEach(({ event, key }) => {
-      EventService.Instance.on(event, (value) => {
-        //console.log(`Set ${value} to ${key}`);
+      EventService.Instance.on(event as keyof EventPayloads, (value: any) => {
         this._data[key] = value;
       });
     });
@@ -57,7 +57,7 @@ class PlayerSettingsStorage {
     const index = playerIds.indexOf(this._data.playerId); // Найти индекс текущего игрока по его ID
     if (index !== -1) {
       this._data.playerState = states[index];
-      //console.log(`Updated state for player ${this._data.playerId}:`, this._data.playerState);
+      // console.log(`Updated state for player ${this._data.playerId}:`, this._data.playerState);
     }
   }
 

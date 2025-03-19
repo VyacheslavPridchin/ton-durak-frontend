@@ -361,6 +361,5 @@ class ApiService {
 
 }
 
-// Экспорт синглтон-сервиса, чтобы не создавать экземпляр каждый раз
 const apiService = new ApiService();
 export default apiService;

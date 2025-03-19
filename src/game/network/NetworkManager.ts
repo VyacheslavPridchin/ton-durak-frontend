@@ -196,7 +196,7 @@ class NetworkManager {
         try {
             const refreshToken = ApiService.refreshToken;
             if (!refreshToken) {
-                console.error("No refresh token available");
+                console.error("Refresh токен недоступен!");
                 return;
             }
 

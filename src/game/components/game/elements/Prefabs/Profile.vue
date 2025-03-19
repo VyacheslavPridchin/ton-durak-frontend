@@ -60,7 +60,7 @@ import { ImageCache } from '../../../../utils/ImageCache.ts';
 import { EventService, EventType } from '../../../../network/EventService';
 import { Localizator } from "../../../../utils/Localizator.ts";
 import { gsap } from 'gsap';
-import '../../../../../services/lottie-player';
+import '@/lottie-player';
 
 const props = defineProps<{
   id: string;
@@ -84,7 +84,7 @@ const remainingTime = ref(0);
 const timerFill = ref<HTMLElement | null>(null);
 const isImageLoaded = ref(false);
 const placeholder = ref('/assets/icons/default-profile-picture.svg');
-const durakIcon = ref<string | null>(null);
+const durakIcon = ref<string>("");
 const durakIconRef = ref<HTMLElement | null>(null);
 const stickerRef = ref<HTMLElement | null>(null);
 const visibleStatus = ref<string | null>(null);

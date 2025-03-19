@@ -36,7 +36,7 @@ import { defineComponent, ref, onMounted, onUnmounted } from 'vue';
 import gsap from 'gsap';
 import { events } from '@/events.ts';
 // Импорт сервиса API (проверьте корректность пути)
-import apiService from '@/services/apiService';
+import apiService from '@/services/ApiService';
 
 export default defineComponent({
   name: 'PlayButton',

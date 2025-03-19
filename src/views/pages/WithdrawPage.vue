@@ -14,18 +14,19 @@
       </a>
       <div class="panel">
         <h2 style="margin-bottom: 0.5vh">Кошелек</h2>
-        <input
-            type="text"
+        <!-- Меняем input на textarea и добавляем событие blur -->
+        <textarea
             class="input-box"
             placeholder="Введите адрес кошелька"
             v-model="walletAddress"
-            @keyup.enter="hideKeyboard"
-        />
+            @blur="updateAddress"
+        ></textarea>
         <a class="secondary-text" style="margin-bottom: 1.5vh">
           Указывайте только
           <span style="font-weight: 500;">{{ cryptoNetwork }}</span> адрес.
         </a>
         <h2 style="margin-bottom: 1vh">Сумма вывода</h2>
+        <!-- Если кошелек не установлен, показываем прочерк -->
         <div class="input-wrapper">
           <input
               type="number"
@@ -33,24 +34,38 @@
               placeholder="Введите сумму"
               v-model.number="withdrawAmount"
               @keyup.enter="hideKeyboard"
+              :disabled="!hasWalletAddress"
           />
-          <button type="button" class="max-button" @click="setMaxAmount">Max</button>
+          <button
+              type="button"
+              class="max-button"
+              @click="setMaxAmount"
+              :disabled="!hasWalletAddress"
+          >
+            Max
+          </button>
         </div>
         <a class="secondary-text" style="margin-bottom: 1.5vh">
-          Укажите сумму больше {{ minAmount }} {{ cryptoName }}
+          Укажите сумму больше <span style="font-weight: 500;">{{ displayedMinAmount }}</span>
         </a>
         <h2 style="margin-bottom: 1vh">Детали</h2>
         <div class="details-row">
           <h2 class="details-title">Минимальная сумма:</h2>
-          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">{{ minAmount }} {{ cryptoName }}</a>
+          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">
+            {{ displayedMinAmount }}
+          </a>
         </div>
         <div class="details-row" style="margin-bottom: 1.5vh">
           <h2 class="details-title">Комиссия сети:</h2>
-          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">{{ networkFee }} {{ cryptoName }}</a>
+          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">
+            {{ displayedNetworkFee }}
+          </a>
         </div>
         <div class="details-row">
           <h2>Итого</h2>
-          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">{{ result }}</a>
+          <a class="details-value placeholder-container" :class="{ isLoading: isLoadingData }">
+            {{ result }}
+          </a>
         </div>
       </div>
       <button
@@ -88,16 +103,27 @@ export default defineComponent({
 
     const cryptoName = ref(cryptoMapping[cryptoNetwork.value] || cryptoNetwork.value);
 
+    // Начальные числовые значения
     const minAmount = ref(10);
     const networkFee = ref(0.5);
     const balance = ref(0);
     const walletAddress = ref('');
     const withdrawAmount = ref(0);
+    // Флаг наличия адреса
+    const hasWalletAddress = ref(true);
 
-    // Изначально включаем плейсхолдеры
     const isLoadingData = ref(true);
 
+    // Если кошелек не установлен, показываем прочерки в деталях и отключаем ввод суммы
+    const displayedMinAmount = computed(() => {
+      return hasWalletAddress.value ? `${minAmount.value} ${cryptoName.value}` : '-';
+    });
+    const displayedNetworkFee = computed(() => {
+      return hasWalletAddress.value ? `${networkFee.value} ${cryptoName.value}` : '-';
+    });
+
     const result = computed(() => {
+      if (!hasWalletAddress.value) return '-';
       const amount = Number(withdrawAmount.value);
       if (amount < minAmount.value) {
         return '-';
@@ -107,7 +133,11 @@ export default defineComponent({
     });
 
     const isButtonDisabled = computed(() => {
-      return walletAddress.value.trim() === '' || withdrawAmount.value < minAmount.value;
+      return (
+          !hasWalletAddress.value ||
+          walletAddress.value.trim() === '' ||
+          withdrawAmount.value < minAmount.value
+      );
     });
 
     const hideKeyboard = () => {
@@ -139,6 +169,34 @@ export default defineComponent({
       }, 200);
     };
 
+    // Отправка запроса обновления адреса при потере фокуса
+    const updateAddress = () => {
+      if (walletAddress.value.trim() === '') return;
+      apiService.postUpdateAddress(walletAddress.value, cryptoTypeMapping[cryptoNetwork.value])
+          .then(response => {
+            if (response.success) {
+              if (response.data.address === "None") {
+                hasWalletAddress.value = false;
+              } else {
+                hasWalletAddress.value = true;
+                walletAddress.value = response.data.address;
+                minAmount.value = response.data.minAmount;
+                networkFee.value = response.data.fee;
+                balance.value = response.data.balance;
+              }
+            }
+          })
+          .catch(error => {
+            console.error('Ошибка обновления адреса:', error);
+            events.emit('showNotification', {
+              title: "Произошла ошибка!",
+              subtitle: "Ошибка обновления адреса.",
+              icon: 'withdraw',
+              sticker: 'block_duck'
+            });
+          });
+    };
+
     onMounted(async () => {
       apiService.getWithdrawalInfo(cryptoTypeMapping[cryptoNetwork.value])
           .then(response => {
@@ -152,12 +210,18 @@ export default defineComponent({
               return;
             }
 
-            // Устанавливаем данные из ответа
-            minAmount.value = response.data.minAmount;
-            networkFee.value = response.data.fee;
-            balance.value = response.data.balance;
+            // Если wallet_address равен "None", оставляем поля как прочерк
+            if (response.data.address === "None") {
+              hasWalletAddress.value = false;
+            } else {
+              hasWalletAddress.value = true;
+              walletAddress.value = response.data.address;
+              minAmount.value = response.data.minAmount;
+              networkFee.value = response.data.fee;
+              balance.value = response.data.balance;
+            }
 
-            isLoadingData.value = false; // Отключаем плейсхолдеры
+            isLoadingData.value = false;
           })
           .catch(error => {
             events.emit('showNotification', {
@@ -175,14 +239,19 @@ export default defineComponent({
       cryptoName,
       minAmount,
       networkFee,
+      balance,
       walletAddress,
       withdrawAmount,
+      hasWalletAddress,
+      displayedMinAmount,
+      displayedNetworkFee,
       result,
       isButtonDisabled,
       hideKeyboard,
-      withdraw,
-      isLoadingData,
       setMaxAmount,
+      withdraw,
+      updateAddress,
+      isLoadingData,
     };
   },
 });
@@ -215,6 +284,7 @@ export default defineComponent({
   font-size: 1.75vh;
   box-sizing: border-box;
   border-color: transparent;
+  resize: vertical;
 }
 
 .input-wrapper {
@@ -266,7 +336,7 @@ export default defineComponent({
   opacity: 0.6;
 }
 
-  /* Chrome, Safari, Edge, Opera */
+/* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;

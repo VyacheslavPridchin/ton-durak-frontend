@@ -362,6 +362,19 @@ class ApiService {
         return this.request<any>(endpoint, "POST", payload);
     }
 
+    // POST /update_address
+    public async postUpdateAddress(address: string, code: string): Promise<ApiResponse<WithdrawalInfoData>> {
+        const endpoint = `/update_address`;
+
+        const payload = {
+            address: address,
+            code: code,
+        };
+
+        // Передаем retry=false, чтобы избежать рекурсии в случае неудачи
+        return this.request<WithdrawalInfoData>(endpoint, "POST", payload, undefined, false, true);
+    }
+
 }
 
 const apiService = new ApiService();

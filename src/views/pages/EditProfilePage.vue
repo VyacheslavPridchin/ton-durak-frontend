@@ -66,7 +66,7 @@ import Stencil from "@/components/Stencil.vue";
 export default defineComponent({
   computed: {
     Stencil() {
-      return Stencil
+      return Stencil;
     }
   },
   components: { ProfilePanel, Cropper, Stencil },
@@ -197,7 +197,7 @@ export default defineComponent({
   max-width: 75vh;
 }
 
-.main-button{
+.main-button {
   width: 50%;
   height: 4.5vh;
   background-color: var(--blue-gradient);
@@ -275,15 +275,15 @@ export default defineComponent({
   overflow: hidden; /* убираем прокрутку внутри контейнера */
 }
 
-.cropper {
-  flex: 1;
-  height: 50vh;
-  width: 100%;
-}
-
+/* Обеспечиваем, чтобы кнопки в cropper-оверлее были растянуты по горизонтали с отступом 2vh */
 .cropper-buttons {
   display: flex;
-  justify-content: space-between;
+  width: 100%;
+  gap: 2vh;
   margin-top: 1vh;
+}
+
+.cropper-buttons button {
+  flex: 1;
 }
 </style>

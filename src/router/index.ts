@@ -1,5 +1,7 @@
+import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
-import TestView from '@/views/Test.vue'
+
+// import TestView from '@/views/Test.vue'
 import MainView from '@/views/pages/MainPage.vue'
 import TournamentView from '@/views/pages/TournamentPage.vue'
 import ProfileView from '@/views/pages/ProfilePage.vue'
@@ -13,7 +15,7 @@ import WithdrawView from "@/views/pages/WithdrawPage.vue";
 import DepositOptionsView from "@/views/pages/DepositOptionsPage.vue";
 import GameView from "@/game/App.vue";
 
-const routes = [
+const routes: RouteRecordRaw[]  = [
   {
     path: '/referrals',
     name: 'Referrals',

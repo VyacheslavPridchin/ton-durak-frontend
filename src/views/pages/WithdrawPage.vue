@@ -26,9 +26,9 @@
           Указывайте только
           <span style="font-weight: 500;">{{ cryptoNetwork }}</span> адрес.
         </a>
-        <h2 style="margin-bottom: 1vh">Сумма вывода</h2>
+        <h2 v-if="hasWalletAddress" style="margin-bottom: 1vh">Сумма вывода</h2>
         <!-- Поле ввода суммы с деактивацией, если кошелек не установлен -->
-        <div class="input-wrapper placeholder-container" style="overflow: visible" :class="{ isLoading: isLoadingData }">
+        <div v-if="hasWalletAddress" class="input-wrapper placeholder-container" style="overflow: visible" :class="{ isLoading: isLoadingData }">
           <input
               type="number"
               class="input-box"

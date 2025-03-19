@@ -33,21 +33,23 @@
       </div>
     </div>
 
-    <!-- Оверлей cropper -->
-    <div v-if="showCropper" class="cropper-overlay">
-      <div class="cropper-container">
-        <Cropper
-            ref="cropperRef"
-            class="cropper"
-            :src="selectedImage"
-            :stencil-component="Stencil"
-        />
-        <div class="cropper-buttons">
-          <button class="secondary-button" @click="cancelCrop">Отмена</button>
-          <button class="main-button" @click="cropAndSave">Сохранить</button>
+    <!-- Анимированный оверлей cropper -->
+    <transition name="fade">
+      <div v-if="showCropper" class="cropper-overlay">
+        <div class="cropper-container">
+          <Cropper
+              ref="cropperRef"
+              class="cropper"
+              :src="selectedImage"
+              :stencil-component="Stencil"
+          />
+          <div class="cropper-buttons">
+            <button class="secondary-button" @click="cancelCrop">Отмена</button>
+            <button class="main-button" @click="cropAndSave">Сохранить</button>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -292,5 +294,21 @@ export default defineComponent({
 
 .cropper-buttons button {
   flex: 1;
+}
+
+/* Анимация для cropper-оверлея */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+  transform: scale(1);
 }
 </style>

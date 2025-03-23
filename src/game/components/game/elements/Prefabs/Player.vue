@@ -180,7 +180,6 @@ defineExpose({
   height: 9vh;
 }
 
-/* Никнейм теперь масштабируется */
 .player-nickname {
   position: absolute;
   bottom: 110%;
@@ -193,9 +192,8 @@ defineExpose({
   justify-content: flex-end;
 }
 
-/* Текст никнейма адаптивен */
 .nickname-text {
-  font-size: 1.75vh;
+  font-size: 1.5vh;
   font-weight: 400;
   text-align: center;
   color: #fff;
@@ -213,7 +211,7 @@ defineExpose({
   background-color: rgba(255, 255, 255, 0.3);
   border-radius: 2vh;
   padding: 0.3vh 1.4vh;
-  font-size: 1.2vh;
+  font-size: 1.25vh;
   max-width: 10vh;
   font-weight: 600;
   color: #fff;

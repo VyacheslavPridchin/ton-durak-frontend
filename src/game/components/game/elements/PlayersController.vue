@@ -296,7 +296,7 @@ onUnmounted(() => {
 <style scoped>
 .players-controller {
   position: absolute;
-  top: 60%;
+  top: 70%;
   left: 50%;
   transform: translate(-50%, -30%);
   width: 300px;

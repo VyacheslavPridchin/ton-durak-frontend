@@ -141,7 +141,7 @@ function handleButtonClick() {
 }
 
 .balance-value {
-  font-size: 1vh;
+  font-size: 1.25vh;
   font-weight: 700;
   color: #ffffff;
   pointer-events: none;

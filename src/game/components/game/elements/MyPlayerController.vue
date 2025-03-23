@@ -1,3 +1,26 @@
+<template>
+  <div class="footer">
+    <Profile
+        class="raised-player"
+        :id="player.id"
+        :profileImage="player.profileImage"
+        :status="player.status"
+        :endTime="player.endTime"
+        :isDurak="player.isDurak"
+        :isMe="true"
+        @click="showEmotionsPopup"
+    />
+
+    <img
+        v-if="emoteIconIsActive"
+        class="smiley-icon"
+        :src="emotePopupIsActive ? '/assets/icons/close-emote-icon.svg' : '/assets/icons/emote-icon.svg'"
+        alt="smiley"
+        @click="showEmotionsPopup"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import Profile from './Prefabs/Profile.vue';
@@ -148,29 +171,6 @@ onUnmounted(() => {
 
 </script>
 
-<template>
-  <div class="footer">
-    <Profile
-      class="raised-player"
-      :id="player.id"
-      :profileImage="player.profileImage"
-      :status="player.status"
-      :endTime="player.endTime"
-      :isDurak="player.isDurak"
-      :isMe="true"
-      @click="showEmotionsPopup"
-    />
-
-    <img
-        v-if="emoteIconIsActive"
-        class="smiley-icon"
-        :src="emotePopupIsActive ? '/assets/icons/close-emote-icon.svg' : '/assets/icons/emote-icon.svg'"
-        alt="smiley"
-        @click="showEmotionsPopup"
-    />
-  </div>
-</template>
-
 <style scoped>
 .footer {
   position: absolute;
@@ -199,7 +199,7 @@ onUnmounted(() => {
 
 .smiley-icon {
   position: absolute;
-  bottom: 0.75vh;
+  bottom: 1.5vh;
   left: 50%;
   transform: translateX(-50%);
   width: 2vh;

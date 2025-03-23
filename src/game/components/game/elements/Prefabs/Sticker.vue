@@ -97,8 +97,9 @@ defineExpose({ play, stop, pause });
   justify-content: center;
   align-items: center;
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 75%;
   height: 75%;
   z-index: 0; /* Loader ниже */

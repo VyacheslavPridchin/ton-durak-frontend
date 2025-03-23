@@ -21,15 +21,17 @@
 
         <h2 style="margin-bottom: 1vh">Новое имя</h2>
         <!-- Если name_timer активен, вместо placeholder выводим таймер и блокируем ввод -->
-        <input
-            type="text"
-            class="input-box placeholder-container"
-            :class="{ isLoading: isLoadingData }"
-            :placeholder="nameFormattedTime ? nameFormattedTime : 'Введите новое имя'"
-            v-model="newName"
-            @keyup.enter="hideKeyboard"
-            :disabled="!!nameFormattedTime"
-        />
+        <div class="placeholder-container" :class="{ isLoading: isLoadingData }">
+          <input
+          type="text"
+          class="input-box"
+          :placeholder="nameFormattedTime ? nameFormattedTime : 'Введите новое имя'"
+          v-model="newName"
+          @keyup.enter="hideKeyboard"
+          :disabled="!!nameFormattedTime"
+          />
+        </div>
+
         <button
             class="main-button animate-press"
             style="width: 100%; margin-top: 2vh"
@@ -234,10 +236,14 @@ export default defineComponent({
         if (response.success && response.data) {
           nameDeadline.value = response.data.name_timer;
           photoDeadline.value = response.data.photo_timer;
+
+          updateTimers();
+          timerInterval = window.setInterval(updateTimers, 1000);
+          isLoadingData.value = false;
         } else {
           events.emit('showNotification', {
             title: "Ошибка!",
-            subtitle: "Ошибка получения таймеров.",
+            subtitle: "Ошибка получения данных.",
             icon: "profile",
             sticker: 'block_duck'
           });
@@ -245,16 +251,13 @@ export default defineComponent({
       } catch (error) {
         events.emit('showNotification', {
           title: "Ошибка!",
-          subtitle: "Ошибка получения таймеров.",
+          subtitle: "Ошибка получения данных.",
           icon: "profile",
           sticker: 'block_duck'
         });
         console.error('Ошибка получения таймеров:', error);
       }
 
-      updateTimers();
-      timerInterval = window.setInterval(updateTimers, 1000);
-      isLoadingData.value = false;
     });
 
     return {

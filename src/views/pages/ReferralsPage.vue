@@ -77,7 +77,7 @@ export default defineComponent({
       referrals.value = data.overview.referrals;
 
       const topReferrals = data.top_referrals.referrals;
-      if (topReferrals && topReferrals.length > 0) {
+      if (topReferrals) {
         // Сортируем по количеству заработанных средств (по убыванию)
         const sorted = topReferrals.slice().sort((a: any, b: any) => b.amount - a.amount);
         const maxAmount = sorted[0].amount || 0;

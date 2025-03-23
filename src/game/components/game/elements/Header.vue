@@ -141,10 +141,9 @@ function handleButtonClick() {
 }
 
 .balance-value {
-  font-size: 16px;
+  font-size: 1vh;
   font-weight: 700;
   color: #ffffff;
-  margin-right: 4px;
   pointer-events: none;
 }
 </style>

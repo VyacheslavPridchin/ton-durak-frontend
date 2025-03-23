@@ -314,7 +314,7 @@ const onShowEmote = async ({ playerId, emote }: { playerId: string, emote: strin
 .status-container {
   position: absolute;
   top: -0.2vh;
-  left: 5vh;
+  left: 6vh;
   z-index: 3;
   display: flex;
 }

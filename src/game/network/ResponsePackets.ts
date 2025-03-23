@@ -37,7 +37,7 @@ export interface WelcomePacket extends IPacket {
 export interface TransferPacket extends IPacket {
   type: string;
   lobby_id: string;
-  location: string;
+  host: string;
 }
 
 export interface PlayerListUpdatePacket extends IPacket {

@@ -86,7 +86,7 @@ export type EventPayloads = {
   [EventType.PlayerAmountSet]: number;
   [EventType.BidSet]: number;
   [EventType.DeckCardAmountChanged]: number;
-  [EventType.Transfer]: { lobbyId: string; location: string };
+  [EventType.Transfer]: { lobbyId: string; host: string };
   [EventType.TryAttackOrDefend]: CardUtils.Card;
   [EventType.TrumpSet]: CardUtils.Card;
   [EventType.PlayerIDsSet]: string[];

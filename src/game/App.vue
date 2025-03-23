@@ -3,18 +3,19 @@
 </template>
 
 <script setup lang="ts">
-import {useRoute, useRouter} from "vue-router";
-import { onMounted, onUnmounted } from 'vue';
-import GameScene from './components/game/elements/Game.vue';
-import NetworkManager from './network/NetworkManager';
+import { useRoute, useRouter } from "vue-router";
+import { onMounted, onUnmounted } from "vue";
+import GameScene from "./components/game/elements/Game.vue";
+import NetworkManager from "./network/NetworkManager";
 // import PlayerSettingsStorage from './network/PlayerSettingsStorage';
-import { EventService, EventType } from './network/EventService';
+import { EventService, EventType } from "./network/EventService";
 import { ImageCache } from "./utils/ImageCache";
 import { CardUtils } from "./utils/CardUtils";
 // import LogInterceptor from "./utils/LogInterceptor";
 // import TokenService from "../services/token.service"
 
 const router = useRouter();
+const route = useRoute();
 // let logger: LogInterceptor;
 
 function refreshStates() {
@@ -22,20 +23,22 @@ function refreshStates() {
 }
 
 function parseUrlParams() {
-  const params = useRoute()
-  const lobbyId = Array.isArray(params.query.lobbyId) ? params.query.lobbyId[0] : params.query.lobbyId;
+  const lobbyId = Array.isArray(route.query.lobbyId)
+      ? route.query.lobbyId[0]
+      : route.query.lobbyId;
   console.log("Lobby ID: ", lobbyId);
-  const playerId = Array.isArray(params.query.playerId) ? params.query.playerId[0] : params.query.playerId;
+  const playerId = Array.isArray(route.query.playerId)
+      ? route.query.playerId[0]
+      : route.query.playerId;
   console.log("Player ID: ", playerId);
-  const language = Array.isArray(params.query.language) ? params.query.language[0] : params.query.language;
+  const language = Array.isArray(route.query.language)
+      ? route.query.language[0]
+      : route.query.language;
   console.log("Language: ", language);
-  const host = Array.isArray(params.query.host) ? params.query.host[0] : params.query.host;
+  const host = Array.isArray(route.query.host)
+      ? route.query.host[0]
+      : route.query.host;
   console.log("Host: ", host);
-
-  // logger = LogInterceptor
-  //     .getInstance('https://tondurakgame.com/error', ['Telegram']);
-  //
-  // logger.setPlayerContext(playerId, lobbyId, TokenService.getLocalAccessToken());
 
   NetworkManager.setUrl(host);
 
@@ -50,13 +53,37 @@ function parseUrlParams() {
   }
 }
 
-function preloadImages(){
-  ImageCache.preloadImages(CardUtils.getEveryCardImagePaths("ton_default", true));
+function preloadImages() {
+  ImageCache.preloadImages(
+      CardUtils.getEveryCardImagePaths("ton_default", true)
+  );
   ImageCache.preloadImage("/assets/icons/durak-icon.svg");
   ImageCache.preloadImage("/assets/icons/balance-icon.svg");
   ImageCache.preloadImage("/assets/icons/timer-icon.svg");
   ImageCache.preloadImage("/assets/icons/reconnect-icon.svg");
   ImageCache.preloadImage("/assets/icons/trophy-icon.svg");
+}
+
+// Новый обработчик события Transfer
+function handleTransfer(eventData: { lobbyId: string; host: string }) {
+  console.log("Handle transfer: ", eventData);
+
+  NetworkManager.reconnectionRequired = false;
+  NetworkManager.close();
+
+  // Обновляем строку запроса с новым lobbyId и переходим по новому маршруту
+  router.push({
+    query: {
+      ...route.query,
+      lobbyId: eventData.lobbyId,
+      host: eventData.host,
+    },
+  });
+
+  NetworkManager.setUrl(eventData.host);
+  EventService.Instance.emit(EventType.LobbyIdSet, eventData.lobbyId);
+
+  NetworkManager.connect();
 }
 
 onMounted(() => {
@@ -68,35 +95,36 @@ onMounted(() => {
   // Считываем параметры из URL
   parseUrlParams();
 
-  // Получаем jwt токен
-  //const jwt_access_token = TokenService.getLocalAccessToken();
-
   preloadImages();
-
-  // Устанавливаем WebSocket URL
-  //NetworkManager.setUrl(import.meta.env.VITE_GAME_SERVER_URL);
 
   // Подключение к серверу
   NetworkManager.connect();
 
   // Добавляем слушатели событий
-  window.addEventListener('resize', refreshStates);
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
+  window.addEventListener("resize", refreshStates);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
       refreshStates();
     }
   });
+
+  // Отслеживание события Transfer
+  EventService.Instance.on(EventType.Transfer, handleTransfer);
 });
 
 onUnmounted(() => {
   console.log("App.vue: onUnmounted");
 
-  window.removeEventListener('resize', refreshStates);
-  document.removeEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
+  window.removeEventListener("resize", refreshStates);
+  // Для корректного удаления слушателя visibilitychange рекомендуется вынести функцию в отдельную переменную
+  document.removeEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
       refreshStates();
     }
   });
+
+  // Удаляем слушатель события Transfer
+  EventService.Instance.off(EventType.Transfer, handleTransfer);
 
   NetworkManager.CloseGame(router);
 });
@@ -104,7 +132,9 @@ onUnmounted(() => {
 
 <style>
 /* Глобальные стили */
-html, body, #app {
+html,
+body,
+#app {
   margin: 0;
   padding: 0;
   width: 100%;

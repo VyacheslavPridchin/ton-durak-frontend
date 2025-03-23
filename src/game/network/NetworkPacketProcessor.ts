@@ -91,7 +91,7 @@ export class NetworkPacketProcessor {
   private static handleTransferPacket(packet: TransferPacket): void {
     EventService.Instance.emit(EventType.Transfer, {
       lobbyId: packet.lobby_id,
-      location: packet.location,
+      host: packet.host,
     });
   }
 

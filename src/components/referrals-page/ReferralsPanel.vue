@@ -89,7 +89,7 @@ export default defineComponent({
       }).catch((err) => {
         events.emit('showNotification', {
           title: "Произошла ошибка!",
-          subtitle: "Произошла ошибка при зачислении реферальной выплаты.",
+          subtitle: "Произошла ошибка при зачислении.",
           icon: "referral",
           sticker: 'block_duck'
         });

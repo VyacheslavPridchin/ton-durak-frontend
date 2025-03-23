@@ -1,3 +1,16 @@
+<template>
+  <div class="footer">
+    <MyPlayerController />
+    <button
+        v-if="availableAction"
+        @click="handleAction"
+        class="action-button"
+    >
+      {{ availableActionText }}
+    </button>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import gsap from 'gsap';
@@ -121,19 +134,6 @@ const handleAction = () => {
 };
 
 </script>
-
-<template>
-  <div class="footer">
-    <MyPlayerController />
-    <button
-      v-if="availableAction"
-      @click="handleAction"
-      class="action-button"
-    >
-      {{ availableActionText }}
-    </button>
-  </div>
-</template>
 
 <style scoped>
 .footer {

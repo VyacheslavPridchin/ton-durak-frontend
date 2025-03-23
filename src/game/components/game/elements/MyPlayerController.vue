@@ -199,10 +199,10 @@ onUnmounted(() => {
 
 .smiley-icon {
   position: absolute;
-  bottom: 5px;
+  bottom: 0.75vh;
   left: 50%;
   transform: translateX(-50%);
-  width: 20px;
-  height: 20px;
+  width: 2vh;
+  height: 2vh;
 }
 </style>

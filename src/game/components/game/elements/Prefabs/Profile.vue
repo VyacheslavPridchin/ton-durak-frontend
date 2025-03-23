@@ -230,8 +230,8 @@ const onShowEmote = async ({ playerId, emote }: { playerId: string, emote: strin
 
 <style scoped>
 .profile {
-  width: 8vh; /* Пропорционально высоте экрана */
-  height: 8vh;
+  width: 9vh; /* Пропорционально высоте экрана */
+  height: 9vh;
   border-radius: 50%;
   background: white;
   display: flex;
@@ -314,7 +314,7 @@ const onShowEmote = async ({ playerId, emote }: { playerId: string, emote: strin
 .status-container {
   position: absolute;
   top: -0.2vh;
-  left: 8vh;
+  left: 5vh;
   z-index: 3;
   display: flex;
 }
@@ -322,7 +322,7 @@ const onShowEmote = async ({ playerId, emote }: { playerId: string, emote: strin
 .status {
   background: white;
   border: 0.2vh solid;
-  font-size: 1.5vh;
+  font-size: 1.2vh;
   font-weight: 600;
   border-radius: 5vh;
   padding: 0.2vh 0.8vh;

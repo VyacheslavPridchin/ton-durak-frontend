@@ -139,8 +139,8 @@ defineExpose({
   position: absolute;
   left: 0;
   top: 0;
-  width: 8vh; /* Пропорционально высоте экрана */
-  height: 8vh;
+  width: 9vh; /* Пропорционально высоте экрана */
+  height: 9vh;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.6);
   display: flex;
@@ -176,8 +176,8 @@ defineExpose({
 
 /* Адаптивное изображение в пустом интерфейсе */
 .empty-image {
-  width: 8vh;
-  height: 8vh;
+  width: 9vh;
+  height: 9vh;
 }
 
 /* Никнейм теперь масштабируется */
@@ -186,7 +186,7 @@ defineExpose({
   bottom: 110%;
   left: 50%;
   transform: translateX(-50%);
-  width: 10vh;
+  width: 14vh;
   height: 5vh;
   display: flex;
   flex-direction: column;
@@ -195,7 +195,7 @@ defineExpose({
 
 /* Текст никнейма адаптивен */
 .nickname-text {
-  font-size: 2vh;
+  font-size: 1.75vh;
   font-weight: 400;
   text-align: center;
   color: #fff;
@@ -213,7 +213,7 @@ defineExpose({
   background-color: rgba(255, 255, 255, 0.3);
   border-radius: 2vh;
   padding: 0.3vh 1.4vh;
-  font-size: 1.5vh;
+  font-size: 1.2vh;
   max-width: 10vh;
   font-weight: 600;
   color: #fff;

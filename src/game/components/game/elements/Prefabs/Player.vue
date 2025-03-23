@@ -139,8 +139,8 @@ defineExpose({
   position: absolute;
   left: 0;
   top: 0;
-  width: 11vh; /* Пропорционально высоте экрана */
-  height: 11vh;
+  width: 8vh; /* Пропорционально высоте экрана */
+  height: 8vh;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.6);
   display: flex;
@@ -176,8 +176,8 @@ defineExpose({
 
 /* Адаптивное изображение в пустом интерфейсе */
 .empty-image {
-  width: 11vh;
-  height: 11vh;
+  width: 8vh;
+  height: 8vh;
 }
 
 /* Никнейм теперь масштабируется */

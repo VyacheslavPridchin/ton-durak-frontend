@@ -230,8 +230,8 @@ const onShowEmote = async ({ playerId, emote }: { playerId: string, emote: strin
 
 <style scoped>
 .profile {
-  width: 11vh; /* Пропорционально высоте экрана */
-  height: 11vh;
+  width: 8vh; /* Пропорционально высоте экрана */
+  height: 8vh;
   border-radius: 50%;
   background: white;
   display: flex;

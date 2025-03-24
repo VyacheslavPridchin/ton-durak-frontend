@@ -112,16 +112,16 @@ export default defineComponent({
       isLoading.value = true;
       console.log('Клик по кнопке');
 
-      const selectedPlayers = JSON.parse(localStorage.getItem('selectedPlayers') || '[3]');
-      const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
-      const selectedRule = JSON.parse(localStorage.getItem('selectedRule') || '["Переводной"]');
+      const selectedPlayers = JSON.parse(localStorage.getItem('selectedPlayers') || '[2]');
+      const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || `["$${props.bids[0]}"]`);
+      const selectedRule = JSON.parse(localStorage.getItem('selectedRule') || '["Классический", "Переводной"]');
 
       const formattedBets = selectedBet.map((bet: string) => {
         const cleaned = bet.replace('$', '');
         const numberValue = parseFloat(cleaned);
         return !isNaN(numberValue) ? numberValue : bet;
       });
-      const formattedPlayers = selectedPlayers.map((player: number | string) => String(player));
+      const formattedPlayers = selectedPlayers.filter((player: number) => player >= 2).map((player: number | string) => String(player));
       const formattedRules = selectedRule.map((rule: string) =>
           rule === 'Классический' ? '0' : rule === 'Переводной' ? '1' : rule
       );

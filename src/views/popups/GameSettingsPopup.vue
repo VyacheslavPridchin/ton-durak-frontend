@@ -67,7 +67,7 @@ export default defineComponent({
     const isLoadingData = ref(true);
 
     const loadSettings = () => {
-      selectedPlayers.value = JSON.parse(localStorage.getItem('selectedPlayers') || '[1]');
+      selectedPlayers.value = JSON.parse(localStorage.getItem('selectedPlayers') || '[2]');
       selectedRule.value = JSON.parse(localStorage.getItem('selectedRule') || '["Классический", "Переводной"]');
       selectedBet.value = JSON.parse(localStorage.getItem('selectedBet') || '[]');
     };

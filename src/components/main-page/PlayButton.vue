@@ -112,9 +112,13 @@ export default defineComponent({
       isLoading.value = true;
       console.log('Клик по кнопке');
 
-      const selectedPlayers = JSON.parse(localStorage.getItem('selectedPlayers') || '[2]');
+      let selectedPlayers = JSON.parse(localStorage.getItem('selectedPlayers') || '[2]');
       const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || `["$${props.bids[0]}"]`);
       const selectedRule = JSON.parse(localStorage.getItem('selectedRule') || '["Классический", "Переводной"]');
+
+
+      selectedPlayers = selectedPlayers.filter((item) => item >= 2);
+      if(selectedPlayers.value.length === 0) { selectedPlayers.value.push(2); }
 
       const formattedBets = selectedBet.map((bet: string) => {
         const cleaned = bet.replace('$', '');

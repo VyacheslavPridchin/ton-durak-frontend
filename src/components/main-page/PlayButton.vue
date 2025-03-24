@@ -65,14 +65,18 @@ export default defineComponent({
     const isLoading = ref(false);
     const router = useRouter();
 
-    watch(props.bids, () => {
-      const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
+    watch(props.bids, (newBids) => {
+      let selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
+      console.log("cached selected bet: ", selectedBet);
 
-      const betOptions = props.bids.map(b => `$${b}`);
+      const betOptions = newBids.map(b => `$${b}`);
+      console.log("betOptions: ", betOptions);
 
-      selectedBet.value = selectedBet.value.filter(b => betOptions.includes(b));
-      if (selectedBet.value.length === 0 && betOptions.length > 0) {
-        selectedBet.value = [betOptions[0]];
+      selectedBet = selectedBet.filter(b => betOptions.includes(b));
+      console.log("filtered selected bet: ", selectedBet);
+
+      if (selectedBet.length === 0 && betOptions.length > 0) {
+        selectedBet = [betOptions[0]];
       }
 
       if (selectedBet.length > 1) {

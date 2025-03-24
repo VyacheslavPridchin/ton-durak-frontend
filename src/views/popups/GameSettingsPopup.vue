@@ -8,7 +8,7 @@
         <button
             v-for="option in playerOptions"
             :key="option"
-            :class="['animate-press', 'secondary-button', { selected: (selectedPlayers.includes(option) && option > 1) }]"
+            :class="['secondary-button', { selected: (selectedPlayers.includes(option) && option > 1)}, { 'animate-press': option > 1}]"
             @click="togglePlayers(option)"
             :disabled="option > 1"
         >
@@ -184,7 +184,7 @@ export default defineComponent({
   outline: 0.2vh solid #2D83EC;
 }
 
-button.disabled {
+button:disabled {
   opacity: 0.3;
 }
 </style>

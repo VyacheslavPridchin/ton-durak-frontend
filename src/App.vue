@@ -70,7 +70,8 @@ onMounted(async () => {
     router.back();
   });
 
-  events.emit("showPopup", "onBoarding");
+  // if(window.onBoardingRequired)
+    events.emit("showPopup", "onBoarding");
 });
 </script>
 

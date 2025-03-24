@@ -73,15 +73,15 @@ export default defineComponent({
 </script>
 
 <style scoped>
+h1{
+  margin-bottom: 0.5vh;
+}
+
 .popup-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   padding: 0 2vh;
   margin: 0 auto;
-  text-align: center;
-  height: 100%;
 }
 
 .slide {

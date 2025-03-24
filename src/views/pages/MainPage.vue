@@ -4,7 +4,7 @@
       <LeaguePanel ref="leaguePanelRef" :rank="rank" :division="division" :progress="progress" />
       <TournamentPanel ref="tournamentPanelRef" :prize="tournamentPrize" :place="tournamentPlace" :deadline="tournamentDeadline" />
       <WalletPanel ref="walletPanelRef" :balance="walletBalance" :bonus="walletBonus" :showTopButton="true"/>
-      <PlayButton :amount="playAmount" />
+      <PlayButton :bids="bids"/>
     </div>
   </div>
 </template>
@@ -34,7 +34,7 @@ export default defineComponent({
     const walletBalance = ref(0);
     const walletBonus = ref(0);
 
-    const playAmount = ref(0);
+    const bids = ref<number[]>([]);
 
     // Рефы для компонентов
     const leaguePanelRef = ref();
@@ -57,8 +57,8 @@ export default defineComponent({
       walletBalance.value = data.finance.balance;
       walletBonus.value = data.finance.bonus_balance;
 
-      // PlayButton (пример)
-      playAmount.value = 3.14;
+      // PlayButton
+      bids.value = data.bids;
 
       leaguePanelRef.value.showData();
       tournamentPanelRef.value.showData();
@@ -125,6 +125,7 @@ export default defineComponent({
       leaguePanelRef,
       tournamentPanelRef,
       walletPanelRef,
+      bids
     };
   }
 });

@@ -52,9 +52,10 @@ import { useRouter } from "vue-router";
 export default defineComponent({
   name: 'PlayButton',
   props: {
-    amount: {
-      type: Number,
-      default: 2.5,
+    bids: {
+      type: Array<number>,
+      required: true,
+      default: [],
     },
   },
   setup(props) {
@@ -66,6 +67,14 @@ export default defineComponent({
 
     const hideHandler = () => {
       const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
+
+      const betOptions = props.bids.map(b => `$${b}`);
+
+      selectedBet.value = selectedBet.value.filter(b => betOptions.includes(b));
+      if (selectedBet.value.length === 0 && betOptions.length > 0) {
+        selectedBet.value = [betOptions[0]];
+      }
+
       if (selectedBet.length > 1) {
         betText.value = selectedBet.slice(0, -1).join(', ') + ' или ' + selectedBet[selectedBet.length - 1];
       } else {
@@ -184,7 +193,6 @@ export default defineComponent({
       iconButton,
       betText,
       isLoading,
-      amount: props.amount,
       onButtonClick,
       onIconClick,
       onButtonPointerEnter,

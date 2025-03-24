@@ -33,7 +33,7 @@
           />
         </div>
       </div>
-      <PlayButton :amount="3.14" />
+      <PlayButton :bids="bids"/>
     </div>
   </div>
 </template>
@@ -69,6 +69,8 @@ export default defineComponent({
     const myPlayerItem = ref<any>(null);
     const leaguePanelRef = ref();
 
+    const bids = ref<number[]>([]);
+
     const fetchTournamentData = async () => {
       const response = await apiService.getScreenTournament();
       if (response.success && response.data) {
@@ -78,6 +80,7 @@ export default defineComponent({
         progress.value = response.data.league.progress * 100;
         prize_pool.value = response.data.tournament.prize_pool;
         deadline.value = response.data.tournament.deadline;
+        bids.value = response.data.bids;
         // Обновляем список игроков и определяем isMe через сравнение id
         players.value = response.data.players.map((p) => ({
           id: p.user_id,
@@ -146,6 +149,7 @@ export default defineComponent({
       leaguePanelRef,
       prize_pool,
       deadline,
+      bids,
       openTournamentInformation
     };
   }

@@ -8,6 +8,7 @@
           :balance="balance"
           :referrals="referrals"
           :claimed="claimed"
+          :invite-link="inviteLink"
       />
 
       <h2 style="margin-top: 1vh; margin-bottom: 0.5vh">Топ рефералов</h2>
@@ -52,6 +53,7 @@ export default defineComponent({
     const balance = ref(0);
     const claimed = ref(0);
     const referrals = ref(0);
+    const inviteLink = ref("");
     const friends = ref<Friend[]>([]);
     const referralsPanelRef = ref<InstanceType<typeof ReferralsPanel> | null>(null);
 
@@ -75,6 +77,7 @@ export default defineComponent({
       balance.value = data.overview.unclaimed;
       claimed.value = data.overview.claimed;
       referrals.value = data.overview.referrals;
+      inviteLink.value = data.overview.link;
 
       const topReferrals = data.top_referrals.referrals;
       if (topReferrals || topReferrals.length !== 0) {
@@ -132,6 +135,7 @@ export default defineComponent({
       referrals,
       friends,
       referralsPanelRef,
+      inviteLink
     };
   },
 });

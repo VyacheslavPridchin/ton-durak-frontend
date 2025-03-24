@@ -63,6 +63,10 @@ export default defineComponent({
     claimed: {
       type: Number,
       required: true,
+    },
+    inviteLink: {
+      type: String,
+      required: true,
     }
   },
   setup(props) {
@@ -98,7 +102,15 @@ export default defineComponent({
     };
 
     const invite = async () => {
-
+      navigator.clipboard.writeText(props.inviteLink)
+          .then(() => {
+            events.emit('showNotification', { title: "Скопировано!", subtitle: "Адрес успешно скопирован.", icon: 'referral', sticker: 'like_duck' });
+            console.log('Адрес скопирован');
+          })
+          .catch(err => {
+            events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не получилось скопировать.", icon: 'referral', sticker: 'block_duck' });
+            console.error('Ошибка копирования адреса:', err);
+          });
     }
 
     const openInformationPopup = () => {

@@ -107,15 +107,20 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      const cachedResponse = loadCachedData();
-      if (cachedResponse && cachedResponse.data) {
-        updateData(cachedResponse.data);
-        if (referralsPanelRef.value && typeof referralsPanelRef.value.showData === 'function') {
-          referralsPanelRef.value.showData();
+      try {
+        const cachedResponse = loadCachedData();
+        if (cachedResponse && cachedResponse.data) {
+          updateData(cachedResponse.data);
+          if (referralsPanelRef.value && typeof referralsPanelRef.value.showData === 'function') {
+            referralsPanelRef.value.showData();
+          }
+        } else if (referralsPanelRef.value && typeof referralsPanelRef.value.hideData === 'function') {
+          referralsPanelRef.value.hideData();
         }
-      } else if (referralsPanelRef.value && typeof referralsPanelRef.value.hideData === 'function') {
-        referralsPanelRef.value.hideData();
+      } catch (error) {
+        console.log(error);
       }
+
       fetchReferralData();
     });
 

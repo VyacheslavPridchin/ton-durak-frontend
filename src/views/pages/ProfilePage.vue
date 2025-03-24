@@ -83,14 +83,20 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      const cachedResponse = loadCachedData();
-      if (cachedResponse && cachedResponse.data) {
-        updateData(cachedResponse.data);
-      } else if (profilePanelRef.value?.hideData) {
-        profilePanelRef.value.hideData();
+      try
+      {
+        const cachedResponse = loadCachedData();
+        if (cachedResponse && cachedResponse.data) {
+          updateData(cachedResponse.data);
+        } else if (profilePanelRef.value?.hideData) {
+          profilePanelRef.value.hideData();
+        }
+      } catch (error) {
+        console.log(error);
       }
       fetchScreenProfile();
     });
+
 
     return { username, profileName, profileImage, stats, profilePanelRef, onWalletButtonClick };
   }

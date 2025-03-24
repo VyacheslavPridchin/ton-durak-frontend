@@ -97,16 +97,21 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      // Сначала пытаемся загрузить данные из кэша
-      const cachedResponse = loadCachedData();
-      if (cachedResponse && cachedResponse.data) {
-        updateData(cachedResponse.data);
-      }
-      else
+      try
       {
-        leaguePanelRef.value.hideData();
-        tournamentPanelRef.value.hideData();
-        walletPanelRef.value.hideData();
+        // Сначала пытаемся загрузить данные из кэша
+        const cachedResponse = loadCachedData();
+        if (cachedResponse && cachedResponse.data) {
+          updateData(cachedResponse.data);
+        }
+        else
+        {
+          leaguePanelRef.value.hideData();
+          tournamentPanelRef.value.hideData();
+          walletPanelRef.value.hideData();
+        }
+      } catch (error) {
+        console.log(error);
       }
       // Запрос обновления данных с сервера (параллельно)
       fetchScreenMain();

@@ -73,15 +73,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-h1{
-  margin-bottom: 0.5vh;
-}
-
 .popup-container {
   display: flex;
   flex-direction: column;
   padding: 0 2vh;
   margin: 0 auto;
+  align-items: center;  /* Center elements horizontally */
+  text-align: center;   /* Center text horizontally */
 }
 
 .slide {
@@ -112,7 +110,6 @@ h1{
   margin-right: 1vh;
 }
 
-
 .indicators {
   margin-top: 1vh;
   display: flex;
@@ -129,5 +126,9 @@ h1{
 
 .indicator-dot.active {
   background: var(--blue-gradient);
+}
+
+h1 {
+  margin-bottom: 0.5vh;
 }
 </style>

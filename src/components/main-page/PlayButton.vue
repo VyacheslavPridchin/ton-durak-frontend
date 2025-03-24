@@ -8,14 +8,14 @@
       @pointerup="onButtonPointerUp"
       @click="onButtonClick"
   >
-    <span class="button-text">
       <template v-if="!isLoading">
-        Играть на {{ betText }}
+        <span class="button-text">
+          Играть на {{ betText }}
+        </span>
       </template>
       <template v-else>
         <div class="loader"></div>
       </template>
-    </span>
     <span class="right-content">
       <span class="separator"></span>
       <button

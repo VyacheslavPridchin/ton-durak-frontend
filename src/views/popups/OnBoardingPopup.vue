@@ -51,19 +51,19 @@ export default defineComponent({
         icon: WinIcon,
         title: "Зарабатывай USDT",
         text: "за каждую победу.",
-        sticker: "loving"
+        sticker: "money_duck"
       },
       {
         icon: WinIcon,
         title: "Зарабатывай до $100 каждую неделю",
         text: "за победы в еженедельном турнире",
-        sticker: "thinking"
+        sticker: "like_duck"
       },
       {
         icon: ReferralIcon,
         title: "Приглашай друзей",
         text: "и зарабатывай USDT за каждую их игру",
-        sticker: "waving"
+        sticker: "profile_duck"
       }
     ];
 

@@ -77,7 +77,7 @@ export default defineComponent({
       referrals.value = data.overview.referrals;
 
       const topReferrals = data.top_referrals.referrals;
-      if (topReferrals) {
+      if (topReferrals || topReferrals.length !== 0) {
         // Сортируем по количеству заработанных средств (по убыванию)
         const sorted = topReferrals.slice().sort((a: any, b: any) => b.amount - a.amount);
         const maxAmount = sorted[0].amount || 0;
@@ -90,6 +90,8 @@ export default defineComponent({
           // Не опускаем ниже 60%
           percent: Math.max((item.amount / maxAmount) * 100, 60),
         }));
+      } else {
+        friends.value = [];
       }
     };
 

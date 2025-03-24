@@ -121,7 +121,6 @@ export default defineComponent({
       tournamentDeadline,
       walletBalance,
       walletBonus,
-      playAmount,
       leaguePanelRef,
       tournamentPanelRef,
       walletPanelRef,

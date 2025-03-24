@@ -58,13 +58,13 @@ export default defineComponent({
         icon: WinIcon,
         title: "Зарабатывай до $100 каждую неделю",
         text: "за победы в еженедельном турнире",
-        sticker: "like_duck"
+        sticker: "tournament_duck"
       },
       {
         icon: ReferralIcon,
         title: "Приглашай друзей",
         text: "и зарабатывай USDT за каждую их игру",
-        sticker: "profile_duck"
+        sticker: "share_duck"
       }
     ];
 

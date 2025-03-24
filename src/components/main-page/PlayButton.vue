@@ -1,39 +1,41 @@
 <template>
-  <div class="play-button-wrapper">
-    <button
-        ref="playButton"
-        class="main-button"
-        @pointerenter="onButtonPointerEnter"
-        @pointerleave="onButtonPointerLeave"
-        @pointerdown="onButtonPointerDown"
-        @pointerup="onButtonPointerUp"
-        @click="onButtonClick"
-    >
-      <span class="button-text">Играть на {{ betText }}</span>
-      <span class="right-content">
-        <span class="separator"></span>
-        <button
-            ref="iconButton"
-            type="button"
-            class="icon-button"
-            @pointerenter.stop="onIconPointerEnter"
-            @pointerleave.stop="onIconPointerLeave"
-            @pointerdown.stop="onIconPointerDown"
-            @pointerup.stop="onIconPointerUp"
-            @click.stop="onIconClick"
-        >
-          <img
-              class="icon-settings"
-              src="@/assets/icons/settings-icon.svg"
-              alt="icon"
-          />
-        </button>
-      </span>
-    </button>
-    <div v-if="isLoading" ref="loaderRef" class="loader-container">
-      <div class="loader"></div>
-    </div>
-  </div>
+  <button
+      ref="playButton"
+      class="main-button"
+      @pointerenter="onButtonPointerEnter"
+      @pointerleave="onButtonPointerLeave"
+      @pointerdown="onButtonPointerDown"
+      @pointerup="onButtonPointerUp"
+      @click="onButtonClick"
+  >
+    <span class="button-text">
+      <template v-if="!isLoading">
+        Играть на {{ betText }}
+      </template>
+      <template v-else>
+        <div class="loader"></div>
+      </template>
+    </span>
+    <span class="right-content">
+      <span class="separator"></span>
+      <button
+          ref="iconButton"
+          type="button"
+          class="icon-button"
+          @pointerenter.stop="onIconPointerEnter"
+          @pointerleave.stop="onIconPointerLeave"
+          @pointerdown.stop="onIconPointerDown"
+          @pointerup.stop="onIconPointerUp"
+          @click.stop="onIconClick"
+      >
+        <img
+            class="icon-settings"
+            src="@/assets/icons/settings-icon.svg"
+            alt="icon"
+        />
+      </button>
+    </span>
+  </button>
 </template>
 
 <script lang="ts">
@@ -54,7 +56,6 @@ export default defineComponent({
   setup(props) {
     const playButton = ref<HTMLElement | null>(null);
     const iconButton = ref<HTMLElement | null>(null);
-    const loaderRef = ref<HTMLElement | null>(null);
     const betText = ref('');
     const isLoading = ref(false);
     const router = useRouter();
@@ -103,8 +104,8 @@ export default defineComponent({
       apiService.quickGame(formattedBets, formattedPlayers, formattedRules)
           .then((response) => {
             isLoading.value = false;
-            if(response.success == false) {
-              if(response.error == "no_balance") {
+            if (response.success === false) {
+              if (response.error === "no_balance") {
                 events.emit('showNotification', { title: "Недостаточно средств!", subtitle: "Пополните баланс для игры.", icon: 'deposit', sticker: 'block_duck' });
                 return;
               }
@@ -113,7 +114,7 @@ export default defineComponent({
             }
             router.push(`/game?host=${response.data.host}&lobbyId=${response.data.lobby_id}&playerId=${window.userData?.id}&language=ru`);
           })
-          .catch((err) => {
+          .catch(() => {
             isLoading.value = false;
             events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не удалось начать игру.", icon: 'loss', sticker: 'block_duck' });
           });
@@ -177,7 +178,6 @@ export default defineComponent({
     return {
       playButton,
       iconButton,
-      loaderRef,
       betText,
       isLoading,
       amount: props.amount,
@@ -199,6 +199,9 @@ export default defineComponent({
 <style scoped>
 .button-text {
   flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
 
@@ -232,19 +235,6 @@ export default defineComponent({
   height: 60%;
   width: auto;
   object-fit: contain;
-}
-
-.loader-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 75%;
-  height: 75%;
-  z-index: 0;
 }
 
 .loader {

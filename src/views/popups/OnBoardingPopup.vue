@@ -114,6 +114,7 @@ h1{
 
 
 .indicators {
+  margin-top: 1vh;
   display: flex;
   justify-content: center;
   gap: 0.5vh;

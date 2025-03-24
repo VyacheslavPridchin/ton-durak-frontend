@@ -20,22 +20,24 @@
       </template>
     <span class="right-content">
       <span class="separator"></span>
-      <button
-          ref="iconButton"
-          type="button"
-          class="icon-button"
-          @pointerenter.stop="onIconPointerEnter"
-          @pointerleave.stop="onIconPointerLeave"
-          @pointerdown.stop="onIconPointerDown"
-          @pointerup.stop="onIconPointerUp"
-          @click.stop="onIconClick"
-      >
-        <img
-            class="icon-settings"
-            src="@/assets/icons/settings-icon.svg"
-            alt="icon"
-        />
-      </button>
+      <span class="icon-button-wrapper"
+            @pointerenter.stop="onIconPointerEnter"
+            @pointerleave.stop="onIconPointerLeave"
+            @pointerdown.stop="onIconPointerDown"
+            @pointerup.stop="onIconPointerUp"
+            @click.stop="onIconClick">
+        <button
+            ref="iconButton"
+            type="button"
+            class="icon-button"
+        >
+          <img
+              class="icon-settings"
+              src="@/assets/icons/settings-icon.svg"
+              alt="icon"
+          />
+        </button>
+      </span>
     </span>
   </button>
 </template>
@@ -231,6 +233,14 @@ export default defineComponent({
   padding: 0;
   cursor: pointer;
   transform: scale(1);
+}
+
+.icon-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1vh; /* Увеличивает область нажатия */
+  margin: -1vh; /* Компенсирует увеличение, чтобы не сместилось */
 }
 
 .icon-settings {

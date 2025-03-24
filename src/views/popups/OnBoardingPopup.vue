@@ -1,6 +1,17 @@
 <template>
   <div class="popup-container">
     <div class="slide">
+      <div v-if="currentSlide.sticker" class="sticker-container">
+        <lottie-player
+            :src="stickerSrc"
+            speed="1"
+            class="sticker"
+            direction="1"
+            mode="normal"
+            loop
+            autoplay
+        ></lottie-player>
+      </div>
       <div class="icon-wrapper">
         <div class="icon-container">
           <img :src="currentSlide.icon" alt="Slide Icon" />
@@ -30,6 +41,8 @@ import { defineComponent, ref, computed } from 'vue';
 import { events } from "@/events.ts";
 import ReferralIcon from "@/assets/icons/transactions/referral-icon.svg";
 import WinIcon from "@/assets/icons/transactions/tournament-icon.svg";
+import apiService from "@/services/ApiService.ts";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   setup() {
@@ -37,28 +50,46 @@ export default defineComponent({
       {
         icon: WinIcon,
         title: "Зарабатывай USDT",
-        text: "за каждую победу."
+        text: "за каждую победу.",
+        sticker: "sticker1"
       },
       {
         icon: WinIcon,
         title: "Зарабатывай до $100 каждую неделю",
-        text: "за победы в еженедельном турнире"
+        text: "за победы в еженедельном турнире",
+        sticker: "sticker2"
       },
       {
         icon: ReferralIcon,
         title: "Приглашай друзей",
-        text: "и зарабатывай USDT за каждую их игру"
+        text: "и зарабатывай USDT за каждую их игру",
+        sticker: "sticker3"
       }
     ];
 
+    const router = useRouter();
+
     const currentSlideIndex = ref(0);
     const currentSlide = computed(() => slides[currentSlideIndex.value]);
+    const stickerSrc = computed(() => `/assets/stickers/${currentSlide.value.sticker}.json`);
 
-    const nextSlide = () => {
+    const nextSlide = async () => {
       if (currentSlideIndex.value < slides.length - 1) {
         currentSlideIndex.value++;
       } else {
-        events.emit("hidePopup");
+        apiService.getFirstGame().then((response) => {
+          if (response.success === false) {
+            events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не удалось начать игру.", icon: 'loss', sticker: 'block_duck' });
+            events.emit("hidePopup");
+            return;
+          }
+
+          router.push(`/game?host=${response.data.host}&lobbyId=${response.data.lobby_id}&playerId=${window.userData?.id}&language=ru`);
+          events.emit("hidePopup");
+        }).catch(() => {
+          events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не удалось начать игру.", icon: 'loss', sticker: 'block_duck' });
+          events.emit("hidePopup");
+        });
       }
     };
 
@@ -66,6 +97,7 @@ export default defineComponent({
       slides,
       currentSlideIndex,
       currentSlide,
+      stickerSrc,
       nextSlide
     };
   }
@@ -78,12 +110,26 @@ export default defineComponent({
   flex-direction: column;
   padding: 0 2vh;
   margin: 0 auto;
-  align-items: center;  /* Center elements horizontally */
-  text-align: center;   /* Center text horizontally */
+  align-items: center;
+  text-align: center;
 }
 
 .slide {
   margin-bottom: 2vh;
+  position: relative;
+}
+
+.sticker-container {
+  position: absolute;
+  right: -1vh;
+  top: -4.5vh;
+  width: 13vh;
+  height: 13vh;
+}
+
+.sticker {
+  width: 100%;
+  height: 100%;
 }
 
 .slide-header {

@@ -130,7 +130,7 @@ export default defineComponent({
     }, { immediate: true });
 
     const openTournamentInformation = () => {
-      events.emit("showPopup", "tournamentInformation");
+      events.emit("showPopup", { name: "tournamentInformation"});
     };
 
     return {

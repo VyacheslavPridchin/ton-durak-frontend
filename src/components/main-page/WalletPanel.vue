@@ -71,7 +71,7 @@ export default defineComponent({
     const goToWallet = () => router.push('/wallet');
     const goToDeposit = () => router.push('/deposit-options');
     const goToWithdraw = () => router.push('/withdraw-options');
-    const showBonusBalanceInformation = () => events.emit('showPopup', 'bonusBalanceInformation');
+    const showBonusBalanceInformation = () => events.emit('showPopup', { name: 'bonusBalanceInformation'});
 
     const isLoadingData = ref(false);
 

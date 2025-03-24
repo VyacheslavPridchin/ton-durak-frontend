@@ -123,7 +123,7 @@ export default defineComponent({
     };
 
     const onIconClick = () => {
-      events.emit('showPopup', 'gameSettings');
+      events.emit('showPopup', { name: 'gameSettings'});
       console.log('Клик по иконке');
     };
 

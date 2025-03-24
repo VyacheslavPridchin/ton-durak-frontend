@@ -42,6 +42,7 @@ export default defineComponent({
             ? popupComponents[activeKey.value]
             : null
     );
+    const canClosePopup = ref(true);
 
     const show = (key: string) => {
       if (!popupComponents[key]) {
@@ -55,7 +56,8 @@ export default defineComponent({
     };
 
     const hide = () => {
-      popupVisible.value = false;
+      if(canClosePopup.value)
+        popupVisible.value = false;
     };
 
     // При запуске анимации скрытия (до начала) очищаем activeKey
@@ -63,9 +65,17 @@ export default defineComponent({
       activeKey.value = null;
     };
 
-    const showHandler = (key: string) => show(key);
-    const hideHandler = () => hide();
-    events.on('showPopup', showHandler);
+    const showHandler = ({ name, canClose = true }) => {
+      show(name);
+      canClosePopup.value = canClose;
+    }
+
+    const hideHandler = () =>  {
+      canClosePopup.value = true;
+      hide();
+    }
+
+    events.on('showPopup',  showHandler);
     events.on('hidePopup', hideHandler);
 
     onUnmounted(() => {

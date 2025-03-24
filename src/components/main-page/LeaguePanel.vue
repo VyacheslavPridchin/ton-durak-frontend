@@ -82,7 +82,7 @@ export default defineComponent({
     const secondaryColor = computed(() => `var(--${props.rank}-secondary-color)`);
 
     const openLeagueInformation = () => {
-      events.emit('showPopup', 'leagueInformation');
+      events.emit('showPopup', { name: 'leagueInformation' });
     };
 
     // Управление плейсхолдерами

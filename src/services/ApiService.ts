@@ -317,6 +317,11 @@ class ApiService {
         return this.request<CheckBidsData>(`/check_bids`, "GET");
     }
 
+    // GET /first_game/
+    public async getFirstGame(): Promise<ApiResponse<any>> {
+        return this.request<any>(`/first_game`, "GET");
+    }
+
     // PUT /screen/profile/edit - изменение профиля (например, смена имени или загрузка фото)
     public async updateProfileEdit(name: string | undefined, file: File | Blob | undefined | null): Promise<ApiResponse<null>> {
         if(file !== undefined && file !== null) {

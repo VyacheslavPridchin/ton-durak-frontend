@@ -18,7 +18,7 @@
 
     <div class="toggle-group">
       <h2>Ставка</h2>
-      <div class="toggles placeholder-container" :class="{ isLoading: isLoadingData }">
+      <div class="toggles placeholder-container" style="overflow: visible" :class="{ isLoading: isLoadingData }">
         <button
             v-for="bet in betOptions"
             :key="bet"
@@ -66,9 +66,9 @@ export default defineComponent({
     const isLoadingData = ref(true);
 
     const loadSettings = () => {
-      selectedPlayers.value = JSON.parse(localStorage.getItem('selectedPlayers') || '[3]');
-      selectedBet.value = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
-      selectedRule.value = JSON.parse(localStorage.getItem('selectedRule') || '["Переводной"]');
+      selectedPlayers.value = JSON.parse(localStorage.getItem('selectedPlayers') || '[1, 2, 3]');
+      selectedRule.value = JSON.parse(localStorage.getItem('selectedRule') || '["Классический", "Переводной"]');
+      selectedBet.value = JSON.parse(localStorage.getItem('selectedBet') || '[]');
     };
 
     const saveSettings = () => {

@@ -168,7 +168,7 @@ export default defineComponent({
       router.push(`/withdraw?${queryParams.toString()}`);
 
       setTimeout(() => {
-        events.emit('showPopup', 'withdrawConfirmation');
+        events.emit('showPopup', { name: 'withdrawConfirmation'});
       }, 200);
     };
 

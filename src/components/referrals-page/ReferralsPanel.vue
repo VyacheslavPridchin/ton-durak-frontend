@@ -98,7 +98,7 @@ export default defineComponent({
     };
 
     const openInformationPopup = () => {
-      events.emit('showPopup', "referralsInformation");
+      events.emit('showPopup', { name: "referralsInformation"});
     };
 
     // Одна переменная для управления плейсхолдерами текстовых данных

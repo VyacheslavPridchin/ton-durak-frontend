@@ -3,6 +3,7 @@
     <div class="slide">
       <div v-if="currentSlide.sticker" class="sticker-container">
         <lottie-player
+            :key="currentSlide.sticker"
             :src="stickerSrc"
             speed="1"
             class="sticker"
@@ -124,9 +125,9 @@ export default defineComponent({
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: -18vh;
-  width: 13vh;
-  height: 13vh;
+  top: -22vh;
+  width: 18vh;
+  height: 18vh;
 }
 
 .sticker {

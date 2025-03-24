@@ -70,6 +70,9 @@ export default defineComponent({
       selectedPlayers.value = JSON.parse(localStorage.getItem('selectedPlayers') || '[2]');
       selectedRule.value = JSON.parse(localStorage.getItem('selectedRule') || '["Классический", "Переводной"]');
       selectedBet.value = JSON.parse(localStorage.getItem('selectedBet') || '[]');
+
+      selectedPlayers.value = selectedPlayers.value.filter((item) => item >= 2);
+      if(selectedPlayers.value.length === 0) { selectedPlayers.value.push(2); }
     };
 
     const saveSettings = () => {

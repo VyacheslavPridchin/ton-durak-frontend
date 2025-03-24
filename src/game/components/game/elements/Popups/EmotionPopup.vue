@@ -1,3 +1,18 @@
+<template>
+  <div v-if="isVisible" ref="popupRef" class="popup">
+    <div class="sticker-grid">
+      <Sticker
+          v-for="(emote, index) in stickers"
+          :key="index"
+          ref="stickerRefs"
+          :emote="emote"
+          :size="100"
+          @click="sendEmote(emote)"
+      />
+    </div>
+  </div>
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, onMounted, nextTick, onUnmounted } from "vue";
 import { gsap } from 'gsap';
@@ -108,21 +123,6 @@ export default defineComponent({
   },
 });
 </script>
-
-<template>
-  <div v-if="isVisible" ref="popupRef" class="popup">
-    <div class="sticker-grid">
-      <Sticker
-          v-for="(emote, index) in stickers"
-          :key="index"
-          ref="stickerRefs"
-          :emote="emote"
-          :size="100"
-          @click="sendEmote(emote)"
-      />
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .popup {

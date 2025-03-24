@@ -1,41 +1,45 @@
 <template>
-  <button
-      ref="playButton"
-      class="main-button"
-      @pointerenter="onButtonPointerEnter"
-      @pointerleave="onButtonPointerLeave"
-      @pointerdown="onButtonPointerDown"
-      @pointerup="onButtonPointerUp"
-      @click="onButtonClick"
-  >
-    <span class="button-text">Играть на {{ betText }}</span>
-    <span class="right-content">
-      <span class="separator"></span>
-      <button
-          ref="iconButton"
-          type="button"
-          class="icon-button"
-          @pointerenter.stop="onIconPointerEnter"
-          @pointerleave.stop="onIconPointerLeave"
-          @pointerdown.stop="onIconPointerDown"
-          @pointerup.stop="onIconPointerUp"
-          @click.stop="onIconClick"
-      >
-        <img
-            class="icon-settings"
-            src="@/assets/icons/settings-icon.svg"
-            alt="icon"
-        />
-      </button>
-    </span>
-  </button>
+  <div class="play-button-wrapper">
+    <button
+        ref="playButton"
+        class="main-button"
+        @pointerenter="onButtonPointerEnter"
+        @pointerleave="onButtonPointerLeave"
+        @pointerdown="onButtonPointerDown"
+        @pointerup="onButtonPointerUp"
+        @click="onButtonClick"
+    >
+      <span class="button-text">Играть на {{ betText }}</span>
+      <span class="right-content">
+        <span class="separator"></span>
+        <button
+            ref="iconButton"
+            type="button"
+            class="icon-button"
+            @pointerenter.stop="onIconPointerEnter"
+            @pointerleave.stop="onIconPointerLeave"
+            @pointerdown.stop="onIconPointerDown"
+            @pointerup.stop="onIconPointerUp"
+            @click.stop="onIconClick"
+        >
+          <img
+              class="icon-settings"
+              src="@/assets/icons/settings-icon.svg"
+              alt="icon"
+          />
+        </button>
+      </span>
+    </button>
+    <div v-if="isLoading" ref="loaderRef" class="loader-container">
+      <div class="loader"></div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onMounted, onUnmounted } from 'vue';
 import gsap from 'gsap';
 import { events } from '@/events.ts';
-// Импорт сервиса API (проверьте корректность пути)
 import apiService from '@/services/ApiService.ts';
 import { useRouter } from "vue-router";
 
@@ -50,8 +54,11 @@ export default defineComponent({
   setup(props) {
     const playButton = ref<HTMLElement | null>(null);
     const iconButton = ref<HTMLElement | null>(null);
+    const loaderRef = ref<HTMLElement | null>(null);
     const betText = ref('');
+    const isLoading = ref(false);
     const router = useRouter();
+
     const hideHandler = () => {
       const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
       if (selectedBet.length > 1) {
@@ -76,42 +83,38 @@ export default defineComponent({
     });
 
     const onButtonClick = async () => {
+      isLoading.value = true;
       console.log('Клик по кнопке');
 
-      // Получаем данные из localStorage
       const selectedPlayers = JSON.parse(localStorage.getItem('selectedPlayers') || '[3]');
       const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
       const selectedRule = JSON.parse(localStorage.getItem('selectedRule') || '["Переводной"]');
 
-      // Форматируем данные:
-      // Bet: убираем знак доллара и пытаемся спарсить текст в число
       const formattedBets = selectedBet.map((bet: string) => {
         const cleaned = bet.replace('$', '');
         const numberValue = parseFloat(cleaned);
         return !isNaN(numberValue) ? numberValue : bet;
       });
-      // Players: приводим к строкам
       const formattedPlayers = selectedPlayers.map((player: number | string) => String(player));
-      // Rule: "Классический" -> "0", "Переводной" -> "1"
       const formattedRules = selectedRule.map((rule: string) =>
           rule === 'Классический' ? '0' : rule === 'Переводной' ? '1' : rule
       );
 
       apiService.quickGame(formattedBets, formattedPlayers, formattedRules)
           .then((response) => {
+            isLoading.value = false;
             if(response.success == false) {
               if(response.error == "no_balance") {
                 events.emit('showNotification', { title: "Недостаточно средств!", subtitle: "Пополните баланс для игры.", icon: 'deposit', sticker: 'block_duck' });
                 return;
               }
-
               events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не удалось начать игру.", icon: 'loss', sticker: 'block_duck' });
               return;
             }
-
             router.push(`/game?host=${response.data.host}&lobbyId=${response.data.lobby_id}&playerId=${window.userData?.id}&language=ru`);
           })
           .catch((err) => {
+            isLoading.value = false;
             events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не удалось начать игру.", icon: 'loss', sticker: 'block_duck' });
           });
     };
@@ -121,7 +124,6 @@ export default defineComponent({
       console.log('Клик по иконке');
     };
 
-    // Анимации для основной кнопки (pointer events)
     const onButtonPointerEnter = () => {
       if (playButton.value) {
         gsap.to(playButton.value, { duration: 0.2, filter: 'brightness(0.9)' });
@@ -146,7 +148,6 @@ export default defineComponent({
       }
     };
 
-    // Анимации для кнопки с иконкой (pointer events)
     const onIconPointerEnter = () => {
       if (iconButton.value) {
         gsap.to(iconButton.value, { duration: 0.2, scale: 1.1 });
@@ -176,7 +177,9 @@ export default defineComponent({
     return {
       playButton,
       iconButton,
+      loaderRef,
       betText,
+      isLoading,
       amount: props.amount,
       onButtonClick,
       onIconClick,
@@ -229,5 +232,33 @@ export default defineComponent({
   height: 60%;
   width: auto;
   object-fit: contain;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75%;
+  height: 75%;
+  z-index: 0;
+}
+
+.loader {
+  width: 50%;
+  height: 50%;
+  border: 5px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

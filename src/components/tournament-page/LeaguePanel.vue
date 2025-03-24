@@ -1,7 +1,7 @@
 <template>
   <div class="panel league-panel animate-press">
     <div class="league-header">
-      <img v-if="rank" class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
+      <img v-if="rank" class="league-badge" :src="leagueBadgeSrc" :alt="`${rank} league`" />
 <!--      <a v-if="rank" class="league-badge-text" :style="{ textShadow: `-0.1vh 0.1vh 0 rgba(0, 0, 0, 0.1)`, color: `rgba(255, 255, 255, 0.8)` }">-->
 <!--        {{ divisionRoman }}-->
 <!--      </a>-->
@@ -23,6 +23,7 @@
 
 <script lang="ts">
 import {defineComponent, computed, ref, onMounted, onUnmounted, nextTick} from 'vue';
+import {ImageCache} from "@/game/utils/ImageCache.ts";
 
 export default defineComponent({
   name: 'LeaguePanel',
@@ -64,6 +65,13 @@ export default defineComponent({
       };
       const rankTitle = ranks[props.rank] || props.rank;
       return `${rankTitle} турнир`;
+    });
+
+    // Подгрузка иконки лиги из кэша
+    const leagueBadgeSrc = ref('');
+    onMounted(async () => {
+      const image = await ImageCache.getImage(`/assets/leagues/${props.rank}-league.svg`);
+      leagueBadgeSrc.value = image.src;
     });
 
     // Единственная переменная для управления плейсхолдерами текстовых данных
@@ -117,6 +125,7 @@ export default defineComponent({
       leagueTitle,
       isLoadingData,
       formattedTime,
+      leagueBadgeSrc,
       hideData,
       showData,
     };

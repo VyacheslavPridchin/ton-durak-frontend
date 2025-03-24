@@ -4,8 +4,8 @@
       <img class="icon" src="@/assets/icons/info-icon.svg" alt="Button Icon" />
     </button>
     <div class="league-header">
-      <!-- Иконка лиги без плейсхолдера -->
-      <img v-if="rank" class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
+      <!-- Иконка лиги подгружается из кэша -->
+      <img v-if="rank" class="league-badge" :src="leagueBadgeSrc" :alt="`${rank} league`" />
       <a class="league-badge-text" :style="{ textShadow: `-0.1vh 0.1vh 0 rgba(0, 0, 0, 0.1)`, color: `rgba(255, 255, 255, 0.8)` }">{{ divisionRoman }}</a>
     </div>
     <div style="display: flex; justify-content: center;">
@@ -29,8 +29,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue';
+import { defineComponent, computed, ref, onMounted } from 'vue';
 import { events } from "@/events.ts";
+import { ImageCache } from "@/game/utils/ImageCache.ts";
 
 export default defineComponent({
   name: 'LeaguePanel',
@@ -81,6 +82,13 @@ export default defineComponent({
     const primaryColor = computed(() => `var(--${props.rank}-color)`);
     const secondaryColor = computed(() => `var(--${props.rank}-secondary-color)`);
 
+    // Подгрузка иконки лиги из кэша
+    const leagueBadgeSrc = ref('');
+    onMounted(async () => {
+      const image = await ImageCache.getImage(`/assets/leagues/${props.rank}-league.svg`);
+      leagueBadgeSrc.value = image.src;
+    });
+
     const openLeagueInformation = () => {
       events.emit('showPopup', { name: 'leagueInformation' });
     };
@@ -98,6 +106,7 @@ export default defineComponent({
       segment3,
       primaryColor,
       secondaryColor,
+      leagueBadgeSrc,
       openLeagueInformation,
       isLoadingData,
       showData,

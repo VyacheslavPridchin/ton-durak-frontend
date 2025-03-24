@@ -59,6 +59,10 @@ export default defineComponent({
 
       // PlayButton (пример)
       playAmount.value = 3.14;
+
+      leaguePanelRef.value.showData();
+      tournamentPanelRef.value.showData();
+      walletPanelRef.value.showData();
     };
 
     // Функции работы с кэшем

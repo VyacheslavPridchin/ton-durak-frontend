@@ -74,17 +74,18 @@ export default defineComponent({
     const updateTimer = () => {
       const now = Math.floor(Date.now() / 1000);
       const timeLeft = props.deadline - now;
-      console.log(props.deadline, now, timeLeft);
       if (timeLeft <= 0) {
         formattedTime.value = '00:00:00';
         if (timerInterval) clearInterval(timerInterval);
         return;
       }
 
-      const hours = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
-      const minutes = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
-      const seconds = (timeLeft % 60).toString().padStart(2, '0');
-      formattedTime.value = `${hours}:${minutes}:${seconds}`;
+      const days = Math.floor(timeLeft / 86400);
+      const remainder = timeLeft % 86400;
+      const hours = Math.floor(remainder / 3600).toString().padStart(2, '0');
+      const minutes = Math.floor((remainder % 3600) / 60).toString().padStart(2, '0');
+      const seconds = (remainder % 60).toString().padStart(2, '0');
+      formattedTime.value = `${days}д ${hours}:${minutes}:${seconds}`;
     };
 
     // При монтировании компонента устанавливаем значение по умолчанию

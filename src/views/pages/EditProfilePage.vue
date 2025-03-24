@@ -212,10 +212,12 @@ export default defineComponent({
       if (nameTimeLeft <= 0) {
         nameFormattedTime.value = '';
       } else {
-        const hours = Math.floor(nameTimeLeft / 3600).toString().padStart(2, '0');
-        const minutes = Math.floor((nameTimeLeft % 3600) / 60).toString().padStart(2, '0');
-        const seconds = (nameTimeLeft % 60).toString().padStart(2, '0');
-        nameFormattedTime.value = `${hours}:${minutes}:${seconds}`;
+        const days = Math.floor(nameTimeLeft / 86400);
+        const remainder = nameTimeLeft % 86400;
+        const hours = Math.floor(remainder / 3600).toString().padStart(2, '0');
+        const minutes = Math.floor((remainder % 3600) / 60).toString().padStart(2, '0');
+        const seconds = (remainder % 60).toString().padStart(2, '0');
+        nameFormattedTime.value = `${days}д ${hours}:${minutes}:${seconds}`;
       }
 
       // Таймер для фото
@@ -223,10 +225,12 @@ export default defineComponent({
       if (photoTimeLeft <= 0) {
         photoFormattedTime.value = '';
       } else {
-        const hours = Math.floor(photoTimeLeft / 3600).toString().padStart(2, '0');
-        const minutes = Math.floor((photoTimeLeft % 3600) / 60).toString().padStart(2, '0');
-        const seconds = (photoTimeLeft % 60).toString().padStart(2, '0');
-        photoFormattedTime.value = `${hours}:${minutes}:${seconds}`;
+        const days = Math.floor(photoTimeLeft / 86400);
+        const remainder = photoTimeLeft % 86400;
+        const hours = Math.floor(remainder / 3600).toString().padStart(2, '0');
+        const minutes = Math.floor((remainder % 3600) / 60).toString().padStart(2, '0');
+        const seconds = (remainder % 60).toString().padStart(2, '0');
+        photoFormattedTime.value = `${days}д ${hours}:${minutes}:${seconds}`;
       }
     };
 

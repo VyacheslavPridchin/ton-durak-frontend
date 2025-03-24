@@ -124,7 +124,7 @@ export default defineComponent({
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: -10vh;
+  top: -18vh;
   width: 13vh;
   height: 13vh;
 }

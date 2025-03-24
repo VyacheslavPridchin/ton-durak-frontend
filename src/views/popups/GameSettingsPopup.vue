@@ -184,7 +184,7 @@ export default defineComponent({
   outline: 0.2vh solid #2D83EC;
 }
 
-.secondary-button.disabled {
-  opacity: 0.6;
+button.disabled {
+  opacity: 0.3;
 }
 </style>

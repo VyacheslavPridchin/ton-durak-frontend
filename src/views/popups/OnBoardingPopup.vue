@@ -1,13 +1,15 @@
 <template>
   <div class="popup-container">
     <div class="slide">
-      <div class="icon-container">
-        <img :src="currentSlide.icon" alt="Slide Icon" />
+      <div class="icon-wrapper">
+        <div class="icon-container">
+          <img :src="currentSlide.icon" alt="Slide Icon" />
+        </div>
       </div>
       <div class="slide-header">
-        <h2>{{ currentSlide.title }}</h2>
+        <h1>{{ currentSlide.title }}</h1>
       </div>
-      <p class="slide-text">{{ currentSlide.text }}</p>
+      <h2 class="slide-text">{{ currentSlide.text }}</h2>
     </div>
     <button class="main-button animate-press" @click="nextSlide">
       {{ currentSlideIndex === slides.length - 1 ? 'Играть' : 'Продолжить' }}
@@ -93,6 +95,12 @@ export default defineComponent({
   margin-bottom: 1vh;
 }
 
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .icon-container {
   display: flex;
   align-items: center;
@@ -104,11 +112,6 @@ export default defineComponent({
   margin-right: 1vh;
 }
 
-.main-button {
-  margin: 2vh auto;
-  padding: 1vh 2vh;
-  cursor: pointer;
-}
 
 .indicators {
   display: flex;

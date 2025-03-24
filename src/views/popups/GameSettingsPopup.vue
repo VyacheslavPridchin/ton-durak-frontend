@@ -10,6 +10,7 @@
             :key="option"
             :class="['animate-press', 'secondary-button', { selected: selectedPlayers.includes(option) }]"
             @click="togglePlayers(option)"
+            :disabled="option > 1"
         >
           {{ option }}
         </button>

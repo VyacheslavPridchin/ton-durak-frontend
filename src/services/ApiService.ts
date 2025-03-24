@@ -45,6 +45,7 @@ export interface ScreenMainData {
         balance: number;
         bonus_balance: number;
     };
+    bids: string[];
 }
 
 export interface ScreenReferralData {
@@ -90,6 +91,7 @@ export interface ScreenTournamentData {
         wins: number;
         prize: number;
     }>;
+    bids: string[];
 }
 
 export interface ScreenProfileData {

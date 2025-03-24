@@ -174,15 +174,9 @@ export default defineComponent({
   margin-top: 1vh;
   display: flex;
   gap: 1vh;
-  flex-wrap: wrap;
 }
 
 .secondary-button.selected {
   outline: 0.2vh solid #2D83EC;
-}
-
-.placeholder-container.isLoading {
-  opacity: 0.5;
-  pointer-events: none;
 }
 </style>

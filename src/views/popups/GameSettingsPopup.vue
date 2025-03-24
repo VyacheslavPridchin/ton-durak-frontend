@@ -8,9 +8,9 @@
         <button
             v-for="option in playerOptions"
             :key="option"
-            :class="['secondary-button', { selected: (selectedPlayers.includes(option) && option > 1)}, { 'animate-press': option > 1}]"
+            :class="['secondary-button', { selected: (selectedPlayers.includes(option) && option > 2)}, { 'animate-press': option > 2}]"
             @click="togglePlayers(option)"
-            :disabled="option > 1"
+            :disabled="option > 2"
         >
           {{ option }}
         </button>

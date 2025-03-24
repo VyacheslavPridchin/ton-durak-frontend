@@ -216,7 +216,7 @@ export default defineComponent({
 
 .separator {
   display: inline-block;
-  width: 1px;
+  width: 0.1em;
   height: 60%;
   background-color: white;
   margin-right: 1.75vh;
@@ -237,10 +237,11 @@ export default defineComponent({
   object-fit: contain;
 }
 
+/* Loader полностью вписывается в кнопку, оставаясь квадратным */
 .loader {
-  width: 50%;
-  height: 50%;
-  border: 5px solid rgba(255, 255, 255, 0.5);
+  height: 80%;
+  aspect-ratio: 1;
+  border: 0.2em solid rgba(255, 255, 255, 0.5);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 1s linear infinite;

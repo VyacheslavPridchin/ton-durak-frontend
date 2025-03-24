@@ -20,6 +20,7 @@ import Footer from "@/layouts/FooterLayout.vue";
 import NotificationLayout from "@/layouts/NotificationLayout.vue";
 import {EventService, EventType} from "@/game/network/EventService.ts";
 import NetworkManager from "@/game/network/NetworkManager.ts";
+import {events} from "@/events.ts";
 
 const router = useRouter();
 const route = useRoute();
@@ -68,6 +69,8 @@ onMounted(async () => {
 
     router.back();
   });
+
+  events.emit("showPopup", "onBoarding");
 });
 </script>
 

@@ -1,6 +1,7 @@
 <template>
   <div class="game-settings">
     <h1>Настройки игры</h1>
+
     <div class="toggle-group">
       <h2>Кол-во игроков</h2>
       <div class="toggles">
@@ -17,7 +18,7 @@
 
     <div class="toggle-group">
       <h2>Ставка</h2>
-      <div class="toggles">
+      <div class="toggles placeholder-container" :class="{ isLoading: isLoadingData }">
         <button
             v-for="bet in betOptions"
             :key="bet"
@@ -49,17 +50,20 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
+import apiService from "@/services/ApiService";
 import { events } from "@/events.ts";
 
 export default defineComponent({
   setup() {
     const playerOptions = [2, 3, 4];
-    const betOptions = ['$0.5', '$1'];
+    const betOptions = ref<string[]>([]);
     const ruleOptions = ['Переводной', 'Классический'];
 
     const selectedPlayers = ref<number[]>([]);
     const selectedBet = ref<string[]>([]);
     const selectedRule = ref<string[]>([]);
+
+    const isLoadingData = ref(true);
 
     const loadSettings = () => {
       selectedPlayers.value = JSON.parse(localStorage.getItem('selectedPlayers') || '[3]');
@@ -102,7 +106,40 @@ export default defineComponent({
       }
     };
 
-    onMounted(loadSettings);
+    const fetchBets = async () => {
+      try {
+        const response = await apiService.checkBids();
+        if (response.success) {
+          betOptions.value = response.data.bids.map(b => `$${b}`);
+          // Обновим выбор, если сохранённые ставки отсутствуют в новом списке
+          selectedBet.value = selectedBet.value.filter(b => betOptions.value.includes(b));
+          if (selectedBet.value.length === 0 && betOptions.value.length > 0) {
+            selectedBet.value = [betOptions.value[0]];
+          }
+        } else {
+          events.emit('showNotification', {
+            title: "Ошибка",
+            subtitle: "Не удалось загрузить ставки",
+            icon: 'profile',
+            sticker: 'block_duck'
+          });
+        }
+      } catch (e) {
+        events.emit('showNotification', {
+          title: "Ошибка",
+          subtitle: "Не удалось загрузить ставки",
+          icon: 'profile',
+          sticker: 'block_duck'
+        });
+      } finally {
+        isLoadingData.value = false;
+      }
+    };
+
+    onMounted(() => {
+      loadSettings();
+      fetchBets();
+    });
 
     return {
       playerOptions,
@@ -114,7 +151,8 @@ export default defineComponent({
       togglePlayers,
       toggleBet,
       toggleRule,
-      saveSettings
+      saveSettings,
+      isLoadingData,
     };
   }
 });
@@ -136,9 +174,15 @@ export default defineComponent({
   margin-top: 1vh;
   display: flex;
   gap: 1vh;
+  flex-wrap: wrap;
 }
 
 .secondary-button.selected {
   outline: 0.2vh solid #2D83EC;
+}
+
+.placeholder-container.isLoading {
+  opacity: 0.5;
+  pointer-events: none;
 }
 </style>

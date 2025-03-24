@@ -20,7 +20,7 @@ export interface AuthResponseData {
             access_token: string;
             refresh_token: string;
         };
-        first_timer: boolean;
+        first_time: boolean;
     };
 }
 
@@ -140,6 +140,10 @@ export interface WithdrawalInfoData {
     fee: number;
     wallet_address: string;
     price: string;
+}
+
+export interface CheckBidsData {
+    bids: number[];
 }
 
 // Класс для работы с API как синглтон-сервис с кэшированием токенов
@@ -306,6 +310,11 @@ class ApiService {
     // GET /withdrawal_info/{type}
     public async getWithdrawalInfo(type: string): Promise<ApiResponse<WithdrawalInfoData>> {
         return this.request<WithdrawalInfoData>(`/withdrawal_info/${type}`, "GET");
+    }
+
+    // GET /check_bids/
+    public async checkBids(): Promise<ApiResponse<CheckBidsData>> {
+        return this.request<CheckBidsData>(`/check_bids`, "GET");
     }
 
     // PUT /screen/profile/edit - изменение профиля (например, смена имени или загрузка фото)

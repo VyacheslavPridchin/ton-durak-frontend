@@ -18,6 +18,7 @@ const auth = async (init_data: string) => {
     try {
         authData.value = await apiService.auth(payload);
         console.log("Auth Response:", authData.value);
+        window.onBoardingRequired = authData.value.data.user_data.first_time;
     } catch (error) {
         console.error("Authorization error:", error);
     }

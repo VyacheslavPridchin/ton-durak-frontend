@@ -239,7 +239,6 @@ export default defineComponent({
   object-fit: contain;
 }
 
-/* Loader полностью вписывается в кнопку, оставаясь квадратным */
 .loader {
   height: 50%;
   aspect-ratio: 1;

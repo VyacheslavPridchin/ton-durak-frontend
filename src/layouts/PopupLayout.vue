@@ -19,6 +19,7 @@ import ReferralsInformationPopup from "@/views/popups/ReferralsInformationPopup.
 import TournamentInformationPopup from "@/views/popups/TournamentInformationPopup.vue";
 import LeagueInformationPopup from "@/views/popups/LeagueInformationPopup.vue";
 import BonusBalanceInformationPopup from "@/views/popups/BonusBalanceInformationPopup.vue";
+import OnBoardingPopup from "@/views/popups/OnBoardingPopup.vue";
 
 export default defineComponent({
   name: 'PopupLayout',
@@ -31,6 +32,7 @@ export default defineComponent({
       tournamentInformation : TournamentInformationPopup,
       leagueInformation : LeagueInformationPopup,
       bonusBalanceInformation : BonusBalanceInformationPopup,
+      onBoarding : OnBoardingPopup,
     };
 
     const activeKey = ref<string | null>(null);

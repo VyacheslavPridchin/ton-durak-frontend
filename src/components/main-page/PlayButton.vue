@@ -14,7 +14,9 @@
         </span>
       </template>
       <template v-else>
-        <div class="loader"></div>
+        <div class="loader-container">
+          <div class="loader"/>
+        </div>
       </template>
     <span class="right-content">
       <span class="separator"></span>
@@ -245,6 +247,19 @@ export default defineComponent({
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 }
 
 @keyframes spin {

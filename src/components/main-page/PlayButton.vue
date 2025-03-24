@@ -241,7 +241,7 @@ export default defineComponent({
 
 /* Loader полностью вписывается в кнопку, оставаясь квадратным */
 .loader {
-  height: 80%;
+  height: 50%;
   aspect-ratio: 1;
   border: 0.2em solid rgba(255, 255, 255, 0.5);
   border-top-color: #fff;

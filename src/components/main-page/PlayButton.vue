@@ -141,6 +141,8 @@ export default defineComponent({
     };
 
     const onButtonPointerEnter = () => {
+
+
       if (playButton.value) {
         gsap.to(playButton.value, { duration: 0.2, filter: 'brightness(0.9)' });
       }
@@ -153,6 +155,8 @@ export default defineComponent({
     };
 
     const onButtonPointerDown = () => {
+      if(isLoading.value) return;
+
       if (playButton.value) {
         gsap.to(playButton.value, { duration: 0.2, filter: 'brightness(0.8)', scale: 0.95 });
       }

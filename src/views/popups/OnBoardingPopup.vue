@@ -131,4 +131,8 @@ export default defineComponent({
 h1 {
   margin-bottom: 0.5vh;
 }
+
+.main-button {
+  width: 100%;
+}
 </style>

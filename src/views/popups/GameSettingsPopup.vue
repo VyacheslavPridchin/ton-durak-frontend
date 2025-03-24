@@ -56,7 +56,7 @@ import { events } from "@/events.ts";
 export default defineComponent({
   setup() {
     const playerOptions = [2, 3, 4];
-    const betOptions = ref<string[]>([]);
+    const betOptions = ref<string[]>(["$0"]);
     const ruleOptions = ['Переводной', 'Классический'];
 
     const selectedPlayers = ref<number[]>([]);

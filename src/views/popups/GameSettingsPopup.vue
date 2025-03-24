@@ -8,7 +8,7 @@
         <button
             v-for="option in playerOptions"
             :key="option"
-            :class="['animate-press', 'secondary-button', { selected: selectedPlayers.includes(option) }]"
+            :class="['animate-press', 'secondary-button', { selected: (selectedPlayers.includes(option) && option > 1) }]"
             @click="togglePlayers(option)"
             :disabled="option > 1"
         >
@@ -67,7 +67,7 @@ export default defineComponent({
     const isLoadingData = ref(true);
 
     const loadSettings = () => {
-      selectedPlayers.value = JSON.parse(localStorage.getItem('selectedPlayers') || '[1, 2, 3]');
+      selectedPlayers.value = JSON.parse(localStorage.getItem('selectedPlayers') || '[1]');
       selectedRule.value = JSON.parse(localStorage.getItem('selectedRule') || '["Классический", "Переводной"]');
       selectedBet.value = JSON.parse(localStorage.getItem('selectedBet') || '[]');
     };
@@ -182,5 +182,9 @@ export default defineComponent({
 
 .secondary-button.selected {
   outline: 0.2vh solid #2D83EC;
+}
+
+.secondary-button.disabled {
+  opacity: 0.6;
 }
 </style>

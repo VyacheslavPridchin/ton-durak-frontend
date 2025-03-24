@@ -127,7 +127,7 @@ function handleButtonClick() {
 .balance-panel {
   left: 50%;
   right: auto;
-  top: 9vh;
+  top: 7.5vh;
   bottom: auto;
   translate: -50%;
   position: fixed;

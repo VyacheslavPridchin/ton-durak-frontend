@@ -104,7 +104,7 @@ export default defineComponent({
     const invite = async () => {
       navigator.clipboard.writeText(props.inviteLink)
           .then(() => {
-            events.emit('showNotification', { title: "Скопировано!", subtitle: "Адрес успешно скопирован.", icon: 'referral', sticker: 'like_duck' });
+            events.emit('showNotification', { title: "Скопировано!", subtitle: "Пригласительная ссылка скопирована.", icon: 'referral', sticker: 'like_duck' });
             console.log('Адрес скопирован');
           })
           .catch(err => {

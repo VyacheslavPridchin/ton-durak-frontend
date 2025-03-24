@@ -29,7 +29,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import { events } from "@/events.ts";
 import ReferralIcon from "@/assets/icons/transactions/referral-icon.svg";
-import WinIcon from "@/assets/icons/transactions/win-icon.svg";
+import WinIcon from "@/assets/icons/transactions/tournament-icon.svg";
 
 export default defineComponent({
   setup() {

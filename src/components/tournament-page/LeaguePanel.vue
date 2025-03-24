@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, computed, ref, onMounted, onUnmounted, nextTick} from 'vue';
+import {defineComponent, computed, ref, onMounted, onUnmounted, nextTick, watch} from 'vue';
 import {ImageCache} from "@/game/utils/ImageCache.ts";
 
 export default defineComponent({
@@ -69,10 +69,12 @@ export default defineComponent({
 
     // Подгрузка иконки лиги из кэша
     const leagueBadgeSrc = ref('');
-    onMounted(async () => {
-      const image = await ImageCache.getImage(`/assets/leagues/${props.rank}-league.svg`);
+    watch(() => props.rank, async (newRank) => {
+      if (!newRank) return;
+      const image = await ImageCache.getImage(`/assets/leagues/${newRank}-league.svg`);
       leagueBadgeSrc.value = image.src;
-    });
+    }, { immediate: true });
+
 
     // Единственная переменная для управления плейсхолдерами текстовых данных
     const isLoadingData = ref(false);

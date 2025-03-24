@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import {defineComponent, computed, ref, watch} from 'vue';
 import { events } from "@/events.ts";
 import { ImageCache } from "@/game/utils/ImageCache.ts";
 
@@ -84,10 +84,12 @@ export default defineComponent({
 
     // Подгрузка иконки лиги из кэша
     const leagueBadgeSrc = ref('');
-    onMounted(async () => {
-      const image = await ImageCache.getImage(`/assets/leagues/${props.rank}-league.svg`);
+    watch(() => props.rank, async (newRank) => {
+      if (!newRank) return;
+      const image = await ImageCache.getImage(`/assets/leagues/${newRank}-league.svg`);
       leagueBadgeSrc.value = image.src;
-    });
+    }, { immediate: true });
+
 
     const openLeagueInformation = () => {
       events.emit('showPopup', { name: 'leagueInformation' });

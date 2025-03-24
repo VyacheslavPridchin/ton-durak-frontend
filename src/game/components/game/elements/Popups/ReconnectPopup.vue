@@ -1,10 +1,10 @@
 <template>
   <div v-if="isVisible" class="popup-overlay" ref="popupContainer">
-    <header class="header">
-      <button class="circle-button" @click="handleButtonClick">
-        <img src='/assets/icons/exit-icon.svg' alt="Action Icon" class="icon" />
-      </button>
-    </header>
+<!--    <header class="header">-->
+<!--&lt;!&ndash;      <button class="circle-button" @click="handleButtonClick">&ndash;&gt;-->
+<!--&lt;!&ndash;        <img src='/assets/icons/exit-icon.svg' alt="Action Icon" class="icon" />&ndash;&gt;-->
+<!--&lt;!&ndash;      </button>&ndash;&gt;-->
+<!--    </header>-->
     <div class="popup-header">
       <img :src="cachedReconnectionIcon" alt="Reconnect Icon" class="popup-icon" />
       <h2 class="popup-title">Переподключение</h2>

@@ -97,6 +97,8 @@ export default defineComponent({
     });
 
     const onButtonClick = async () => {
+      if(isLoading.value) return;
+
       isLoading.value = true;
       console.log('Клик по кнопке');
 

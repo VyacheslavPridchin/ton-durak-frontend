@@ -30,7 +30,7 @@
       <button style="background: var(--blue-gradient); color: white" class="secondary-button animate-press" @click.stop="getMoney">
         Зачислить
       </button>
-      <button style="background: var(--blue-gradient); color: var(--white-color)" class="secondary-button animate-press" @click.stop="">
+      <button style="background: var(--blue-gradient); color: var(--white-color)" class="secondary-button animate-press" @click.stop="invite">
         Пригласить
       </button>
     </div>
@@ -97,6 +97,10 @@ export default defineComponent({
       })
     };
 
+    const invite = async () => {
+
+    }
+
     const openInformationPopup = () => {
       events.emit('showPopup', { name: "referralsInformation"});
     };
@@ -105,7 +109,7 @@ export default defineComponent({
     const isLoadingData = ref(false);
 
     const hideData = () => {
-      isLoadingData.value = false;
+      isLoadingData.value = true;
     };
     // Функция, вызываемая извне, для скрытия плейсхолдера
     const showData = () => {
@@ -125,7 +129,8 @@ export default defineComponent({
       openInformationPopup,
       isLoadingData,
       showData,
-      hideData
+      hideData,
+      invite
     };
   }
 });

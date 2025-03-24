@@ -118,7 +118,7 @@ export default defineComponent({
 
 
       selectedPlayers = selectedPlayers.filter((item) => item >= 2);
-      if(selectedPlayers.value.length === 0) { selectedPlayers.value.push(2); }
+      if(selectedPlayers.length === 0) { selectedPlayers.push(2); }
 
       const formattedBets = selectedBet.map((bet: string) => {
         const cleaned = bet.replace('$', '');

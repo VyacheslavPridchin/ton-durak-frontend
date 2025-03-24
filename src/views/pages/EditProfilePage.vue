@@ -217,7 +217,9 @@ export default defineComponent({
         const hours = Math.floor(remainder / 3600).toString().padStart(2, '0');
         const minutes = Math.floor((remainder % 3600) / 60).toString().padStart(2, '0');
         const seconds = (remainder % 60).toString().padStart(2, '0');
-        nameFormattedTime.value = `${days}д ${hours}:${minutes}:${seconds}`;
+        nameFormattedTime.value = days > 0
+            ? `${days}д ${hours}:${minutes}:${seconds}`
+            : `${hours}:${minutes}:${seconds}`;
       }
 
       // Таймер для фото
@@ -230,9 +232,12 @@ export default defineComponent({
         const hours = Math.floor(remainder / 3600).toString().padStart(2, '0');
         const minutes = Math.floor((remainder % 3600) / 60).toString().padStart(2, '0');
         const seconds = (remainder % 60).toString().padStart(2, '0');
-        photoFormattedTime.value = `${days}д ${hours}:${minutes}:${seconds}`;
+        photoFormattedTime.value = days > 0
+            ? `${days}д ${hours}:${minutes}:${seconds}`
+            : `${hours}:${minutes}:${seconds}`;
       }
     };
+
 
     onMounted(async () => {
       try {

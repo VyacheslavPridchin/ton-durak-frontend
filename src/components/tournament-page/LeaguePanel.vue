@@ -2,9 +2,9 @@
   <div class="panel league-panel animate-press">
     <div class="league-header">
       <img v-if="rank" class="league-badge" :src="`/assets/leagues/${rank}-league.svg`" :alt="`${rank} league`" />
-      <a v-if="rank" class="league-badge-text" :style="{ textShadow: `-0.1vh 0.1vh 0 rgba(0, 0, 0, 0.1)`, color: `rgba(255, 255, 255, 0.8)` }">
-        {{ divisionRoman }}
-      </a>
+<!--      <a v-if="rank" class="league-badge-text" :style="{ textShadow: `-0.1vh 0.1vh 0 rgba(0, 0, 0, 0.1)`, color: `rgba(255, 255, 255, 0.8)` }">-->
+<!--        {{ divisionRoman }}-->
+<!--      </a>-->
     </div>
     <div style="display: flex; justify-content: center;">
       <h2 class="league-title placeholder-container" :class="{ isLoading: isLoadingData }">
@@ -85,7 +85,9 @@ export default defineComponent({
       const hours = Math.floor(remainder / 3600).toString().padStart(2, '0');
       const minutes = Math.floor((remainder % 3600) / 60).toString().padStart(2, '0');
       const seconds = (remainder % 60).toString().padStart(2, '0');
-      formattedTime.value = `${days}д ${hours}:${minutes}:${seconds}`;
+      formattedTime.value = days > 0
+          ? `${days}д ${hours}:${minutes}:${seconds}`
+          : `${hours}:${minutes}:${seconds}`;
     };
 
     // При монтировании компонента устанавливаем значение по умолчанию

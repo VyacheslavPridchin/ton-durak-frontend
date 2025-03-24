@@ -87,6 +87,7 @@ export default defineComponent({
     });
 
     const updateText = () => {
+
       const selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
       if (selectedBet.length > 1) {
         betText.value = selectedBet.slice(0, -1).join(', ') + ' или ' + selectedBet[selectedBet.length - 1];
@@ -96,6 +97,8 @@ export default defineComponent({
     };
 
     onMounted(() => {
+      console.log("play button on mounted");
+
       updateText();
       events.on('hidePopup', updateText);
     });

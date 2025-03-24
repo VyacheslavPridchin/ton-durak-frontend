@@ -74,12 +74,9 @@ export default defineComponent({
 .popup-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   padding: 0 2vh;
   margin: 0 auto;
   text-align: center;
-  height: 100%;
 }
 
 .slide {

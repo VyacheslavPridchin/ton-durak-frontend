@@ -108,6 +108,8 @@ export default defineComponent({
 
     const fetchBets = async () => {
       try {
+        isLoadingData.value = true;
+
         const response = await apiService.checkBids();
         if (response.success) {
           betOptions.value = response.data.bids.map(b => `$${b}`);
@@ -116,6 +118,9 @@ export default defineComponent({
           if (selectedBet.value.length === 0 && betOptions.value.length > 0) {
             selectedBet.value = [betOptions.value[0]];
           }
+
+          isLoadingData.value = false;
+
         } else {
           events.emit('showNotification', {
             title: "Ошибка",
@@ -131,8 +136,6 @@ export default defineComponent({
           icon: 'profile',
           sticker: 'block_duck'
         });
-      } finally {
-        isLoadingData.value = false;
       }
     };
 

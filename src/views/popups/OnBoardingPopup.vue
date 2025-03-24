@@ -1,10 +1,10 @@
 <template>
   <div class="popup-container">
     <div class="slide">
+      <div class="icon-container">
+        <img :src="currentSlide.icon" alt="Slide Icon" />
+      </div>
       <div class="slide-header">
-        <div class="icon-container">
-          <img :src="currentSlide.icon" alt="Slide Icon" />
-        </div>
         <h2>{{ currentSlide.title }}</h2>
       </div>
       <p class="slide-text">{{ currentSlide.text }}</p>

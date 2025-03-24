@@ -53,9 +53,8 @@ export default defineComponent({
   name: 'PlayButton',
   props: {
     bids: {
-      type: Array<number>,
+      type: Array as () => number[],
       required: true,
-      default: [],
     },
   },
   setup(props) {
@@ -65,7 +64,7 @@ export default defineComponent({
     const isLoading = ref(false);
     const router = useRouter();
 
-    watch(props.bids, (newBids) => {
+    watch(() => props.bids, (newBids) => {
       let selectedBet = JSON.parse(localStorage.getItem('selectedBet') || '["$0.5"]');
       console.log("cached selected bet: ", selectedBet);
 

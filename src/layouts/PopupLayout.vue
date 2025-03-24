@@ -96,7 +96,7 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  z-index: 1000;
+  z-index: 900;
 }
 
 .popup {

@@ -88,7 +88,7 @@ export default defineComponent({
   height: 100%;
   background-color: transparent;
   pointer-events: none;
-  z-index: 900;
+  z-index: 1000;
 }
 
 .notifications-wrapper {

@@ -51,19 +51,19 @@ export default defineComponent({
         icon: WinIcon,
         title: "Зарабатывай USDT",
         text: "за каждую победу.",
-        sticker: "sticker1"
+        sticker: "loving"
       },
       {
         icon: WinIcon,
         title: "Зарабатывай до $100 каждую неделю",
         text: "за победы в еженедельном турнире",
-        sticker: "sticker2"
+        sticker: "thinking"
       },
       {
         icon: ReferralIcon,
         title: "Приглашай друзей",
         text: "и зарабатывай USDT за каждую их игру",
-        sticker: "sticker3"
+        sticker: "waving"
       }
     ];
 
@@ -119,10 +119,12 @@ export default defineComponent({
   position: relative;
 }
 
+/* Центрированный стикер, поднятый выше */
 .sticker-container {
   position: absolute;
-  right: -1vh;
-  top: -4.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -10vh;
   width: 13vh;
   height: 13vh;
 }

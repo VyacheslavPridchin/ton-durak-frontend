@@ -104,7 +104,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(8px);
-  z-index: 9998;
+  z-index: 999999;
 }
 
 .popup {

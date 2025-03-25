@@ -43,6 +43,9 @@ onMounted(async () => {
   }
 
   // @ts-ignore
+  console.log("Telegram platform: ", window.Telegram.WebApp.platform)
+
+  // @ts-ignore
   window.Telegram.WebApp.lockOrientation();
 
   router.afterEach(() => {

@@ -34,7 +34,7 @@ onMounted(async () => {
 
 
   // @ts-ignore
-  if(window.Telegram.WebApp.platform !== "tdesktop"){
+  if(window.Telegram.WebApp.platform !== "tdesktop" && window.Telegram.WebApp.platform !== "macos") {
     // @ts-ignore
     window.Telegram.WebApp.expand();
 

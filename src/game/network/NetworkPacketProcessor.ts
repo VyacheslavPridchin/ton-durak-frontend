@@ -89,6 +89,8 @@ export class NetworkPacketProcessor {
   }
 
   private static handleTransferPacket(packet: TransferPacket): void {
+    EventService.Instance.emit(EventType.GameEnded, 0);
+
     EventService.Instance.emit(EventType.Transfer, {
       lobbyId: packet.lobby_id,
       host: packet.host,

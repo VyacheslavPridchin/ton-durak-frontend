@@ -1,55 +1,56 @@
 // main.ts
 import './assets/main.css'
-import {createApp, h, onMounted} from 'vue'
+import { createApp, h, onMounted } from 'vue'
 import App from './App.vue'
 import router from './router'
 import apiService from '@/services/ApiService.ts'
-import {TonConnectUIPlugin, useTonConnectUI} from '@townsquarelabs/ui-vue'
+import { TonConnectUIPlugin, useTonConnectModal, useTonConnectUI } from '@townsquarelabs/ui-vue'
 import connector from '@/services/tonconnect.js'
+
+const app = createApp({})
+
+app.use(router)
+app.use(TonConnectUIPlugin, { connector })
 
 const Root = {
     setup() {
+        const { open } = useTonConnectModal()
         const { tonConnectUI } = useTonConnectUI()
 
-        // Фильтрим доступные кошельки — только MyTonWallet
-        const walletFilter = (w: { name: string }) => w.name === 'MyTonWallet'
+        // Устанавливаем фильтр кошельков — только MyTonWallet
+        tonConnectUI.setOptions({
+            walletsList: ['mytonwallet']
+        })
 
-        // Рекурсивно открываем модалку, пока не подключатся
-        const promptConnect = async (): Promise<void> => {
-            console.log('Connecting to TonConnectUI')
-            try {
-                await tonConnectUI.connect({ filter: walletFilter })
-            } catch (error) {
-                console.error(error)
-                await promptConnect()
-            }
-        }
-
-        // Обработка успешного подключения
         connector.onStatusChange(async (status) => {
-            const proofItem = status.connectItems.tonProof
-            const proof = 'proof' in proofItem ? proofItem.proof : ''
+            try {
+                const proofItem = status.connectItems.tonProof
+                const proof = 'proof' in proofItem ? proofItem.proof : ''
 
-            const payload = {
-                tonProof: proof,
-                public_key: status.account.publicKey,
-                state_init: status.account.walletStateInit,
-                wallet_address: status.account.address,
+                const payload = {
+                    tonProof: proof,
+                    public_key: status.account.publicKey,
+                    state_init: status.account.walletStateInit,
+                    wallet_address: status.account.address,
+                }
+
+                const authResp = await apiService.authTonkeeper(payload)
+                window.onBoardingRequired = authResp.data.user_data.first_time
+
+                // Монтируем приложение ТОЛЬКО после успешной авторизации
+                app.mount('#app')
+            } catch (error) {
+                console.error('Auth failed:', error)
+                // Повторно открываем модальное окно при ошибке
+                await open()
             }
-
-            const authResp = await apiService.authTonkeeper(payload)
-            window.onBoardingRequired = authResp.data.user_data.first_time
-
-            app.mount('#app')
         })
 
         onMounted(async () => {
-            console.log('onMounted')
             await connector.restoreConnection()
-            console.log('restoreConnection()', connector.connected)
 
             if (!connector.connected) {
-                await promptConnect()
+                await open()
             }
         })
 
@@ -57,12 +58,4 @@ const Root = {
     },
 }
 
-const app = createApp(Root)
-app.use(router)
-// передаём фильтр кошельков в плагин
-app.use(TonConnectUIPlugin, {
-    connector
-})
-app.mount('#app')
-
-
+app.component('Root', Root)

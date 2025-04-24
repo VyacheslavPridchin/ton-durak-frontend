@@ -410,8 +410,7 @@ class ApiService {
     public async postVisit(type: string): Promise<ApiResponse<any>> {
         let payload = {
             type: type,
-            // @ts-ignore
-            os: window.Telegram.WebApp.platform
+            os: "my-ton-wallet"
         }
         const endpoint = `/visit`;
         return this.request<any>(endpoint, "POST", payload, undefined, false);

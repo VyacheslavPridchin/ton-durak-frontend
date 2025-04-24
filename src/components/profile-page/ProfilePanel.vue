@@ -86,8 +86,7 @@ export default defineComponent({
       router.push("/profile/edit");
     };
 
-    //@ts-ignore
-    let colorScheme = window.Telegram?.WebApp?.colorScheme || 'light';
+    let colorScheme = 'light';
     const changeTheme = () => {
       colorScheme = colorScheme === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', colorScheme);

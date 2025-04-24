@@ -27,52 +27,6 @@ const route = useRoute();
 const roots = ref<string[]>(["/referrals", "/main", "/profile"]);
 
 onMounted(async () => {
-  // @ts-ignore
-  window.Telegram.WebApp.disableVerticalSwipes();
-  // @ts-ignore
-  window.Telegram.WebApp.enableClosingConfirmation();
-
-
-  // @ts-ignore
-  if(window.Telegram.WebApp.platform !== "tdesktop" && window.Telegram.WebApp.platform !== "macos") {
-    // @ts-ignore
-    window.Telegram.WebApp.expand();
-
-    // @ts-ignore
-    window.Telegram.WebApp.requestFullscreen();
-  }
-
-  // @ts-ignore
-  console.log("Telegram platform: ", window.Telegram.WebApp.platform)
-
-  // @ts-ignore
-  window.Telegram.WebApp.lockOrientation();
-
-  router.afterEach(() => {
-    const idx = window.history.state ? window.history.state.position : 0;
-    if (idx > 0 && !roots.value.includes(route.path)) {
-      // @ts-ignore
-      window.Telegram.WebApp.BackButton.show();
-    } else {
-      // @ts-ignore
-      window.Telegram.WebApp.BackButton.hide();
-    }
-  });
-
-  // @ts-ignore
-  window.Telegram.WebApp.BackButton.onClick(() => {
-    if(route.path === "/game"){
-      if (window.gameInProgress) {
-        EventService.Instance.emit(EventType.ShowTryLeavePopup, undefined);
-      } else {
-        NetworkManager.CloseGame(router);
-      }
-      return;
-    }
-
-    router.back();
-  });
-
   if(window.onBoardingRequired)
     events.emit("showPopup", { name: "onBoarding", canClose: false });
 });

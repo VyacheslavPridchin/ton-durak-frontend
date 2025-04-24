@@ -112,8 +112,6 @@ function updateCurrentIndex() {
 }
 
 function navigate(to: string) {
-  // @ts-ignore
-  window.Telegram.WebApp.HapticFeedback.impactOccurred("medium")
   router.push(to)
 }
 

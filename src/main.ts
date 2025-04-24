@@ -62,6 +62,6 @@ app.use(router)
 app.use(TonConnectUIPlugin, {
     connector
 })
-
+app.mount('#app')
 
 

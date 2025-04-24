@@ -1,6 +1,6 @@
 // main.ts
 import './assets/main.css'
-import {createApp, h} from 'vue'
+import {createApp, h, onMounted} from 'vue'
 import App from './App.vue'
 import router from './router'
 import apiService from '@/services/ApiService.ts'
@@ -42,13 +42,12 @@ const Root = {
             app.mount('#app')
         })
 
-        // При монтировании: пробуем восстановить, иначе открываем модалку
-        ;(async () => {
+        onMounted(async () => {
             await connector.restoreConnection()
             if (!connector.connected) {
                 await promptConnect()
             }
-        })()
+        })
 
         return () => h(App)
     },
@@ -60,4 +59,6 @@ app.use(router)
 app.use(TonConnectUIPlugin, {
     connector
 })
+
+
 

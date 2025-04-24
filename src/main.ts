@@ -67,7 +67,7 @@ const Root = defineComponent({
             }
 
             const payload = {
-                tonProof: proof,
+                proof: proof,
                 public_key: wallet.account.publicKey,
                 state_init: wallet.account.walletStateInit,
                 wallet_address: wallet.account.address,

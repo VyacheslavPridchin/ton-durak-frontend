@@ -20,11 +20,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import {defineComponent, onMounted, ref} from 'vue';
 import TonIcon from "@/assets/icons/ton-icon.svg";
 import USDTTonIcon from "@/assets/icons/usdt-ton-icon.svg";
 import CryptoItem from "@/components/withdraw-options-page/CryptoItem.vue";
 import { useRouter } from "vue-router";
+import apiService from "@/services/ApiService.ts";
 
 export default defineComponent({
   components: {CryptoItem },
@@ -37,6 +38,10 @@ export default defineComponent({
     const handleToggle = (id: string) => {
       activeItem.value = activeItem.value === id ? null : id;
     };
+
+    onMounted(async () => {
+      await apiService.postVisit('deposit_options_page');
+    })
 
     const router = useRouter();
 

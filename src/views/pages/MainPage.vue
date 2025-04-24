@@ -96,6 +96,10 @@ export default defineComponent({
       }
     };
 
+    onMounted(async () => {
+      await apiService.postVisit('main_page');
+    })
+
     onMounted(() => {
       try
       {

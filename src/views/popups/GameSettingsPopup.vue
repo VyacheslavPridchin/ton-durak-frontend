@@ -143,6 +143,10 @@ export default defineComponent({
       }
     };
 
+    onMounted(async () => {
+      await apiService.postVisit('game_settings_popup');
+    })
+
     onMounted(() => {
       loadSettings();
       fetchBets();

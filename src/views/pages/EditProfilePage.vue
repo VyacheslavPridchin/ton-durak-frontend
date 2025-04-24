@@ -238,6 +238,9 @@ export default defineComponent({
       }
     };
 
+    onMounted(async () => {
+      await apiService.postVisit('edit_profile_page');
+    })
 
     onMounted(async () => {
       try {

@@ -19,7 +19,8 @@ const Root = {
             console.log('Connecting to TonConnectUI')
             try {
                 await tonConnectUI.connect({ filter: walletFilter })
-            } catch {
+            } catch (error) {
+                console.error(error)
                 await promptConnect()
             }
         }

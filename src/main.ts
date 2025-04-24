@@ -1,10 +1,10 @@
 // main.ts
 import './assets/main.css'
-import { createApp, h } from 'vue'
+import {createApp, h} from 'vue'
 import App from './App.vue'
 import router from './router'
 import apiService from '@/services/ApiService.ts'
-import { TonConnectUIPlugin, useTonConnectUI } from '@townsquarelabs/ui-vue'
+import {TonConnectUIPlugin, useTonConnectUI} from '@townsquarelabs/ui-vue'
 import connector from '@/services/tonconnect.js'
 
 const Root = {
@@ -16,6 +16,7 @@ const Root = {
 
         // Рекурсивно открываем модалку, пока не подключатся
         const promptConnect = async (): Promise<void> => {
+            console.log('Connecting to TonConnectUI')
             try {
                 await tonConnectUI.connect({ filter: walletFilter })
             } catch {
@@ -34,10 +35,11 @@ const Root = {
                 state_init: status.account.walletStateInit,
                 wallet_address: status.account.address,
             }
+
             const authResp = await apiService.authTonkeeper(payload)
-            const firstTime = authResp.data.user_data.first_time
-            window.onBoardingRequired = firstTime
-            await router.push(firstTime ? '/onboarding/game' : '/game')
+            window.onBoardingRequired = authResp.data.user_data.first_time
+
+            app.mount('#app')
         })
 
         // При монтировании: пробуем восстановить, иначе открываем модалку
@@ -58,4 +60,4 @@ app.use(router)
 app.use(TonConnectUIPlugin, {
     connector
 })
-app.mount('#app')
+

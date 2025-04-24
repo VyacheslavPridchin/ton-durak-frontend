@@ -60,7 +60,7 @@ const Root = defineComponent({
             console.log('🔐 Proof:', proof)
 
             const payload = {
-                proof: "12345678",
+                proof: { tonProof: "12345678" },
                 public_key: status.account.publicKey,
                 state_init: status.account.walletStateInit,
                 wallet_address: status.account.address,

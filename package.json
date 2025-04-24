@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@sentry/vue": "^9.2.0",
+    "@townsquarelabs/ui-vue": "^2.0.11-beta.0",
     "axios": "^1.8.3",
     "gsap": "^3.12.7",
     "mitt": "^3.0.1",

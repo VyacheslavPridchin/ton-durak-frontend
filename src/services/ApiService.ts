@@ -259,6 +259,22 @@ class ApiService {
         return response;
     }
 
+    // POST /tonkeeper/auth
+    public async authTonkeeper(payload: any): Promise<ApiResponse<AuthResponseData>> {
+        const response = await this.request<AuthResponseData>("/tonkeeper/auth", "POST", payload);
+
+        if (response.success && response.data?.user_data?.jwt) {
+            this.accessToken = response.data.user_data.jwt.access_token;
+            this.refreshToken = response.data.user_data.jwt.refresh_token;
+
+            console.log(this.refreshToken);
+
+            this.saveTokensToCache();
+        }
+        return response;
+    }
+
+
     // GET /screen/main
     public async getScreenMain(): Promise<ApiResponse<ScreenMainData>> {
         return this.request<ScreenMainData>("/screen/main", "GET");

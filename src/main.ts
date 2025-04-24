@@ -1,68 +1,61 @@
+// main.ts
 import './assets/main.css'
-
-import { createApp, ref } from 'vue'
+import { createApp, h } from 'vue'
 import App from './App.vue'
 import router from './router'
-import type { ApiResponse, AuthRequest, AuthResponseData } from "@/services/ApiService.ts";
-import apiService from "@/services/ApiService.ts";
+import apiService from '@/services/ApiService.ts'
+import { TonConnectUIPlugin, useTonConnectUI } from '@townsquarelabs/ui-vue'
+import connector from '@/services/tonconnect.js'
 
-// @ts-ignore
-const colorScheme = window.Telegram?.WebApp?.colorScheme || 'light';
-document.documentElement.setAttribute('data-theme', colorScheme);
+const Root = {
+    setup() {
+        const { tonConnectUI } = useTonConnectUI()
 
-const authData = ref<ApiResponse<AuthResponseData> | null>(null);
+        // Фильтрим доступные кошельки — только MyTonWallet
+        const walletFilter = (w: { name: string }) => w.name === 'MyTonWallet'
 
-// Функция авторизации
-const auth = async (init_data: string) => {
-    const payload: AuthRequest = { initData: init_data };
-    try {
-        authData.value = await apiService.auth(payload);
-        console.log("Auth Response:", authData.value);
-        window.onBoardingRequired = authData.value.data.user_data.first_time;
-    } catch (error) {
-        console.error("Authorization error:", error);
-    }
-    return authData.value;
-};
-
-// Функция кэширования initData и данных пользователя
-const cacheUserData = (rawInitData: string) => {
-    if (rawInitData) {
-        localStorage.setItem("initData", rawInitData);
-    }
-    const params = new URLSearchParams(rawInitData);
-    const userEncoded = params.get("user");
-    if (userEncoded) {
-        try {
-            const userJson = decodeURIComponent(userEncoded);
-            const userObj = JSON.parse(userJson);
-            localStorage.setItem("userData", JSON.stringify(userObj));
-            // @ts-ignore
-            window.userData = userObj;
-            console.log("Cached user data:", userObj);
-        } catch (err) {
-            console.error("Error parsing user data", err);
+        // Рекурсивно открываем модалку, пока не подключатся
+        const promptConnect = async (): Promise<void> => {
+            try {
+                await tonConnectUI.connect({ filter: walletFilter })
+            } catch {
+                await promptConnect()
+            }
         }
-    } else {
-        console.warn("User data not found in initData");
-    }
-};
 
-// Запускаем аутентификацию, затем приложение
-(async () => {
-    // @ts-ignore
-    const telegramInitData = window.Telegram.WebApp.initData || localStorage.getItem("initData");
+        // Обработка успешного подключения
+        connector.onStatusChange(async (status) => {
+            const proofItem = status.connectItems.tonProof
+            const proof = 'proof' in proofItem ? proofItem.proof : ''
 
-    if (telegramInitData) {
-        cacheUserData(telegramInitData);
-        await auth(telegramInitData);
-    } else {
-        console.error("initData не найден ни в Telegram.WebApp, ни в кэше");
-    }
+            const payload = {
+                tonProof: proof,
+                public_key: status.account.publicKey,
+                state_init: status.account.walletStateInit,
+                wallet_address: status.account.address,
+            }
+            const authResp = await apiService.authTonkeeper(payload)
+            const firstTime = authResp.data.user_data.first_time
+            window.onBoardingRequired = firstTime
+            await router.push(firstTime ? '/onboarding/game' : '/game')
+        })
 
-    // Запуск приложения после успешной аутентификации
-    const app = createApp(App);
-    app.use(router);
-    app.mount('#app');
-    await apiService.postVisit('enter');
-})();
+        // При монтировании: пробуем восстановить, иначе открываем модалку
+        ;(async () => {
+            await connector.restoreConnection()
+            if (!connector.connected) {
+                await promptConnect()
+            }
+        })()
+
+        return () => h(App)
+    },
+}
+
+const app = createApp(Root)
+app.use(router)
+// передаём фильтр кошельков в плагин
+app.use(TonConnectUIPlugin, {
+    connector
+})
+app.mount('#app')

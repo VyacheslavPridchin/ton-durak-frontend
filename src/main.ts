@@ -61,6 +61,7 @@ const Root = defineComponent({
             const proof = wallet.connectItems?.tonProof?.proof
 
             if(proof == undefined || proof == ""){
+                await connector.disconnect();
                 await promptConnect();
                 return;
             }

@@ -58,7 +58,13 @@ const Root = defineComponent({
         // 7. Handle successful connection → authenticate → render App
         connector.onStatusChange(async wallet => {
             // @ts-ignore
-            const proof = wallet.connectItems?.tonProof?.proof ?? ''
+            const proof = wallet.connectItems?.tonProof?.proof
+
+            if(proof == undefined || proof == ""){
+                await promptConnect();
+                return;
+            }
+
             const payload = {
                 tonProof: proof,
                 public_key: wallet.account.publicKey,

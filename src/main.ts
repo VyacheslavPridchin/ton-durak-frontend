@@ -10,78 +10,74 @@ import connector from '@/services/tonconnect.js'
 const Root = defineComponent({
     name: 'Root',
     setup() {
-        console.log('🔧 Root.setup start')
-
-        const { state, open } = useTonConnectModal()
-        const { tonConnectUI, setOptions } = useTonConnectUI()
+        const { state } = useTonConnectModal()
+        const { tonConnectUI } = useTonConnectUI()
         const authorized = ref(false)
 
-        ;(async () => {
-            console.log('⏳ Loading wallets…')
-            const walletsList = await tonConnectUI.getWallets()
-            console.log('📦 All wallets:', walletsList)
-
-            const filtered = walletsList.filter(w => w.name === 'MyTonWallet')
-            console.log('🔍 Filtered wallets:', filtered)
-
-            // теперь используем setOptions, а не tonConnectUI.setOptions
-            setOptions({
-                walletsListConfiguration: { includeWallets: filtered }
-            })
-            console.log('✅ Wallet filter applied')
-
-            console.log('⏳ Restoring connection…')
-            await connector.restoreConnection()
-            console.log('🔄 connector.connected =', connector.connected)
-
-            if (!connector.connected) {
-                console.log('🔔 Not connected → opening modal')
-                await open()
-            } else {
-                console.log('✔ Already connected → waiting onStatusChange')
-            }
-        })()
-
-        watch(
-            () => state.value.status,
-            async status => {
-                console.log('🎯 Modal status:', status)
-                if (status === 'closed' && !connector.connected) {
-                    console.log('🔄 Modal closed without connection → reopening')
-                    await open()
-                }
-            }
-        )
-
+        // Подписываемся на статус соединения
         connector.onStatusChange(async status => {
             console.log('📶 onStatusChange:', status)
-            const proofItem = status.connectItems?.tonProof
+            const proofItem = status.connectItems.tonProof
             const proof = proofItem && 'proof' in proofItem ? proofItem.proof : ''
-            console.log('🔐 Proof:', proof)
+            console.log('🔐 Proof received:', proof)
 
             const payload = {
-                proof: { tonProof: "12345678" },
+                tonProof: proof,
                 public_key: status.account.publicKey,
                 state_init: status.account.walletStateInit,
                 wallet_address: status.account.address,
             }
-            console.log('📤 Auth payload:', payload)
 
             try {
                 const authResp = await apiService.authTonkeeper(payload)
                 console.log('✅ authTonkeeper response:', authResp)
                 window.onBoardingRequired = authResp.data.user_data.first_time
-                console.log('🏷 onBoardingRequired:', window.onBoardingRequired)
-
                 authorized.value = true
             } catch (err) {
                 console.error('❌ Auth failed, reopening modal:', err)
-                await open()
+                // если что-то пошло не так — откроем заново
+                await promptConnect()
             }
         })
 
-        console.log('🔧 Root.setup end')
+        // Функция открытия с передачей фильтра и tonProof
+        const promptConnect = async () => {
+                console.log('👉 Opening TonConnect modal with proof…')
+                try {
+                    await tonConnectUI.connect({
+                        filter: w => w.name === 'MyTonWallet',
+                        request: { tonProof: '12345678' }
+                    })
+                } catch (err) {
+                    console.error('❌ connect() failed, retrying:', err)
+                    await promptConnect()
+                }
+            }
 
+            // Сразу пытаемся восстановить сессию, иначе открываем модалку
+        ;(async () => {
+            console.log('⏳ Restoring connection…')
+            await connector.restoreConnection()
+            console.log('🔄 connector.connected =', connector.connected)
+
+            if (!connector.connected) {
+                console.log('🔔 Not connected → promptConnect()')
+                await promptConnect()
+            } else {
+                console.log('✔ Already connected → waiting onStatusChange')
+            }
+        })()
+
+        // Если модалка закрылась без соединения, откроем снова
+        watch(() => state.value.status, async status => {
+            console.log('🎯 Modal status:', status)
+            if (status === 'closed' && !connector.connected) {
+                console.log('🔄 Modal closed without connection → reopening')
+                await promptConnect()
+            }
+        })
+
+        // Рендерим <App/> только после успешной авторизации
         return () => (authorized.value ? h(App) : null)
     }
 })

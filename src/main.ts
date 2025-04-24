@@ -1,6 +1,6 @@
 // main.ts
 import './assets/main.css'
-import { createApp, h } from 'vue'
+import { createApp, h, watch } from 'vue'
 import App from './App.vue'
 import router from './router'
 import apiService from '@/services/ApiService.ts'
@@ -19,60 +19,69 @@ const Root = {
     setup() {
         console.log('🔧 Root.setup() start')
 
-        const { open } = useTonConnectModal()
+        const { state, open, close } = useTonConnectModal()
         console.log('🗳️ useTonConnectModal obtained')
 
         const { tonConnectUI } = useTonConnectUI()
-        console.log('⚙️ useTonConnectUI obtained:', tonConnectUI)
+        console.log('⚙️ useTonConnectUI obtained')
 
-        // Устанавливаем фильтр кошельков — только MyTonWallet
-        console.log('💡 Setting wallet filter option')
+        // Фильтруем кошельки (только MyTonWallet)
         tonConnectUI.setOptions({
-            walletsList: ['mytonwallet']
+            walletsList: ['mytonwallet'],
         })
+        console.log('💡 Wallet filter applied')
 
-        // Обработка успешного подключения
-        connector.onStatusChange(async (status) => {
-            console.log('📶 onStatusChange triggered with status:', status)
-            try {
-                const proofItem = status.connectItems.tonProof
-                const proof = 'proof' in proofItem ? proofItem.proof : ''
-                console.log('🔐 Proof extracted:', proof)
-
-                const payload = {
-                    tonProof: proof,
-                    public_key: status.account.publicKey,
-                    state_init: status.account.walletStateInit,
-                    wallet_address: status.account.address,
+        // Если модалка закрылась без подключения, откроем её снова
+        watch(
+            () => state.value.status,
+            async (status) => {
+                console.log('🎯 Modal status changed →', status)
+                if (status === 'closed' && !connector.connected) {
+                    console.log('🔄 Modal closed but not connected → reopening')
+                    await open()
                 }
-                console.log('📤 Sending auth payload:', payload)
+            }
+        )
 
+        // Когда статус коннектора меняется (успешное подключение) — монтируем приложение
+        connector.onStatusChange(async (status) => {
+            console.log('📶 onStatusChange:', status)
+            const proofItem = status.connectItems.tonProof
+            const proof = 'proof' in proofItem ? proofItem.proof : ''
+            console.log('🔐 Extracted proof:', proof)
+
+            const payload = {
+                tonProof: proof,
+                public_key: status.account.publicKey,
+                state_init: status.account.walletStateInit,
+                wallet_address: status.account.address,
+            }
+            console.log('📤 Sending auth payload:', payload)
+
+            try {
                 const authResp = await apiService.authTonkeeper(payload)
                 console.log('✅ authTonkeeper response:', authResp)
-
                 window.onBoardingRequired = authResp.data.user_data.first_time
-                console.log('🏷️ onBoardingRequired set to', window.onBoardingRequired)
-
                 console.log('🎉 Mounting app now')
                 app.mount('#app')
-            } catch (error) {
-                console.error('❌ Auth or mount failed:', error)
-                console.log('🔄 Re-opening modal')
+            } catch (err) {
+                console.error('❌ Auth failed, reopening modal:', err)
                 await open()
             }
         })
 
-        // Инициализация подключения
+        // Начальная попытка восстановить сессию или открыть модалку
         ;(async () => {
-            console.log('⏳ Restoring connection...')
+            console.log('⏳ Restoring connection…')
             await connector.restoreConnection()
-            console.log('🔄 restoreConnection() returned, connected =', connector.connected)
+            console.log('🔄 connector.connected =', connector.connected)
 
-            if (!connector.connected) {
-                console.log('🔔 Not connected, opening modal')
-                await open()
+            if (connector.connected) {
+                console.log('🔔 Already connected → mounting')
+                app.mount('#app')
             } else {
-                console.log('🔔 Already connected, waiting for onStatusChange')
+                console.log('🔔 Not connected → opening modal')
+                await open()
             }
         })()
 
@@ -83,5 +92,4 @@ const Root = {
 
 app.component('Root', Root)
 console.log('📝 Root component registered')
-
-// Замечание: `app.mount('#app')` вызывается только после onStatusChange
+// Заметьте: app.mount('#app') больше не вызывается здесь — только внутри onStatusChange или после restoreConnection.

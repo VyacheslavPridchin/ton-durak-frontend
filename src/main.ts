@@ -10,81 +10,76 @@ import connector from '@/services/tonconnect.js'
 const Root = defineComponent({
     name: 'Root',
     setup() {
-        const { state } = useTonConnectModal()
-        const { tonConnectUI } = useTonConnectUI()
+        // 1. Modal control hooks
+        const { state, open } = useTonConnectModal()                    // open() opens the connect modal :contentReference[oaicite:4]{index=4}
+        const { tonConnectUI, setOptions } = useTonConnectUI()         // access TonConnectUI instance and UI options :contentReference[oaicite:5]{index=5}
+
+        // 2. Auth flag to render App only after success
         const authorized = ref(false)
 
-        // Подписываемся на статус соединения
-        connector.onStatusChange(async status => {
-            console.log('📶 onStatusChange:', status)
-            const proofItem = status.connectItems.tonProof
-            const proof = proofItem && 'proof' in proofItem ? proofItem.proof : ''
-            console.log('🔐 Proof received:', proof)
-
-            const payload = {
-                tonProof: proof,
-                public_key: status.account.publicKey,
-                state_init: status.account.walletStateInit,
-                wallet_address: status.account.address,
-            }
-
-            try {
-                const authResp = await apiService.authTonkeeper(payload)
-                console.log('✅ authTonkeeper response:', authResp)
-                window.onBoardingRequired = authResp.data.user_data.first_time
-                authorized.value = true
-            } catch (err) {
-                console.error('❌ Auth failed, reopening modal:', err)
-                // если что-то пошло не так — откроем заново
-                await promptConnect()
-            }
-        })
-
-        // Функция открытия с передачей фильтра и tonProof
-        const promptConnect = async () => {
-                console.log('👉 Opening TonConnect modal with proof…')
-                try {
-                    await tonConnectUI.connect({
-                        filter: w => w.name === 'MyTonWallet',
-                        request: { tonProof: '12345678' }
-                    })
-                } catch (err) {
-                    console.error('❌ connect() failed, retrying:', err)
-                    await promptConnect()
-                }
-            }
-
-            // Сразу пытаемся восстановить сессию, иначе открываем модалку
+            // 3. Filter wallets to only MyTonWallet
         ;(async () => {
-            console.log('⏳ Restoring connection…')
-            await connector.restoreConnection()
-            console.log('🔄 connector.connected =', connector.connected)
+            const walletsList = await tonConnectUI.getWallets()           // load all wallets :contentReference[oaicite:6]{index=6}
+            const filtered = walletsList.filter(w => w.name === 'MyTonWallet')
+            setOptions({
+                walletsListConfiguration: { includeWallets: filtered }
+            })                                                            // apply filter :contentReference[oaicite:7]{index=7}
 
+            // 4. Try to restore existing session; if none, prompt connect
+            await connector.restoreConnection()
             if (!connector.connected) {
-                console.log('🔔 Not connected → promptConnect()')
                 await promptConnect()
-            } else {
-                console.log('✔ Already connected → waiting onStatusChange')
             }
         })()
 
-        // Если модалка закрылась без соединения, откроем снова
-        watch(() => state.value.status, async status => {
-            console.log('🎯 Modal status:', status)
-            if (status === 'closed' && !connector.connected) {
-                console.log('🔄 Modal closed without connection → reopening')
-                await promptConnect()
+        // 5. Prepare and open modal with tonProof
+        const promptConnect = async () => {
+            // a) Fetch or generate your proof here (static for example)
+            const proof = '12345678'
+            // b) Inject proof into the upcoming connect request
+            tonConnectUI.setConnectRequestParameters({
+                state: 'ready',
+                value: { tonProof: proof }
+            })                                                              // inject tonProof :contentReference[oaicite:8]{index=8}
+            // c) Open the wallets modal
+            await open()
+        }
+
+        // 6. Re-open modal automatically if user closes it without connecting
+        watch(
+            () => state.value.status,
+            async status => {
+                if (status === 'closed' && !connector.connected) {
+                    await promptConnect()
+                }
+            }
+        )
+
+        // 7. Handle successful connection → authenticate → render App
+        connector.onStatusChange(async wallet => {
+            // @ts-ignore
+            const proof = wallet.connectItems?.tonProof?.proof ?? ''
+            const payload = {
+                tonProof: proof,
+                public_key: wallet.account.publicKey,
+                state_init: wallet.account.walletStateInit,
+                wallet_address: wallet.account.address,
+            }
+            try {
+                const authResp = await apiService.authTonkeeper(payload)
+                window.onBoardingRequired = authResp.data.user_data.first_time
+                authorized.value = true                                      // only now render <App/>
+            } catch {
+                await promptConnect()                                         // retry on auth failure
             }
         })
 
-        // Рендерим <App/> только после успешной авторизации
+        // 8. Only render the main App after authorization
         return () => (authorized.value ? h(App) : null)
     }
 })
 
-console.log('🏁 main.ts start')
 const app = createApp(Root)
 app.use(router)
 app.use(TonConnectUIPlugin, { connector })
-console.log('🚀 Plugins applied, mounting Root')
 app.mount('#app')

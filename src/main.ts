@@ -1,6 +1,6 @@
 // main.ts
 import './assets/main.css'
-import { createApp, h, onMounted } from 'vue'
+import { createApp, h } from 'vue'
 import App from './App.vue'
 import router from './router'
 import apiService from '@/services/ApiService.ts'
@@ -22,6 +22,7 @@ const Root = {
             walletsList: ['mytonwallet']
         })
 
+        // Обработка успешного подключения
         connector.onStatusChange(async (status) => {
             try {
                 const proofItem = status.connectItems.tonProof
@@ -46,13 +47,14 @@ const Root = {
             }
         })
 
-        onMounted(async () => {
+        // Инициализация подключения
+        ;(async () => {
             await connector.restoreConnection()
 
             if (!connector.connected) {
                 await open()
             }
-        })
+        })()
 
         return () => h(App)
     },

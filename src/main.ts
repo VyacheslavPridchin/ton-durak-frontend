@@ -7,40 +7,57 @@ import apiService from '@/services/ApiService.ts'
 import { TonConnectUIPlugin, useTonConnectModal, useTonConnectUI } from '@townsquarelabs/ui-vue'
 import connector from '@/services/tonconnect.js'
 
-console.log('🏁 main.ts start')
-
 const Root = defineComponent({
     name: 'Root',
     setup() {
         console.log('🔧 Root.setup start')
 
         const { state, open } = useTonConnectModal()
-        console.log('🗳 useTonConnectModal obtained')
-
         const { tonConnectUI } = useTonConnectUI()
-        console.log('⚙ useTonConnectUI obtained')
-
-        // Оставляем в списке только MyTonWallet
-        tonConnectUI.setOptions({ walletsList: ['mytonwallet'] })
-        console.log('💡 Wallet filter applied')
-
-        // Флаг, что авторизация пройдена
         const authorized = ref(false)
 
-        // Если модалка закрылась без подключения — откроем заново
+            // 1. Загрузим все доступные кошельки и отфильтруем по имени
+        ;(async () => {
+            console.log('⏳ Loading wallets…')
+            const walletsList = await tonConnectUI.getWallets()
+            console.log('📦 All wallets:', walletsList)
+
+            const filtered = walletsList.filter(w => w.name === 'MyTonWallet')
+            console.log('🔍 Filtered wallets:', filtered)
+
+            // 2. Применим только эти кошельки в конфигурации модалки
+            tonConnectUI.setOptions({
+                walletsListConfiguration: { includeWallets: filtered }
+            })
+            console.log('✅ Wallet filter applied')
+
+            // 3. Попробуем восстановить сессию или откроем модалку
+            console.log('⏳ Restoring connection…')
+            await connector.restoreConnection()
+            console.log('🔄 connector.connected =', connector.connected)
+
+            if (!connector.connected) {
+                console.log('🔔 Not connected → opening modal')
+                await open()
+            } else {
+                console.log('✔ Already connected → waiting for onStatusChange')
+            }
+        })()
+
+        // Если пользователь закрыл модалку без подключения — откроем снова
         watch(
             () => state.value.status,
-            async (status) => {
+            async status => {
                 console.log('🎯 Modal status:', status)
                 if (status === 'closed' && !connector.connected) {
-                    console.log('🔄 Modal closed without connection, reopening')
+                    console.log('🔄 Modal closed without connection → reopening')
                     await open()
                 }
             }
         )
 
-        // При любом изменении статуса коннектора
-        connector.onStatusChange(async (status) => {
+        // При изменении статуса коннектора — авторизуем и показываем App
+        connector.onStatusChange(async status => {
             console.log('📶 onStatusChange:', status)
             const proofItem = status.connectItems.tonProof
             const proof = 'proof' in proofItem ? proofItem.proof : ''
@@ -60,7 +77,6 @@ const Root = defineComponent({
                 window.onBoardingRequired = authResp.data.user_data.first_time
                 console.log('🏷 onBoardingRequired:', window.onBoardingRequired)
 
-                // Разрешаем отрисовку основного приложения
                 authorized.value = true
             } catch (err) {
                 console.error('❌ Auth failed, reopening modal:', err)
@@ -68,31 +84,14 @@ const Root = defineComponent({
             }
         })
 
-        // Сразу восстанавливаем сессию или открываем модалку
-        ;(async () => {
-            console.log('⏳ Restoring connection…')
-            await connector.restoreConnection()
-            console.log('🔄 connector.connected =', connector.connected)
-
-            if (!connector.connected) {
-                console.log('🔔 Not connected → opening modal')
-                await open()
-            } else {
-                console.log('✔ Already connected → waiting onStatusChange')
-            }
-        })()
-
         console.log('🔧 Root.setup end')
 
-        // В рендере: пока не авторизованы — ничего не показываем,
-        // когда `authorized === true` — рисуем <App/>
-        return () => {
-            if (!authorized.value) return null
-            return h(App)
-        }
+        // Рендерим только после флага authorized
+        return () => (authorized.value ? h(App) : null)
     }
 })
 
+console.log('🏁 main.ts start')
 const app = createApp(Root)
 app.use(router)
 app.use(TonConnectUIPlugin, { connector })

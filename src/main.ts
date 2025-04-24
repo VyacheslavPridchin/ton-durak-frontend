@@ -43,7 +43,10 @@ const Root = {
         })
 
         onMounted(async () => {
+            console.log('onMounted')
             await connector.restoreConnection()
+            console.log('restoreConnection()', connector.connected)
+
             if (!connector.connected) {
                 await promptConnect()
             }

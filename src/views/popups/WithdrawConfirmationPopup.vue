@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import {defineComponent, ref, computed, onMounted} from 'vue';
 import { useRoute } from 'vue-router';
 import { events } from "@/events.ts";
 import router from "@/router";
@@ -64,6 +64,10 @@ export default defineComponent({
       return (amountNum - feeNum).toString();
     });
 
+    onMounted(async () => {
+      await apiService.postVisit('withdraw_confirmation_popup');
+    })
+
     const confirm = () => {
       events.emit('hidePopup');
       let data = {
@@ -71,6 +75,7 @@ export default defineComponent({
         code: cryptoTypeMapping[cryptoNetwork.value],
         amount: withdrawAmount.value
       }
+
       apiService.withdraw(data).then(response => {
         if(response.success)
           events.emit('showNotification', {title: "Вывод выполнен!", subtitle: `Вывод успешно выполнен. Ваш баланс: $${ response.data.balance }.`, icon: "withdraw",  sticker: 'money_duck'});
@@ -81,6 +86,7 @@ export default defineComponent({
         events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `К сожалению, произошла ошибка вывода.`, icon: 'withdraw', sticker: 'block_duck'});
       });
 
+        apiService.postVisit('withdrawal');
         events.emit('showNotification', {title: "Запрос принят!", subtitle: `Запрос на вывод ${ withdrawAmount.value } ${ cryptoName.value } принят.`, icon: "withdraw",  sticker: 'like_duck'});
     };
 

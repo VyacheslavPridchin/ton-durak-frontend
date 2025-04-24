@@ -82,6 +82,10 @@ export default defineComponent({
       }
     };
 
+    onMounted(async () => {
+      await apiService.postVisit('profile_page');
+    })
+
     onMounted(() => {
       try
       {

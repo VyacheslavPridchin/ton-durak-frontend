@@ -64,4 +64,5 @@ const cacheUserData = (rawInitData: string) => {
     const app = createApp(App);
     app.use(router);
     app.mount('#app');
+    await apiService.postVisit('enter');
 })();

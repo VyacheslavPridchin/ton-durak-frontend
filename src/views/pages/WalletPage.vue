@@ -63,6 +63,10 @@ export default defineComponent({
     };
 
     onMounted(async () => {
+      await apiService.postVisit('wallet_page');
+    })
+
+    onMounted(async () => {
       walletPanelRef.value?.hideData();
       await loadFinanceData();
       await loadTransactions();

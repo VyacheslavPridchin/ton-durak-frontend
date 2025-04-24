@@ -111,6 +111,10 @@ export default defineComponent({
       }
     };
 
+    onMounted(async () => {
+      await apiService.postVisit('referrals_page');
+    })
+
     onMounted(() => {
       try {
         const cachedResponse = loadCachedData();

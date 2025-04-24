@@ -96,6 +96,10 @@ export default defineComponent({
       }
     };
 
+    onMounted(async () => {
+      await apiService.postVisit('tournament_page');
+    })
+
     onMounted(() => {
       leaguePanelRef.value.hideData();
       fetchTournamentData();

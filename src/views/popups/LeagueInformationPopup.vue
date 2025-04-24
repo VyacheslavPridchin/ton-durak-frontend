@@ -33,8 +33,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import {defineComponent, ref, computed, onMounted} from 'vue';
 import { events } from "@/events.ts";
+import apiService from "@/services/ApiService.ts";
 
 export default defineComponent({
   setup() {
@@ -44,6 +45,10 @@ export default defineComponent({
     const leagues = ['bronze', 'silver', 'gold', 'platinum', 'predator'];
     const currentLeague = ref('predator'); // указываем текущую лигу
     const currentIndex = computed(() => leagues.indexOf(currentLeague.value));
+
+    onMounted(async () => {
+      await apiService.postVisit('league_information_popup');
+    })
 
     return {
       closePopup,

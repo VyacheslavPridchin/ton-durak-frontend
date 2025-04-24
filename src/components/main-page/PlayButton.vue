@@ -129,6 +129,7 @@ export default defineComponent({
       const formattedRules = selectedRule.map((rule: string) =>
           rule === 'Классический' ? '0' : rule === 'Переводной' ? '1' : rule
       );
+      await apiService.postVisit('quick_game');
 
       apiService.quickGame(formattedBets, formattedPlayers, formattedRules)
           .then((response) => {

@@ -39,6 +39,10 @@ export default defineComponent({
     const graphData = ref<{ day: string; value: number }[]>([ {day: "-", value: 0 } ]);
 
     onMounted(async () => {
+      await apiService.postVisit('referrals_details_page');
+    })
+
+    onMounted(async () => {
       try {
         const [graphResponse, transactionsResponse] = await Promise.all([
           apiService.getScreenReferralGraph(),

@@ -81,6 +81,8 @@ export default defineComponent({
     };
 
     const getMoney = async () => {
+      await apiService.postVisit('claim_referrals_money');
+
       apiService.claimReferral().then((response) => {
         console.log(response);
 
@@ -111,6 +113,9 @@ export default defineComponent({
             events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не получилось скопировать.", icon: 'referral', sticker: 'block_duck' });
             console.error('Ошибка копирования адреса:', err);
           });
+
+      await apiService.postVisit('copy_invite_link');
+
     }
 
     const openInformationPopup = () => {

@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import {defineComponent, ref, computed, onMounted} from 'vue';
 import { events } from "@/events.ts";
 import ReferralIcon from "@/assets/icons/transactions/referral-icon.svg";
 import WinIcon from "@/assets/icons/transactions/tournament-icon.svg";
@@ -74,18 +74,24 @@ export default defineComponent({
     const currentSlide = computed(() => slides[currentSlideIndex.value]);
     const stickerSrc = computed(() => `/assets/stickers/${currentSlide.value.sticker}.json`);
 
+    onMounted(async () => {
+      await apiService.postVisit('onboarding_popup');
+    })
+
     const nextSlide = async () => {
       if (currentSlideIndex.value < slides.length - 1) {
         currentSlideIndex.value++;
+        await apiService.postVisit(`onboarding_slide_${currentSlideIndex.value}`);
+
       } else {
-        apiService.getFirstGame().then((response) => {
+        apiService.getFirstGame().then(async (response) => {
           if (response.success === false) {
             events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не удалось начать игру.", icon: 'loss', sticker: 'block_duck' });
             events.emit("hidePopup");
             return;
           }
-
-          router.push(`/game?host=${response.data.host}&lobbyId=${response.data.lobby_id}&playerId=${window.userData?.id}&language=ru`);
+          await apiService.postVisit('onboarding_play');
+          await router.push(`/game?host=${response.data.host}&lobbyId=${response.data.lobby_id}&playerId=${window.userData?.id}&language=ru`);
           events.emit("hidePopup");
         }).catch(() => {
           events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не удалось начать игру.", icon: 'loss', sticker: 'block_duck' });

@@ -143,6 +143,12 @@ export default defineComponent({
       );
     });
 
+
+    onMounted(async () => {
+      await apiService.postVisit('withdraw_page');
+    })
+
+
     const hideKeyboard = () => {
       const activeElement = document.activeElement as HTMLElement;
       if (activeElement && typeof activeElement.blur === 'function') {

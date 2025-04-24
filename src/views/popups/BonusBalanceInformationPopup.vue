@@ -13,14 +13,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {defineComponent, onMounted} from 'vue';
 import {events} from "@/events.ts";
+import apiService from "@/services/ApiService.ts";
 
 export default defineComponent({
   setup() {
     const closePopup = () => {
       events.emit("hidePopup");
     }
+
+    onMounted(async () => {
+      await apiService.postVisit('bonus_balance_information_popup');
+    })
+
     return {
       closePopup
     };

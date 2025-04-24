@@ -79,6 +79,7 @@ export default defineComponent({
           .then(() => {
             events.emit('showNotification', { title: "Скопировано!", subtitle: "Адрес успешно скопирован.", icon: 'copy', sticker: 'like_duck' });
             console.log('Адрес скопирован');
+            apiService.postVisit('copy_wallet_address');
           })
           .catch(err => {
             events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Не получилось скопировать.", icon: 'copy', sticker: 'block_duck' });
@@ -92,7 +93,9 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-       apiService.getDepositInfo(cryptoTypeMapping[cryptoNetwork.value]).then(response => {
+      await apiService.postVisit('deposit_page');
+
+      apiService.getDepositInfo(cryptoTypeMapping[cryptoNetwork.value]).then(response => {
          if(!response.success) {
            events.emit('showNotification', { title: "Произошла ошибка!", subtitle: "Ошибка получения данных депозита.", icon: 'deposit', sticker: 'block_duck' });
            return;

@@ -13,10 +13,9 @@ const Root = defineComponent({
         console.log('🔧 Root.setup start')
 
         const { state, open } = useTonConnectModal()
-        const { tonConnectUI } = useTonConnectUI()
+        const { tonConnectUI, setOptions } = useTonConnectUI()
         const authorized = ref(false)
 
-            // 1. Загрузим все доступные кошельки и отфильтруем по имени
         ;(async () => {
             console.log('⏳ Loading wallets…')
             const walletsList = await tonConnectUI.getWallets()
@@ -25,13 +24,12 @@ const Root = defineComponent({
             const filtered = walletsList.filter(w => w.name === 'MyTonWallet')
             console.log('🔍 Filtered wallets:', filtered)
 
-            // 2. Применим только эти кошельки в конфигурации модалки
-            tonConnectUI.setOptions({
+            // теперь используем setOptions, а не tonConnectUI.setOptions
+            setOptions({
                 walletsListConfiguration: { includeWallets: filtered }
             })
             console.log('✅ Wallet filter applied')
 
-            // 3. Попробуем восстановить сессию или откроем модалку
             console.log('⏳ Restoring connection…')
             await connector.restoreConnection()
             console.log('🔄 connector.connected =', connector.connected)
@@ -40,11 +38,10 @@ const Root = defineComponent({
                 console.log('🔔 Not connected → opening modal')
                 await open()
             } else {
-                console.log('✔ Already connected → waiting for onStatusChange')
+                console.log('✔ Already connected → waiting onStatusChange')
             }
         })()
 
-        // Если пользователь закрыл модалку без подключения — откроем снова
         watch(
             () => state.value.status,
             async status => {
@@ -56,11 +53,10 @@ const Root = defineComponent({
             }
         )
 
-        // При изменении статуса коннектора — авторизуем и показываем App
         connector.onStatusChange(async status => {
             console.log('📶 onStatusChange:', status)
-            const proofItem = status.connectItems.tonProof
-            const proof = 'proof' in proofItem ? proofItem.proof : ''
+            const proofItem = status.connectItems?.tonProof
+            const proof = proofItem && 'proof' in proofItem ? proofItem.proof : ''
             console.log('🔐 Proof:', proof)
 
             const payload = {
@@ -86,7 +82,6 @@ const Root = defineComponent({
 
         console.log('🔧 Root.setup end')
 
-        // Рендерим только после флага authorized
         return () => (authorized.value ? h(App) : null)
     }
 })

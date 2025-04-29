@@ -106,6 +106,29 @@ async function loadTransferIcon() {
   transferIcon.value = await ImageCache.getImage(iconPath).then(img => img?.src ?? null);
 }
 
+function destroyInvalidCards() {
+  // Удаляем инвалидные карты
+  for (const card of [...cards.value]) {
+    const refCmp = cardRefs.value[card.id];
+    const isInvalid =
+        (card.rank === undefined || card.suit === undefined || card.isFaceDown) &&
+        refCmp && (refCmp as any).location === CardUtils.Location.Table;
+
+    if (isInvalid) {
+      destroyCardById(card.id);
+    }
+  }
+
+  // Удаляем ссылки в cardRefs, если id нет в cards
+  const validIds = new Set(cards.value.map(c => c.id));
+  for (const id of Object.keys(cardRefs.value)) {
+    if (!validIds.has(id)) {
+      destroyCardById(id);
+    }
+  }
+}
+
+
 // Подписываемся на событие при монтировании
 onMounted(() => {
   EventService.Instance.on(EventType.TrumpSet, onTrumpSet);
@@ -401,6 +424,7 @@ defineExpose({
 
   // Основные
   spawnCard,
+  destroyInvalidCards,
 });
 </script>
 

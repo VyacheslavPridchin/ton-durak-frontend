@@ -399,21 +399,26 @@ class TableController {
       }
     }
 
-    // Отложенная очистка потерянных карт через 50 мс
     setTimeout(() => {
-      const newKeys = new Set(newTurns.map(t =>
-          CardUtils.getCardCode(t.attackCard) + (t.defendCard ? '_' + CardUtils.getCardCode(t.defendCard) : '')
-      ));
+      const currentCodes = new Set<string>();
+      turns.forEach(t => {
+        currentCodes.add(CardUtils.getCardCode(t.attackCard));
+        if (t.defendCard) currentCodes.add(CardUtils.getCardCode(t.defendCard));
+      });
 
       previousTurns.forEach(prev => {
-        const keyAttack = CardUtils.getCardCode(prev.attackCard);
-        const keyDefend = prev.defendCard ? CardUtils.getCardCode(prev.defendCard) : null;
-        const comboKey = keyAttack + (keyDefend ? '_' + keyDefend : '');
-        if (!newKeys.has(comboKey)) {
-          cardsManagerRef.value.destroyCard(prev.attackCard.rank, prev.attackCard.suit);
-          if (prev.defendCard) cardsManagerRef.value.destroyCard(prev.defendCard.rank, prev.defendCard.suit);
-        }
+        // проверяем атакующую
+        [prev.attackCard, prev.defendCard].forEach(card => {
+          if (!card) return;
+          const code = CardUtils.getCardCode(card);
+          const inst = cardsManagerRef.value.getCard(card.rank, card.suit);
+          if (!currentCodes.has(code) && inst?.location === CardUtils.Location.Table) {
+            cardsManagerRef.value.destroyCard(card.rank, card.suit);
+          }
+        });
       });
+
+      cardsManagerRef.value.destroyInvalidCards();
     }, 50);
   }
 

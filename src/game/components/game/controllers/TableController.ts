@@ -269,27 +269,32 @@ class TableController {
    * Обновление карт на столе
    */
   private async updateTableCards(turns: CardUtils.TableTurn[], animate: boolean = true, fromServer: boolean = true): Promise<void> {
-    if(fromServer) this.lastTableUpdate = Date.now();
+    if (fromServer) this.lastTableUpdate = Date.now();
 
     const cardsManagerRef = CardsManagerRef.get();
 
-    this.cachedTableCards = turns;
+    // Копия предыдущего состояния для последующей очистки
+    const previousTurns = this.cachedTableCards ? this.cachedTableCards.map(t => ({ ...t })) : [];
 
-    turns = turns.map(turn => ({ ...turn }));
+    // Кэшируем новое состояние (копия), не уничтожаем сразу
+    const newTurns = turns.map(turn => ({ ...turn }));
+    this.cachedTableCards = newTurns;
+
+    turns = newTurns.map(turn => ({ ...turn }));
 
     const currentState = PlayerSettingsStorage.playerState;
     const gameType = PlayerSettingsStorage.gameType;
     const canTransfer: boolean = turns.length > 0 && turns.every(turn => !turn.defendCard);
-    if(currentState == "defend" && gameType == 1 && canTransfer) {
+    if (currentState == "defend" && gameType == 1 && canTransfer) {
       const fakeTableTurn = new class implements CardUtils.TableTurn {
         attackCard: CardUtils.Card;
         defendCard: CardUtils.Card;
-      }
+      };
 
       const fakeCard = new class implements CardUtils.Card {
         rank: CardUtils.Rank;
         suit: CardUtils.Suit;
-      }
+      };
 
       fakeCard.rank = CardUtils.Rank.Unknown;
       fakeCard.suit = CardUtils.Suit.Unknown;
@@ -325,24 +330,20 @@ class TableController {
         const baseY = centerY - (rows - 1) * rowSpacingY / 2 + row * rowSpacingY;
         let coord = { x: baseX, y: baseY };
 
-        if(turn.attackCard.rank == CardUtils.Rank.Unknown) {
+        if (turn.attackCard.rank == CardUtils.Rank.Unknown) {
           this.transferIconPosition = { x: baseX, y: baseY };
           EventService.Instance.emit(EventType.TransferIconShow, { isVisible: true, posX: baseX, posY: baseY });
           continue;
         }
 
-        // Атакующая карта
         if (!cardsManagerRef.value.isCardExist(turn.attackCard.rank, turn.attackCard.suit)) {
-          
-          const playerId = PlayerSettingsStorage.getCardOwner(CardUtils.getCardCode(turn.attackCard))
-          if(playerId !== null)
-          {
+          const playerId = PlayerSettingsStorage.getCardOwner(CardUtils.getCardCode(turn.attackCard));
+          if (playerId !== null) {
             const newCoord = PlayerSettingsStorage.getPlayerCoordinate(playerId);
-            if(newCoord !== null)
-              coord = newCoord;
-            }
+            if (newCoord !== null) coord = newCoord;
+          }
 
-            await cardsManagerRef.value.spawnCard(
+          await cardsManagerRef.value.spawnCard(
               turn.attackCard.rank,
               turn.attackCard.suit,
               'ton_default',
@@ -352,34 +353,29 @@ class TableController {
               0.3,
               i,
               false
-            );
+          );
         }
 
         const attackCardInstance = cardsManagerRef.value.getCard(turn.attackCard.rank, turn.attackCard.suit);
         if (attackCardInstance && attackCardInstance.location != CardUtils.Location.Draft) {
           attackCardInstance.setLocation(CardUtils.Location.Table);
-
           if (animate)
             attackCardInstance.moveTo(baseX, baseY, 0, cardScale, 0.5, false, i, false);
-          else
-            attackCardInstance.set(baseX, baseY, 0, cardScale, false, i, false);
+          else attackCardInstance.set(baseX, baseY, 0, cardScale, false, i, false);
         }
 
-        // Защитная карта, если есть
         if (turn.defendCard) {
           const defendX = baseX + defendCardXOffset;
           const defendY = baseY + defendCardYOffset;
           let coord = { x: defendX, y: defendY };
           if (!cardsManagerRef.value.isCardExist(turn.defendCard.rank, turn.defendCard.suit)) {
-              const playerId = PlayerSettingsStorage.getCardOwner(CardUtils.getCardCode(turn.defendCard))
-              if(playerId !== null)
-              {
-                const newCoord = PlayerSettingsStorage.getPlayerCoordinate(playerId);
-                if(newCoord !== null)
-                  coord = newCoord;
-              }
-              
-              await cardsManagerRef.value.spawnCard(
+            const playerId = PlayerSettingsStorage.getCardOwner(CardUtils.getCardCode(turn.defendCard));
+            if (playerId !== null) {
+              const newCoord = PlayerSettingsStorage.getPlayerCoordinate(playerId);
+              if (newCoord !== null) coord = newCoord;
+            }
+
+            await cardsManagerRef.value.spawnCard(
                 turn.defendCard.rank,
                 turn.defendCard.suit,
                 'ton_default',
@@ -389,8 +385,7 @@ class TableController {
                 0.3,
                 i + 1,
                 false
-              );
-            
+            );
           }
 
           const defendCardInstance = cardsManagerRef.value.getCard(turn.defendCard.rank, turn.defendCard.suit);
@@ -398,12 +393,28 @@ class TableController {
             defendCardInstance.setLocation(CardUtils.Location.Table);
             if (animate)
               defendCardInstance.moveTo(defendX, defendY, defendCardRotation, cardScale, 0.5, false, i + 1, false);
-            else
-              defendCardInstance.set(defendX, defendY, defendCardRotation, cardScale, false, i + 1, false);
+            else defendCardInstance.set(defendX, defendY, defendCardRotation, cardScale, false, i + 1, false);
           }
         }
       }
     }
+
+    // Отложенная очистка потерянных карт через 50 мс
+    setTimeout(() => {
+      const newKeys = new Set(newTurns.map(t =>
+          CardUtils.getCardCode(t.attackCard) + (t.defendCard ? '_' + CardUtils.getCardCode(t.defendCard) : '')
+      ));
+
+      previousTurns.forEach(prev => {
+        const keyAttack = CardUtils.getCardCode(prev.attackCard);
+        const keyDefend = prev.defendCard ? CardUtils.getCardCode(prev.defendCard) : null;
+        const comboKey = keyAttack + (keyDefend ? '_' + keyDefend : '');
+        if (!newKeys.has(comboKey)) {
+          cardsManagerRef.value.destroyCard(prev.attackCard.rank, prev.attackCard.suit);
+          if (prev.defendCard) cardsManagerRef.value.destroyCard(prev.defendCard.rank, prev.defendCard.suit);
+        }
+      });
+    }, 50);
   }
 
   /**

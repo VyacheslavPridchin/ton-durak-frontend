@@ -1,12 +1,17 @@
 <template>
-  <div v-if="isVisible" class="popup-overlay" ref="popupContainer">
-    <div class="popup">
-      <div class="popup-header">
-        <img :src="cachedTrophyIcon" alt="Trophy Icon" class="popup-icon" />
-        <h2 class="popup-title">Поздравляем!</h2>
+  <div v-if="isVisible" class="popup-overlay" @click="hidePopup">
+    <div class="popup-content" ref="popupContainer">
+      <div class="fire-container" v-if="streak > 3">
+        <img :src="cachedFireIcon" alt="Fire Icon" class="fire-icon" />
+        <span class="fire-count">x{{ streak }}</span>
       </div>
-      <p class="popup-subtitle">{{ description }}</p>
-      <button class="continue-button" @click="handleButtonClick">{{ buttonText }}</button>
+      <div class="trophy-container">
+        <img :src="cachedTrophyIcon" alt="Trophy Icon" class="popup-icon" />
+        <span class="win-amount">
+          ${{ amount }}
+        </span>
+      </div>
+      <h2 class="popup-title">ТЫ ПОБЕДИЛ</h2>
     </div>
   </div>
 </template>
@@ -15,181 +20,135 @@
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { gsap } from 'gsap';
 import { EventService, EventType } from '../../../../network/EventService';
-import {useRouter} from "vue-router";
-import NetworkManager from "../../../../network/NetworkManager.ts";
-import {ImageCache} from "../../../../utils/ImageCache.ts";
+import { ImageCache } from '../../../../utils/ImageCache.ts';
 
 const isVisible = ref(false);
-const popupContainer = ref<HTMLElement | null>(null);
-const currency = ref('');
 const amount = ref(0);
-const description = ref('');
-const reason = ref('');
-const buttonText = ref('Продолжить');
-const router = useRouter();
-let kick = 0;
+const streak = ref(0);
+const popupContainer = ref<HTMLElement | null>(null);
 const cachedTrophyIcon = ref<string | null>(null);
+const cachedFireIcon = ref<string | null>(null);
 
-async function loadIcon() {
+async function loadIcons() {
   try {
-    const imagePath = "/assets/icons/trophy-icon.svg";
-    const img = await ImageCache.getImage(imagePath);
-    if (img) {
-      cachedTrophyIcon.value = img.src;
-    } else {
-      console.error(`Не удалось загрузить изображение: ${imagePath}`);
-    }
-  } catch (error) {
-    console.error('Ошибка загрузки изображения:', error);
+    const trophyImg = await ImageCache.getImage('/assets/icons/throphy-icon.svg');
+    if (trophyImg) cachedTrophyIcon.value = trophyImg.src;
+    const fireImg = await ImageCache.getImage('/assets/icons/fire-icon.svg');
+    if (fireImg) cachedFireIcon.value = fireImg.src;
+  } catch (err) {
+    console.error('Ошибка загрузки иконок:', err);
   }
 }
-async function showPopup(eventData: { currency: string; amount: number; reason: string; kick: number }) {
-  currency.value = eventData.currency;
-  amount.value = eventData.amount;
-  reason.value = eventData.reason;
-  kick = eventData.kick;
+
+async function showPopup(
+    // data: { amount: number; streak: number }
+) {
+  // amount.value = data.amount;
+  // streak.value = data.streak;
   isVisible.value = true;
-
-  buttonText.value = kick === 1 ? 'Выйти' : 'Продолжить';
-
-  if(eventData.amount > 0)
-  {
-    description.value = `Ты выиграл ${eventData.amount} ${eventData.currency}`;
-  } else
-  {
-    description.value = `Ты выиграл игру`;
-  }
-
   await nextTick();
   if (popupContainer.value) {
+    // animate trophy
     gsap.fromTo(
-        popupContainer.value,
-        { opacity: 0, backdropFilter: 'blur(0px)' },
-        { opacity: 1, backdropFilter: 'blur(8px)', duration: 0.4, ease: 'power2.out' }
+        popupContainer.value.querySelector('.popup-icon'),
+        { scale: 0.4, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.7)' }
     );
+    gsap.to(popupContainer.value, {
+      opacity: 1,
+      backdropFilter: 'blur(8px)',
+      duration: 0.4,
+      ease: 'power2.out'
+    });
   }
 }
 
 function hidePopup() {
+  if (!isVisible.value) return;
   if (popupContainer.value) {
     gsap.to(popupContainer.value, {
       opacity: 0,
       backdropFilter: 'blur(0px)',
       duration: 0.3,
       ease: 'power2.in',
-      onComplete: () => {
-        isVisible.value = false;
-      },
+      onComplete: () => { isVisible.value = false; }
     });
   } else {
     isVisible.value = false;
   }
 }
 
-function continueGame() {
-  hidePopup();
-}
-
-function closeGame() {
-  NetworkManager.CloseGame(router);
-}
-
-function handleButtonClick() {
-  if (kick === 1) {
-    closeGame();
-  } else {
-    continueGame();
-  }
-}
-
-function onWinnerDeclared(eventData: { currency: string; amount: number; reason: string; kick: number }) {
-  showPopup(eventData);
-}
-
 onMounted(() => {
-  loadIcon();
-  EventService.Instance.on(EventType.WinnerDeclared, onWinnerDeclared);
+  loadIcons();
+  EventService.Instance.on(EventType.WinnerDeclared, showPopup);
 });
 
 onUnmounted(() => {
-  EventService.Instance.off(EventType.WinnerDeclared, onWinnerDeclared);
+  EventService.Instance.off(EventType.WinnerDeclared, showPopup);
 });
 </script>
 
 <style scoped>
 .popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(8px);
-    z-index: 9999;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+  z-index: 99999;
+  opacity: 0;
 }
 
-.popup {
-    background: white;
-    padding: 24px;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    width: 340px;
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
 
-.popup-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.fire-container {
+  position: absolute;
+  top: -40px;
+  display: flex;
+  align-items: center;
+}
+
+.fire-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.fire-count {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1776AC;
+  margin-left: 4px;
+}
+
+.trophy-container {
+  position: relative;
 }
 
 .popup-icon {
-    width: 44px;
-    height: 44px;
-    margin-bottom: 12px;
+  width: 160px;
+  height: 160px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+}
+
+.win-amount {
+  position: absolute;
+  bottom: 16px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1776AC;
 }
 
 .popup-title {
-    margin: 0;
-    font-size: 30px;
-    font-weight: 700;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    color: #000;
+  margin-top: 24px;
+  font-size: 34px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-
-.popup-subtitle {
-    color: #000;
-    font-size: 16px;
-    font-weight: 400;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    margin: 0px 0px 16px;
-}
-
-.continue-button {
-    background: linear-gradient(to right, #2D83EC, #1AC9FF);
-    color: white;
-    border: none;
-    padding: 12px;
-    width: 100%;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: 200;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    cursor: pointer;
-    transition: opacity 0.2s ease-in-out;
-}
-
-.continue-button:hover {
-  background: linear-gradient(90deg, #0056b3, #338bff);
-  transition: background 0.1s ease-in-out;
-}
-
-.continue-button:active {
-  background: linear-gradient(to right, #1A5FA0, #1392CC);
-  transition: background 0.1s ease-in-out;
-}
-
 </style>

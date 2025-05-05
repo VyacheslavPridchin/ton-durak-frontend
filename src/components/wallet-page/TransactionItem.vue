@@ -64,7 +64,7 @@ export default defineComponent({
 
     // Форматирование даты в виде "3 марта в 11:44"
     const formattedDateTime = computed(() => {
-      const date = new Date(props.dateTime);
+      const date = new Date(props.dateTime * 1000);
       const day = date.getDate();
       const months = [
         'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',

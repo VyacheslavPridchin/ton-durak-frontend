@@ -15,7 +15,7 @@
       </div>
       <div class="icon-wrapper">
         <div class="icon-container">
-          <img :src="currentSlide.icon" alt="Slide Icon" />
+          <img :src="currentSlide.icon" alt="Slide Icon" style="width: 60%; height: 60%;"> />
         </div>
       </div>
       <div class="slide-header">

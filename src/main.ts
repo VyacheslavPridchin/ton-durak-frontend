@@ -10,19 +10,20 @@ import apiService from "@/services/ApiService.ts";
 const colorScheme = window.Telegram?.WebApp?.colorScheme || 'light';
 document.documentElement.setAttribute('data-theme', colorScheme);
 
-const authData = ref<ApiResponse<AuthResponseData> | null>(null);
+// const authData = ref<ApiResponse<AuthResponseData> | null>(null);
 
 // Функция авторизации
 const auth = async (init_data: string) => {
+    const authData = ref<ApiResponse<AuthResponseData> | null>(null);
+
     const payload: AuthRequest = { initData: init_data };
     try {
         authData.value = await apiService.auth(payload);
         console.log("Auth Response:", authData.value);
-        window.onBoardingRequired = authData.value.data.user_data.first_time;
     } catch (error) {
         console.error("Authorization error:", error);
     }
-    return authData.value;
+    return authData;
 };
 
 // Функция кэширования initData и данных пользователя
@@ -57,7 +58,18 @@ const cacheUserData = (rawInitData: string) => {
         cacheUserData(telegramInitData);
         await auth(telegramInitData);
     } else {
-        console.error("initData не найден ни в Telegram.WebApp, ни в кэше");
+        // ищем authData в URL
+        const params = new URLSearchParams(window.location.search);
+        const authDataParam = params.get('authData');
+
+        if (authDataParam) {
+            const authDataString = atob(authDataParam);
+            const authData = JSON.parse(authDataString);
+            await apiService.setAuthData(authData)
+        } else {
+            console.error("initData и authData не найдены");
+            return;
+        }
     }
 
     // Запуск приложения после успешной аутентификации
@@ -66,3 +78,4 @@ const cacheUserData = (rawInitData: string) => {
     app.mount('#app');
     await apiService.postVisit('enter');
 })();
+

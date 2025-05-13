@@ -249,14 +249,19 @@ class ApiService {
     public async auth(payload: AuthRequest): Promise<ApiResponse<AuthResponseData>> {
         const response = await this.request<AuthResponseData>("full_auth", "POST", payload);
         if (response.success && response.data?.user_data?.jwt) {
-            this.accessToken = response.data.user_data.jwt.access_token;
-            this.refreshToken = response.data.user_data.jwt.refresh_token;
-
-            console.log(this.refreshToken);
-
-            this.saveTokensToCache();
+            await this.setAuthData(response.data)
         }
         return response;
+    }
+
+    public async setAuthData(data: AuthResponseData) {
+        this.accessToken = data.user_data.jwt.access_token;
+        this.refreshToken = data.user_data.jwt.refresh_token;
+        window.onBoardingRequired = data.user_data.first_time;
+
+        this.saveTokensToCache();
+
+        console.log("Set auth data complete");
     }
 
     // GET /screen/main

@@ -45,15 +45,19 @@ export enum EventType {
   RefreshStates = 'RefreshStates',
   TransferIconShow = 'TransferIconShow',
   ShowTryLeavePopup = 'ShowTryLeavePanel',
-  ShowDebug = 'ShowDebug',
+  // ShowDebug = 'ShowDebug',
   Reconnect = 'Reconnect',
   SetTimeoutPercent = 'SetTimeoutPercent',
   SetMyState = 'SetMyState',
   HideMyTimer = 'HideMyTimer',
   PreviewHandCards = 'PreviewHandCards',
   ShowEmotionsPopup = 'ShowEmotionsPopup',
+  // ShowChangeBetPopup = 'ShowEmotionsPopup',
+  ShowOfferToChangeBetPopup = 'ShowOfferToChangeBetPopup',
   ShowEmote = 'ShowEmote',
   EmotionsCooldown = 'EmotionsCooldown',
+  BetsReceived = 'BetsReceived',
+  BetSelected = 'BetSelected',
 }
 
 // Описываем все события: ключ — название, значение — тип аргумента
@@ -110,6 +114,10 @@ export type EventPayloads = {
   [EventType.SetTimeoutPercent]: number;
   [EventType.HideMyTimer]: void;
   [EventType.ShowEmotionsPopup]: boolean;
+  // [EventType.ShowChangeBetPopup]: boolean;
+  [EventType.ShowOfferToChangeBetPopup]: number;
+  [EventType.BetsReceived]: number[];
+  [EventType.BetSelected]: number;
   [EventType.ShowEmote]: { playerId: string; emote: string };
   [EventType.EmotionsCooldown]: void;
 };

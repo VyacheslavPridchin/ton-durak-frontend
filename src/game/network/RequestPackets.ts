@@ -40,6 +40,51 @@ export class EmoteRequest extends BaseRequest {
   }
 }
 
+// export class GetRequest extends BaseRequest {
+//   public type = "request";
+//   public request: string;
+//   constructor(request: string) {
+//     super();
+//     this.request = request;
+//   }
+// }
+
+export class GetBetsRequest extends BaseRequest {
+  public type = "request";
+  public request = "bets";
+}
+
+export class ChangeBetRequest extends BaseRequest {
+  public type = "change_bet";
+  public value: number;
+  constructor(value: number) {
+    super();
+    this.value = value;
+  }
+}
+
+export class SurrenderRequest extends BaseRequest {
+  public type = "surrender";
+}
+
+export class AcceptBetRequest extends BaseRequest {
+  public type = "accept";
+  public value: number;
+  constructor(value: number) {
+    super();
+    this.value = value;
+  }
+}
+
+export class DeclineBetRequest extends BaseRequest {
+  public type = "decline";
+  public value: number;
+  constructor(value: number) {
+    super();
+    this.value = value;
+  }
+}
+
 export class MuteRequest extends BaseRequest {
   public type = "mute";
   public player: string;

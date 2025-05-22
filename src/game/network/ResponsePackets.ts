@@ -1,3 +1,5 @@
+import {BaseRequest} from "@/game/network/RequestPackets.ts";
+
 /**
  * Аналог C# ResponsePackets.
  * Описание интерфейсов пакетов, которые приходят с сервера.
@@ -17,6 +19,11 @@ export interface EmotePacket extends IPacket {
   type: string;
   player: string;
   emote: string;
+}
+
+export interface ChangeBetPacket extends IPacket {
+  type: string;
+  value: number;
 }
 
 export interface WelcomePacket extends IPacket {

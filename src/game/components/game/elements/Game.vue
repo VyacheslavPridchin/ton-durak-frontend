@@ -6,7 +6,10 @@
     <KickPopup />
     <TryLeavePopup />
     <ReconnectPopup />
+    <OfferToChangeBetPopup />
+
     <EmotionPopup />
+    <ChangeBetPopup />
     <Header />
 <!--    <GameEventDebugger v-if="showDebugger" />-->
     <CardsManager ref="cardsManagerRef" />
@@ -31,6 +34,9 @@ import KickPopup from './Popups/KickPopup.vue';
 import TryLeavePopup from './Popups/TryLeavePopup.vue';
 import ReconnectPopup from './Popups/ReconnectPopup.vue';
 import EmotionPopup from './Popups/EmotionPopup.vue';
+import ChangeBetPopup from './Popups/ChangeBetPopup.vue';
+import OfferToChangeBetPopup from "@/game/components/game/elements/Popups/OfferToChangeBetPopup.vue";
+
 // import GameEventDebugger from '../../debug/GameEventDebugger.vue';
 import { EventService, EventType } from "../../../network/EventService.ts";
 

@@ -16,7 +16,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import gsap from 'gsap';
 import { EventService, EventType } from '../../../network/EventService';
 import NetworkManager from '../../../network/NetworkManager';
-import { ChangeStateRequest } from '../../../network/RequestPackets';
+import {ChangeBetRequest, ChangeStateRequest} from '../../../network/RequestPackets';
 import MyPlayerController from './MyPlayerController.vue';
 import { Localizator } from "../../../utils/Localizator.ts";
 
@@ -25,6 +25,8 @@ const availableAction = ref<string>('');
 const isAnimating = ref<boolean>(false);
 let animationTween: gsap.core.Tween | null = null;
 let lastEndGame: number = 0;
+let lastBid: number;
+let newBid: number | null = null;
 
 function handleUpdateAvailableState(action: string) {
   availableAction.value = action;
@@ -82,18 +84,32 @@ function stopButtonAnimation() {
 
 function handleGameEnded() {
   lastEndGame = Date.now();
+  newBid = null;
+}
+
+function handleBidSet(value: number) {
+  lastBid = value;
+}
+
+function handleNewBidSet(value: number) {
+  newBid = value;
 }
 
 onMounted(() => {
   EventService.Instance.on(EventType.UpdateAvailableState, handleUpdateAvailableState);
   EventService.Instance.on(EventType.SetTimeoutPercent, handleSetTimeoutPercent);
   EventService.Instance.on(EventType.GameEnded, handleGameEnded);
+  EventService.Instance.on(EventType.BidSet, handleBidSet);
+  EventService.Instance.on(EventType.BetSelected, handleNewBidSet);
 });
 
 onUnmounted(() => {
   EventService.Instance.off(EventType.UpdateAvailableState, handleUpdateAvailableState);
   EventService.Instance.off(EventType.SetTimeoutPercent, handleSetTimeoutPercent);
   EventService.Instance.off(EventType.GameEnded, handleGameEnded);
+  EventService.Instance.off(EventType.BidSet, handleBidSet);
+  EventService.Instance.off(EventType.BetSelected, handleNewBidSet);
+
   stopButtonAnimation();
 });
 
@@ -116,6 +132,11 @@ const handleAction = () => {
   };
 
   if (availableAction.value === "ready") {
+
+    if(newBid != null && newBid != lastBid) {
+      NetworkManager.send(new ChangeBetRequest(newBid));
+    }
+
     if (delay > 0) {
       const sendReadyRequest = () => {
         const request = new ChangeStateRequest("ready");

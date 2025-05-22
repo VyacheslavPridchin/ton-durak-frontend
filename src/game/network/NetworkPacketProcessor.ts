@@ -14,7 +14,7 @@ import type {
   DurakPacket,
   ReconnectionPacket,
   ReconnectionWelcomePacket,
-  KickPacket, PongPacket, EmotePacket,
+  KickPacket, PongPacket, EmotePacket, ChangeBetPacket,
 } from './ResponsePackets';
 import { CardUtils } from '../utils/CardUtils';
 import PlayerSettingsStorage from './PlayerSettingsStorage';
@@ -40,6 +40,7 @@ export class NetworkPacketProcessor {
     "kick": (json) => NetworkPacketProcessor.handlePacket<KickPacket>(json, NetworkPacketProcessor.handleKick),
     "pong": (json) => NetworkPacketProcessor.handlePacket<PongPacket>(json, NetworkPacketProcessor.handlePong),
     "emote": (json) => NetworkPacketProcessor.handlePacket<EmotePacket>(json, NetworkPacketProcessor.handleEmotePacket),
+    "change_bet": (json) => NetworkPacketProcessor.handlePacket<ChangeBetPacket>(json, NetworkPacketProcessor.handleChangeBet),
   };
 
   public static processPacket(json: string): void {
@@ -77,6 +78,11 @@ export class NetworkPacketProcessor {
         : players;
   
     EventService.Instance.emit(EventType.PlayerIDsSet, sortedPlayers);
+  }
+
+  private static handleChangeBet(packet: ChangeBetPacket): void {
+    console.log(packet);
+    EventService.Instance.emit(EventType.ShowOfferToChangeBetPopup, packet.value);
   }
 
   private static handleEmotePacket(packet: EmotePacket): void {

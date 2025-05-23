@@ -69,33 +69,34 @@ export default defineComponent({
     })
 
     const biometricRequest = () => {
-      // @ts-ignore
+// @ts-ignore
       window.Telegram.WebApp.BiometricManager.init(() => {
         // @ts-ignore
         if (!window.Telegram.WebApp.BiometricManager.isBiometricAvailable) {
-          alert('Биометрическая аутентификация недоступна на этом устройстве.');
+          alert('Биометрическая аутентификация недоступна на этом устройстве. Подтвердите вывод через поддержку или на другом устройстве.');
           return;
         }
 
         // @ts-ignore
-        window.Telegram.WebApp.BiometricManager.requestAccess({ reason: 'Подтверждение требуется для вывода средств.' }, (granted) => {
-          if (!granted) {
+        window.Telegram.WebApp.BiometricManager.requestAccess({ reason: 'Требуется для подтвеждения вывода средств.' }, (granted) => {
+          if (granted) {
+            // @ts-ignore
+            window.Telegram.WebApp.BiometricManager.authenticate({ reason: 'Подтвердите вывод средств.' }, (success, token) => {
+              if (success) {
+                console.log('Аутентификация успешна. Токен:', token);
+                alert(token);
+                // @ts-ignore
+                alert(window.Telegram.WebApp.BiometricManager.deviceId);
+                // Здесь можно сохранить токен или выполнить другие действия
+              } else {
+                alert('Аутентификация не пройдена.');
+              }
+            });
+          } else {
             alert('Доступ к биометрии не предоставлен.');
-            return;
           }
-
-          // @ts-ignore
-          window.Telegram.WebApp.BiometricManager.authenticate({ reason: 'Подтвердите свою личность' }, (success, token) => {
-            if (success) {
-              console.log('Аутентификация успешна. Токен:', token);
-              // здесь можно сохранить токен или отправить его на сервер
-            } else {
-              alert('Аутентификация не пройдена.');
-            }
-          });
         });
       });
-
     }
 
     const confirm = () => {

@@ -74,7 +74,7 @@ export default defineComponent({
     function biometricRequest() {
       // @ts-ignore
       if (!window.Telegram.WebApp.BiometricManager.isBiometricAvailable) {
-        console.log('Устройство не поддерживает доступ к биометрии. Для вывода средств напишите в поддержку или воспользуйтесь другим устройством.');
+        alert('Устройство не поддерживает доступ к биометрии. Для вывода средств напишите в поддержку или воспользуйтесь другим устройством.');
         return;
       }
 

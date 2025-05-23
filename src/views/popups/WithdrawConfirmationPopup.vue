@@ -99,25 +99,27 @@ export default defineComponent({
     }
 
     const confirm = () => {
-      events.emit('hidePopup');
-      let data = {
-        to_addr: walletAddress.value,
-        code: cryptoTypeMapping[cryptoNetwork.value],
-        amount: withdrawAmount.value
-      }
-
-      apiService.withdraw(data).then(response => {
-        if(response.success)
-          events.emit('showNotification', {title: "Вывод выполнен!", subtitle: `Вывод успешно выполнен. Ваш баланс: $${ response.data.balance }.`, icon: "withdraw",  sticker: 'money_duck'});
-        else
-          events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `${response.error}`, icon: 'withdraw', sticker: 'block_duck'});
-
-      }).catch( error => {
-        events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `К сожалению, произошла ошибка вывода.`, icon: 'withdraw', sticker: 'block_duck'});
-      });
-
-        apiService.postVisit('withdrawal');
-        events.emit('showNotification', {title: "Запрос принят!", subtitle: `Запрос на вывод ${ withdrawAmount.value } ${ cryptoName.value } принят.`, icon: "withdraw",  sticker: 'like_duck'});
+      biometricRequest();
+      //
+      // events.emit('hidePopup');
+      // let data = {
+      //   to_addr: walletAddress.value,
+      //   code: cryptoTypeMapping[cryptoNetwork.value],
+      //   amount: withdrawAmount.value
+      // }
+      //
+      // apiService.withdraw(data).then(response => {
+      //   if(response.success)
+      //     events.emit('showNotification', {title: "Вывод выполнен!", subtitle: `Вывод успешно выполнен. Ваш баланс: $${ response.data.balance }.`, icon: "withdraw",  sticker: 'money_duck'});
+      //   else
+      //     events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `${response.error}`, icon: 'withdraw', sticker: 'block_duck'});
+      //
+      // }).catch( error => {
+      //   events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `К сожалению, произошла ошибка вывода.`, icon: 'withdraw', sticker: 'block_duck'});
+      // });
+      //
+      //   apiService.postVisit('withdrawal');
+      //   events.emit('showNotification', {title: "Запрос принят!", subtitle: `Запрос на вывод ${ withdrawAmount.value } ${ cryptoName.value } принят.`, icon: "withdraw",  sticker: 'like_duck'});
     };
 
     return {

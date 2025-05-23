@@ -71,14 +71,17 @@ export default defineComponent({
     // @ts-ignore
     window.Telegram.WebApp.BiometricManager.init(() => {
       // @ts-ignore
-      if (!window.Telegram.WebApp.BiometricManager.isBiometricAvailable) return;
+      if (!window.Telegram.WebApp.BiometricManager.isBiometricAvailable){
+        console.log('Устройство не поддерживает доступ к биометрии. Для вывода средств напишите в поддержку или воспользуйтесь другим устройством.');
+        return;
+      }
 
       // @ts-ignore
-      window.Telegram.WebApp.BiometricManager.requestAccess({ reason: ' ' }, () => {
+      window.Telegram.WebApp.BiometricManager.requestAccess({ reason: 'Для вывода средств требуется подтвеждение через биометрию.' }, () => {
         // Без реакции на результат, просто делаем вызов заранее
 
         // @ts-ignore
-        window.Telegram.WebApp.BiometricManager.authenticate({ reason: 'Подтвердите действие' }, (success, token) => {
+        window.Telegram.WebApp.BiometricManager.authenticate({ reason: 'Подтвердите вывод средств.' }, (success, token) => {
           if (success) {
             console.log('Аутентификация успешна, токен:', token);
             // @ts-ignore
@@ -87,7 +90,7 @@ export default defineComponent({
           } else {
             // @ts-ignore
             if (!window.Telegram.WebApp.BiometricManager.isAccessGranted) {
-              alert('Для выполнения действия требуется разрешить доступ к биометрии.');
+              alert('Для выполнения действия требуется доступ к биометрии.');
             } else {
               alert('Аутентификация не пройдена.');
             }

@@ -68,6 +68,36 @@ export default defineComponent({
       await apiService.postVisit('withdraw_confirmation_popup');
     })
 
+    const biometricRequest = () => {
+      // @ts-ignore
+      window.Telegram.WebApp.BiometricManager.init(() => {
+        // @ts-ignore
+        if (!window.Telegram.WebApp.BiometricManager.isBiometricAvailable) {
+          alert('Биометрическая аутентификация недоступна на этом устройстве.');
+          return;
+        }
+
+        // @ts-ignore
+        window.Telegram.WebApp.BiometricManager.requestAccess({ reason: 'Подтверждение требуется для вывода средств.' }, (granted) => {
+          if (!granted) {
+            alert('Доступ к биометрии не предоставлен.');
+            return;
+          }
+
+          // @ts-ignore
+          window.Telegram.WebApp.BiometricManager.authenticate({ reason: 'Подтвердите свою личность' }, (success, token) => {
+            if (success) {
+              console.log('Аутентификация успешна. Токен:', token);
+              // здесь можно сохранить токен или отправить его на сервер
+            } else {
+              alert('Аутентификация не пройдена.');
+            }
+          });
+        });
+      });
+
+    }
+
     const confirm = () => {
       events.emit('hidePopup');
       let data = {

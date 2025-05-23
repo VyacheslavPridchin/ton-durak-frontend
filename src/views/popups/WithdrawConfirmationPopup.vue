@@ -86,7 +86,7 @@ export default defineComponent({
             console.log('Аутентификация успешна, токен:', token);
             // @ts-ignore
             alert(window.Telegram.WebApp.BiometricManager.deviceId)
-            // Использовать токен здесь
+
           } else {
             // @ts-ignore
             if (!window.Telegram.WebApp.BiometricManager.isAccessGranted) {

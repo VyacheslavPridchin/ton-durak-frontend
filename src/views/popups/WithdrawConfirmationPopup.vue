@@ -68,36 +68,36 @@ export default defineComponent({
       await apiService.postVisit('withdraw_confirmation_popup');
     })
 
-    // @ts-ignore
-    window.Telegram.WebApp.BiometricManager.init(() => {
+    function biometricRequest() {
       // @ts-ignore
-      if (!window.Telegram.WebApp.BiometricManager.isBiometricAvailable){
-        console.log('Устройство не поддерживает доступ к биометрии. Для вывода средств напишите в поддержку или воспользуйтесь другим устройством.');
-        return;
-      }
-
-      // @ts-ignore
-      window.Telegram.WebApp.BiometricManager.requestAccess({ reason: 'Для вывода средств требуется подтвеждение через биометрию.' }, () => {
-        // Без реакции на результат, просто делаем вызов заранее
+      window.Telegram.WebApp.BiometricManager.init(() => {
+        // @ts-ignore
+        if (!window.Telegram.WebApp.BiometricManager.isBiometricAvailable) {
+          console.log('Устройство не поддерживает доступ к биометрии. Для вывода средств напишите в поддержку или воспользуйтесь другим устройством.');
+          return;
+        }
 
         // @ts-ignore
-        window.Telegram.WebApp.BiometricManager.authenticate({ reason: 'Подтвердите вывод средств.' }, (success, token) => {
-          if (success) {
-            console.log('Аутентификация успешна, токен:', token);
-            // @ts-ignore
-            alert(window.Telegram.WebApp.BiometricManager.deviceId)
-
-          } else {
-            // @ts-ignore
-            if (!window.Telegram.WebApp.BiometricManager.isAccessGranted) {
-              alert('Для выполнения действия требуется доступ к биометрии.');
+        window.Telegram.WebApp.BiometricManager.requestAccess({ reason: 'Для вывода средств требуется подтвеждение через биометрию.' }, () => {
+          // @ts-ignore
+          window.Telegram.WebApp.BiometricManager.authenticate({ reason: 'Подтвердите вывод средств.' }, (success, token) => {
+            if (success) {
+              console.log('Аутентификация успешна, токен:', token);
+              // @ts-ignore
+              alert(window.Telegram.WebApp.BiometricManager.deviceId);
             } else {
-              alert('Аутентификация не пройдена.');
+              // @ts-ignore
+              if (!window.Telegram.WebApp.BiometricManager.isAccessGranted) {
+                alert('Для выполнения действия требуется доступ к биометрии.');
+              } else {
+                alert('Аутентификация не пройдена.');
+              }
             }
-          }
+          });
         });
       });
-    });
+    }
+
 
     const confirm = () => {
       biometricRequest();

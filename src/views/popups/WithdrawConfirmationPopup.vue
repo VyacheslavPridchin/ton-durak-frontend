@@ -65,13 +65,13 @@ export default defineComponent({
     });
 
     onMounted(async () => {
+      // @ts-ignore
+      window.Telegram.WebApp.BiometricManager.init(); // один раз за сессию, без колбека
+
       await apiService.postVisit('withdraw_confirmation_popup');
     })
 
     function biometricRequest() {
-      // @ts-ignore
-      window.Telegram.WebApp.BiometricManager.init(); // один раз за сессию, без колбека
-
       // @ts-ignore
       if (!window.Telegram.WebApp.BiometricManager.isBiometricAvailable) {
         console.log('Устройство не поддерживает доступ к биометрии. Для вывода средств напишите в поддержку или воспользуйтесь другим устройством.');

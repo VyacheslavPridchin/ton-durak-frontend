@@ -23,7 +23,7 @@ import ReferralIcon from "@/assets/icons/transactions/referral-icon.svg"
 import TournamentIcon from "@/assets/icons/transactions/tournament-icon.svg"
 import WinIcon from "@/assets/icons/transactions/win-icon.svg"
 import WithdrawIcon from "@/assets/icons/transactions/withdraw-icon.svg"
-type TransactionType = 'withdraw' | 'loss' | 'tournament' | 'earn' | 'deposit' | 'referral';
+type TransactionType = 'withdraw' | 'withdrawal' | 'loss' | 'tournament' | 'earn' | 'deposit' | 'referral';
 
 export default defineComponent({
   props: {
@@ -35,6 +35,7 @@ export default defineComponent({
     const icon = computed(() => {
       switch (props.type) {
         case 'withdraw':    return WithdrawIcon;
+        case 'withdrawal':    return WithdrawIcon;
         case 'loss':        return LossIcon;
         case 'tournament':  return TournamentIcon;
         case 'earn':        return WinIcon;
@@ -46,6 +47,7 @@ export default defineComponent({
     const title = computed(() => {
       switch (props.type) {
         case 'withdraw':    return 'Вывод';
+        case 'withdrawal':    return 'Вывод';
         case 'loss':        return 'Поражение';
         case 'tournament':  return 'Турнир';
         case 'earn':        return 'Победа';
@@ -55,11 +57,11 @@ export default defineComponent({
     });
 
     const sign = computed(() => {
-      return (props.type === 'withdraw' || props.type === 'loss') ? '-$' : '+$';
+      return (props.type === 'withdraw' || props.type === 'withdrawal' || props.type === 'loss') ? '-$' : '+$';
     });
 
     const amountColorClass = computed(() => {
-      return (props.type === 'withdraw' || props.type === 'loss') ? 'negative' : 'positive';
+      return (props.type === 'withdraw' || props.type === 'withdrawal'  || props.type === 'loss') ? 'negative' : 'positive';
     });
 
     // Форматирование даты в виде "3 марта в 11:44"

@@ -13,6 +13,7 @@ import DepositView from "@/views/pages/DepositPage.vue";
 import WithdrawOptionsView from "@/views/pages/WithdrawOptionsPage.vue";
 import WithdrawView from "@/views/pages/WithdrawPage.vue";
 import DepositOptionsView from "@/views/pages/DepositOptionsPage.vue";
+import FreeGameView from "@/views/pages/FreeGamePage.vue";
 import GameView from "@/game/App.vue";
 
 const routes: RouteRecordRaw[]  = [
@@ -75,6 +76,11 @@ const routes: RouteRecordRaw[]  = [
     path: '/game',
     name: 'Game',
     component: GameView,
+  },
+  {
+    path: '/free',
+    name: 'Free Game',
+    component: FreeGameView,
   },
   {
     path: '/',

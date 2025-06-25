@@ -47,42 +47,4 @@ export default defineComponent({
   padding: 0 2vh;
   margin: 0 auto;
 }
-
-.address-box {
-  display: flex;
-  align-items: center;
-  background: #F5F4F4;
-  border-radius: 1vh;
-  padding: 1vh;
-  margin: 0 0 0.25vh 0;
-  height: 3vh;
-}
-
-.address-text {
-  font-size: 1.75vh;
-  color: #000;
-  margin-right: auto;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-.details-row {
-  margin-top: 0.25vh;
-  display: flex;
-  align-items: center;
-  gap: 0.8vh;
-}
-
-.details-title {
-  text-align: left;
-  font-size: 1.75vh;
-  color: rgba(0, 0, 0, 0.75);
-}
-
-.details-value {
-  margin-left: auto;
-  font-size: 1.75vh;
-}
 </style>

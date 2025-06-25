@@ -68,7 +68,7 @@ const cacheUserData = (rawInitData: string) => {
             await apiService.setAuthData(authData)
         } else {
             console.error("initData и authData не найдены");
-            return;
+            // return;
         }
     }
 

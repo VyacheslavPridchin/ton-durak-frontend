@@ -14,7 +14,7 @@ import type {
   DurakPacket,
   ReconnectionPacket,
   ReconnectionWelcomePacket,
-  KickPacket, PongPacket, EmotePacket, ChangeBetPacket,
+  KickPacket, PongPacket, EmotePacket, ChangeBetPacket, ChangeBetPacketAnswer,
 } from './ResponsePackets';
 import { CardUtils } from '../utils/CardUtils';
 import PlayerSettingsStorage from './PlayerSettingsStorage';
@@ -40,7 +40,9 @@ export class NetworkPacketProcessor {
     "kick": (json) => NetworkPacketProcessor.handlePacket<KickPacket>(json, NetworkPacketProcessor.handleKick),
     "pong": (json) => NetworkPacketProcessor.handlePacket<PongPacket>(json, NetworkPacketProcessor.handlePong),
     "emote": (json) => NetworkPacketProcessor.handlePacket<EmotePacket>(json, NetworkPacketProcessor.handleEmotePacket),
-    "change_bet": (json) => NetworkPacketProcessor.handlePacket<ChangeBetPacket>(json, NetworkPacketProcessor.handleChangeBet),
+    "change_bid": (json) => NetworkPacketProcessor.handlePacket<ChangeBetPacket>(json, NetworkPacketProcessor.handleChangeBet),
+    "accepted": (json) => NetworkPacketProcessor.handlePacket<ChangeBetPacketAnswer>(json, NetworkPacketProcessor.handleChangeBetAnswer),
+    "declined": (json) => NetworkPacketProcessor.handlePacket<ChangeBetPacketAnswer>(json, NetworkPacketProcessor.handleChangeBetAnswer),
   };
 
   public static processPacket(json: string): void {
@@ -83,6 +85,10 @@ export class NetworkPacketProcessor {
   private static handleChangeBet(packet: ChangeBetPacket): void {
     console.log(packet);
     EventService.Instance.emit(EventType.ShowOfferToChangeBetPopup, packet.value);
+  }
+
+  private static handleChangeBetAnswer(packet: ChangeBetPacketAnswer): void {
+    console.log(packet);
   }
 
   private static handleEmotePacket(packet: EmotePacket): void {

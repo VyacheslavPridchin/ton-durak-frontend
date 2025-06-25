@@ -24,7 +24,7 @@ import {events} from "@/events.ts";
 
 const router = useRouter();
 const route = useRoute();
-const roots = ref<string[]>(["/referrals", "/main", "/profile"]);
+const roots = ref<string[]>(["/referrals", "/free", "/main", "/wallet", "/profile"]);
 
 onMounted(async () => {
   // @ts-ignore

@@ -23,7 +23,14 @@ export interface EmotePacket extends IPacket {
 
 export interface ChangeBetPacket extends IPacket {
   type: string;
-  value: number;
+  players: string[];
+
+}
+
+
+export interface ChangeBetPacketAnswer extends IPacket {
+  type: string;
+  player_id: string;
 }
 
 export interface WelcomePacket extends IPacket {

@@ -28,6 +28,8 @@ import { useRouter, useRoute } from 'vue-router'
 import ReferralsIcon from '@/assets/icons/referrals-menu-icon.svg'
 import MainIcon from '@/assets/icons/main-menu-icon.svg'
 import ProfileIcon from '@/assets/icons/profile-menu-icon.svg'
+import WalletIcon from '@/assets/icons/wallet-icon.svg'
+import FreeGameIcon from '@/assets/icons/profile-menu-icon.svg'
 
 interface LinkItem {
   name: string
@@ -52,7 +54,9 @@ const shouldRender = computed(() => !props.excludePaths.includes(route.path))
 
 const links: LinkItem[] = [
   { name: 'Referrals', icon: ReferralsIcon, route: '/referrals' },
+  { name: 'Free', icon: FreeGameIcon, route: '/free' },
   { name: 'Main', icon: MainIcon, route: '/main' },
+  { name: 'Wallet', icon: WalletIcon, route: '/wallet' },
   { name: 'Profile', icon: ProfileIcon, route: '/profile' }
 ]
 

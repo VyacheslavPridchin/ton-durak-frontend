@@ -29,7 +29,7 @@ import ReferralsIcon from '@/assets/icons/referrals-menu-icon.svg'
 import MainIcon from '@/assets/icons/main-menu-icon.svg'
 import ProfileIcon from '@/assets/icons/profile-menu-icon.svg'
 import WalletIcon from '@/assets/icons/wallet-icon.svg'
-import FreeGameIcon from '@/assets/icons/profile-menu-icon.svg'
+import FreeGameIcon from '@/assets/icons/free-play-icon.svg'
 
 interface LinkItem {
   name: string

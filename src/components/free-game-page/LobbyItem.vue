@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="panel lobby-item">
+    <div class="panel lobby-item animate-press">
       <div class="icon-container">
         <img class="lobby-icon" :src="icon" alt="icon" />
       </div>
@@ -8,9 +8,14 @@
         <h2 class="lobby-title">Лобби «{{ nickname }}»</h2>
         <a class="lobby-type">{{ typeText }}</a>
       </div>
-      <a class="players-count">
-        {{ currentPlayers }}/{{ maxPlayers }}
-      </a>
+      <div class="lobby-right">
+        <a class="players-count">
+          {{ currentPlayers }}/{{ maxPlayers }}
+        </a>
+        <div class="right-button">
+          <img class="icon" src="@/assets/icons/next-icon.svg" alt="Settings Icon" />
+        </div>
+      </div>
     </div>
   </transition>
 </template>
@@ -54,6 +59,19 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.right-button {
+  width: 2.4vh;
+  height: 2.4vh;
+  border-radius: 50%;
+  background: var(--gray-color);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  margin-left: 1vh;
+}
+
 .fade-enter-active {
   transition: opacity 0.5s ease;
 }
@@ -103,6 +121,12 @@ export default defineComponent({
   font-size: 1.5vh;
   color: #8B8B8B;
   margin: 0;
+}
+
+.lobby-right {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
 }
 
 .players-count {

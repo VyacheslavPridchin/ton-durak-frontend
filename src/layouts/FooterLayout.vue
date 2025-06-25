@@ -54,9 +54,9 @@ const shouldRender = computed(() => !props.excludePaths.includes(route.path))
 
 const links: LinkItem[] = [
   { name: 'Referrals', icon: ReferralsIcon, route: '/referrals' },
-  { name: 'Free', icon: FreeGameIcon, route: '/free' },
-  { name: 'Main', icon: MainIcon, route: '/main' },
   { name: 'Wallet', icon: WalletIcon, route: '/wallet' },
+  { name: 'Main', icon: MainIcon, route: '/main' },
+  { name: 'Free', icon: FreeGameIcon, route: '/free' },
   { name: 'Profile', icon: ProfileIcon, route: '/profile' }
 ]
 

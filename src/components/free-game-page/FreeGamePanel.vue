@@ -1,6 +1,5 @@
 <template>
   <div class="panel referral-panel">
-    <div class="block-background animate-press"></div>
     <div class="content">
       <!-- Info button -->
       <button class="top-right-button" @click.stop="openInformationPopup">
@@ -19,19 +18,15 @@
         <img class="icon" src="@/assets/icons/energy-icon.svg" alt="Info" />
       </div>
 
-
-
       <!-- Timer for current restore -->
       <div v-if="gamesLeft < gamesTotal" class="bonus-balance-container">
-        <h2 class="bonus-title">
-          +1
-          <img class="icon" src="@/assets/icons/energy-icon.svg" alt="Energy" />
-        </h2>
         <div
             class="bonus-amount placeholder-container"
             :class="{ isLoading: isLoadingData }"
         >
-          {{ timerText }}
+          <span class="bonus-label">+1</span>
+          <img class="icon" style="margin-right: 0.4vh" src="@/assets/icons/energy-icon.svg" alt="Energy" />
+          <span class="bonus-timer">через {{ timerText }}</span>
         </div>
       </div>
 
@@ -59,15 +54,12 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { events } from '@/events.ts';
 
-// --- props ---
 const props = defineProps<{
   gamesLeft: number;
   gamesTotal: number;
-  /** Unix‐ms timestamp when *all* games will be fully restored */
   restoreEnd: number;
 }>();
 
-// --- placeholder state & API ---
 const isLoadingData = ref(false);
 function hideData() {
   isLoadingData.value = true;
@@ -76,7 +68,6 @@ function showData() {
   isLoadingData.value = false;
 }
 
-// --- live clock ---
 const now = ref(Date.now());
 let timerId: number;
 onMounted(() => {
@@ -88,20 +79,14 @@ onUnmounted(() => {
   clearInterval(timerId);
 });
 
-// --- constants & helpers ---
-const SEGMENT_MS = 15 * 60 * 1000; // 15 minutes
-
-/** ms remaining until *all* restored */
+const SEGMENT_MS = 15 * 60 * 1000;
 const totalRemainingMs = computed(() => props.restoreEnd - now.value);
-
-/** ms remaining in the *current* segment */
 const currentSegmentRemainingMs = computed(() => {
   if (props.gamesLeft >= props.gamesTotal) return 0;
   const rem = totalRemainingMs.value % SEGMENT_MS;
   return rem > 0 ? rem : 0;
 });
 
-/** formatted "MM:SS" for the current segment */
 const timerText = computed(() => {
   if (props.gamesLeft >= props.gamesTotal) {
     return '0:00';
@@ -112,7 +97,6 @@ const timerText = computed(() => {
   return `${m}:${sec.toString().padStart(2, '0')}`;
 });
 
-/** array of fill‐percentages for each of the `gamesTotal` segments */
 const segments = computed<number[]>(() => {
   const out: number[] = [];
   for (let i = 0; i < props.gamesTotal; i++) {
@@ -125,11 +109,9 @@ const segments = computed<number[]>(() => {
       out.push(0);
     }
   }
-  console.log(out)
   return out;
 });
 
-// --- popup emitter ---
 function openInformationPopup() {
   events.emit('showPopup', { name: 'freeGame' });
 }
@@ -144,22 +126,12 @@ defineExpose({ showData, hideData });
   overflow: clip;
 }
 
-/* Background block (for click animation) */
-.block-background {
-  position: absolute;
-  inset: -1vh -2vh;
-  background: var(--panel-color);
-  z-index: 0;
-}
-
-/* Foreground content */
 .content {
   position: relative;
   z-index: 1;
   pointer-events: none;
 }
 
-/* Info icon button */
 .top-right-button {
   position: absolute;
   top: 0;
@@ -172,7 +144,6 @@ defineExpose({ showData, hideData });
   display: block;
 }
 
-/* Titles and balances */
 .referral-title {
   text-align: left;
   padding-bottom: 0.5vh;
@@ -187,36 +158,36 @@ defineExpose({ showData, hideData });
 }
 
 .referral-balance .icon {
-  margin-left: 0.5vh;     /* отступ между текстом и иконкой */
-  width: 3vh;             /* размер иконки совпадает с высотой текста */
+  margin-left: 0.5vh;
+  width: 3vh;
   height: 3vh;
 }
 
 .bonus-balance-container {
   display: flex;
-  align-items: center;
-  gap: 0.8vh;
+  justify-content: flex-end;
   margin-top: 2vh;
 }
-.bonus-title {
-  display: inline-flex;
+
+.bonus-amount {
+  display: flex;
   align-items: center;
   font-size: 1.75vh;
+}
+
+.bonus-label {
   color: var(--secondary-text-color);
 }
 
-.bonus-title .icon {
-  margin-left: 0.5vh;
+.bonus-amount .icon {
   width: 1.75vh;
   height: 1.75vh;
 }
 
-.bonus-amount {
-  margin-left: auto;
-  font-size: 1.75vh;
+.bonus-timer {
+  color: var(--secondary-text-color);
 }
 
-/* Progress bar styling */
 .progress-bar-container {
   display: flex;
   justify-content: space-between;

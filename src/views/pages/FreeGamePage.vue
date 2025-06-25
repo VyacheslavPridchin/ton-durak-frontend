@@ -13,7 +13,7 @@
       <h2 style="margin-top: 1vh; margin-bottom: 0.5vh">Лобби</h2>
       <div class="list">
         <LobbyItem
-            v-for="(lobby, i) in lobbys"
+            v-for="(lobby, i) in lobbies"
             :key="i"
             :type="lobby.type"
             :nickname="lobby.nickname"
@@ -21,7 +21,7 @@
             :maxPlayers="lobby.maxPlayers"
         />
       </div>
-      <FreePlayButton/>
+      <FreePlayButton style="margin-top: 0;"/>
     </div>
   </div>
 </template>
@@ -52,15 +52,18 @@ type Lobby = {
   maxPlayers: number
 }
 
-const lobbys = ref<Lobby[]>([
-  { type: 'transfer', nickname: 'Игрок1', currentPlayers: 1, maxPlayers: 4 },
-  { type: 'classic',  nickname: 'Игрок2', currentPlayers: 2, maxPlayers: 2 },
-  { type: 'classic',  nickname: 'Игрок2', currentPlayers: 2, maxPlayers: 2 },
-  { type: 'classic',  nickname: 'Игрок2', currentPlayers: 2, maxPlayers: 2 },
-  { type: 'classic',  nickname: 'Игрок2', currentPlayers: 2, maxPlayers: 2 },
-  { type: 'classic',  nickname: 'Игрок2', currentPlayers: 2, maxPlayers: 2 },
-  { type: 'classic',  nickname: 'Игрок2', currentPlayers: 2, maxPlayers: 2 },
-  { type: 'classic',  nickname: 'Игрок2', currentPlayers: 2, maxPlayers: 2 },
+const lobbies = ref<Lobby[]>([
+  { type: 'transfer', nickname: 'Игрок1', currentPlayers: 1, maxPlayers: 2 },
+  { type: 'classic',  nickname: 'Игрок2', currentPlayers: 1, maxPlayers: 2 },
+  { type: 'transfer',  nickname: 'Игрок3', currentPlayers: 1, maxPlayers: 2 },
+  { type: 'transfer',  nickname: 'Игрок4', currentPlayers: 1, maxPlayers: 2 },
+  { type: 'transfer',  nickname: 'Игрок5', currentPlayers: 1, maxPlayers: 2 },
+  { type: 'classic',  nickname: 'Игрок6', currentPlayers: 1, maxPlayers: 2 },
+  { type: 'classic',  nickname: 'Игрок7', currentPlayers: 1, maxPlayers: 2 },
+  { type: 'transfer',  nickname: 'Игрок8', currentPlayers: 1, maxPlayers: 2 },
+  { type: 'classic',  nickname: 'Игрок9', currentPlayers: 1, maxPlayers: 2 },
+  { type: 'transfer',  nickname: 'Игрок10', currentPlayers: 1, maxPlayers: 2 },
+  { type: 'classic',  nickname: 'Игрок11', currentPlayers: 1, maxPlayers: 2 },
 ])
 </script>
 

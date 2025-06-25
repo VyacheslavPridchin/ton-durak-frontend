@@ -24,9 +24,8 @@ export interface EmotePacket extends IPacket {
 export interface ChangeBetPacket extends IPacket {
   type: string;
   players: string[];
-
+  value: number;
 }
-
 
 export interface ChangeBetPacketAnswer extends IPacket {
   type: string;

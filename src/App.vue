@@ -84,10 +84,8 @@ onMounted(async () => {
 function checkTournamentWin() {
   apiService.postCheckTournamentWin().then((response) => {
     if(response.success){
+      window.tournamentWinData = response.data;
       events.emit('showPopup', { name: 'tournamentWin' });
-      nextTick(() => {
-        EventService.Instance.emit(EventType.SetTournamentWinData, response.data);
-      })
     }
   });
 }

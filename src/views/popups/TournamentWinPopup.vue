@@ -44,13 +44,12 @@ export default defineComponent({
     const leagueBadgeSrc = ref('');
 
     onMounted(async () => {
+      setData(window.tournamentWinData);
       const img = await ImageCache.getImage(`/assets/leagues/${rank.value}-league.svg`);
       leagueBadgeSrc.value = img.src;
-
-      EventService.Instance.on(EventType.SetTournamentWinData, onSetData);
     });
 
-    function onSetData(data: { league: string; place: number; wins: number; difference: number; amount: number }) {
+    function setData(data: { league: string; place: number; wins: number; difference: number; amount: number }) {
       rank.value = data.league;
       place.value = data.place;
       wins.value = data.wins;
@@ -61,10 +60,6 @@ export default defineComponent({
     const closePopup = () => {
       events.emit("hidePopup");
     }
-
-    onUnmounted(() => {
-      EventService.Instance.off(EventType.SetTournamentWinData, onSetData);
-    });
 
     return {
       rank,

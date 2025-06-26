@@ -58,7 +58,6 @@ export enum EventType {
   EmotionsCooldown = 'EmotionsCooldown',
   BetsReceived = 'BetsReceived',
   BetSelected = 'BetSelected',
-  SetTournamentWinData = 'SetTournamentWinData',
 }
 
 // Описываем все события: ключ — название, значение — тип аргумента
@@ -121,7 +120,6 @@ export type EventPayloads = {
   [EventType.BetSelected]: number;
   [EventType.ShowEmote]: { playerId: string; emote: string };
   [EventType.EmotionsCooldown]: void;
-  [EventType.SetTournamentWinData]: { league: string, place: number, wins: number, difference: number, amount: number };
 };
 
 

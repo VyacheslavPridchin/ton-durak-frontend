@@ -412,10 +412,10 @@ class ApiService {
     }
 
     // POST /device_id
-    public async postDeviceId(): Promise<ApiResponse<string>> {
+    public async postDeviceId(deviceId: string): Promise<ApiResponse<string>> {
         const endpoint = `/device_id`;
         // Передаем retry=false, чтобы избежать рекурсии в случае неудачи
-        return this.request<string>(endpoint, "POST", undefined);
+        return this.request<string>(endpoint, "POST", { device_id: deviceId });
     }
 
     public async postVisit(type: string): Promise<ApiResponse<any>> {

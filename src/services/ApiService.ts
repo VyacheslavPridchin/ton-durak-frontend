@@ -148,6 +148,14 @@ export interface CheckBidsData {
     bids: number[];
 }
 
+export interface CheckTournamentWinData {
+    "league": string,
+    "place": number,
+    "wins": number,
+    "difference": number,
+    "amount": number
+}
+
 // Класс для работы с API как синглтон-сервис с кэшированием токенов
 class ApiService {
     private axiosInstance: AxiosInstance;
@@ -394,6 +402,20 @@ class ApiService {
 
         // Передаем retry=false, чтобы избежать рекурсии в случае неудачи
         return this.request<WithdrawalInfoData>(endpoint, "POST", payload, undefined, false);
+    }
+
+    // POST /check_tournament_win
+    public async postCheckTournamentWin(): Promise<ApiResponse<CheckTournamentWinData>> {
+        const endpoint = `/check_tournament_win`;
+        // Передаем retry=false, чтобы избежать рекурсии в случае неудачи
+        return this.request<CheckTournamentWinData>(endpoint, "POST", undefined);
+    }
+
+    // POST /check_tournament_win
+    public async postDeviceId(): Promise<ApiResponse<string>> {
+        const endpoint = `/device_id`;
+        // Передаем retry=false, чтобы избежать рекурсии в случае неудачи
+        return this.request<string>(endpoint, "POST", undefined);
     }
 
     public async postVisit(type: string): Promise<ApiResponse<any>> {

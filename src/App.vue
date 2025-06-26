@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import {nextTick, onMounted, ref} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import PopupLayout from "@/layouts/PopupLayout.vue";
 import FullscreenLayout from "@/layouts/FullscreenLayout.vue";
@@ -21,6 +21,8 @@ import NotificationLayout from "@/layouts/NotificationLayout.vue";
 import {EventService, EventType} from "@/game/network/EventService.ts";
 import NetworkManager from "@/game/network/NetworkManager.ts";
 import {events} from "@/events.ts";
+import apiService from "@/services/ApiService.ts";
+import PlayerSettingsStorage from "@/game/network/PlayerSettingsStorage.ts";
 
 const router = useRouter();
 const route = useRoute();
@@ -75,7 +77,20 @@ onMounted(async () => {
 
   if(window.onBoardingRequired)
     events.emit("showPopup", { name: "onBoarding", canClose: false });
+
+  checkTournamentWin();
 });
+
+function checkTournamentWin() {
+  apiService.postCheckTournamentWin().then((response) => {
+    if(response.success){
+      events.emit('showPopup', { name: 'tournamentWin' });
+      nextTick(() => {
+        EventService.Instance.emit(EventType.SetTournamentWinData, response.data);
+      })
+    }
+  });
+}
 </script>
 
 <style scoped>

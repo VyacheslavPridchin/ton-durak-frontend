@@ -22,6 +22,7 @@ import BonusBalanceInformationPopup from "@/views/popups/BonusBalanceInformation
 import OnBoardingPopup from "@/views/popups/OnBoardingPopup.vue";
 import FreeGamePopup from "@/views/popups/FreeGamePopup.vue";
 import FreeGameSettingsPopup from "@/views/popups/FreeGameSettingsPopup.vue";
+import TournamentWinPopup from "@/views/popups/TournamentWinPopup.vue";
 
 export default defineComponent({
   name: 'PopupLayout',
@@ -34,6 +35,7 @@ export default defineComponent({
       tournamentInformation : TournamentInformationPopup,
       leagueInformation : LeagueInformationPopup,
       bonusBalanceInformation : BonusBalanceInformationPopup,
+      tournamentWin : TournamentWinPopup,
       onBoarding : OnBoardingPopup,
       freeGame : FreeGamePopup,
       freeGameSettings: FreeGameSettingsPopup,

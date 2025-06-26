@@ -27,26 +27,49 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
-import {ImageCache} from "@/game/utils/ImageCache.ts";
+import {defineComponent, ref, onMounted, onUnmounted} from 'vue';
+import { ImageCache } from '@/game/utils/ImageCache.ts';
+import { EventService, EventType } from '@/game/network/EventService.ts';
 
 export default defineComponent({
-  name: 'TournamentResultPopup',
-  props: {
-    rank: { type: String },           // e.g. "bronze", "silver", "gold"
-    place: { type: Number },
-    wins: { type: Number },
-    gap: { type: Number },
-    reward: { type: Number },
-  },
-  setup(props) {
+  name: 'TournamentWinPopup',
+  emits: ['close'],
+  setup() {
+    const rank = ref('bronze');
+    const place = ref(1);
+    const wins = ref(0);
+    const gap = ref(0);
+    const reward = ref(0);
     const leagueBadgeSrc = ref('');
+
     onMounted(async () => {
-      const img = await ImageCache.getImage(`/assets/leagues/${props.rank}-league.svg`);
+      const img = await ImageCache.getImage(`/assets/leagues/${rank.value}-league.svg`);
       leagueBadgeSrc.value = img.src;
+
+      EventService.Instance.on(EventType.SetTournamentWinData, onSetData);
     });
-    return { leagueBadgeSrc };
-  }
+
+    function onSetData(data: { league: string; place: number; wins: number; difference: number; amount: number }) {
+      rank.value = data.league;
+      place.value = data.place;
+      wins.value = data.wins;
+      gap.value = data.difference;
+      reward.value = data.amount;
+    }
+
+    onUnmounted(() => {
+      EventService.Instance.off(EventType.SetTournamentWinData, onSetData);
+    });
+
+    return {
+      rank,
+      place,
+      wins,
+      gap,
+      reward,
+      leagueBadgeSrc,
+    };
+  },
 });
 </script>
 

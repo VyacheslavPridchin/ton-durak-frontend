@@ -71,7 +71,7 @@ export default defineComponent({
       await apiService.postVisit('withdraw_confirmation_popup');
     })
 
-    function biometricRequest() {
+    async function biometricRequest() {
       // @ts-ignore
       if (!window.Telegram.WebApp.BiometricManager.isBiometricAvailable) {
         alert('Устройство не поддерживает доступ к биометрии. Для вывода средств напишите в поддержку или воспользуйтесь другим устройством.');
@@ -84,9 +84,15 @@ export default defineComponent({
           // @ts-ignore
           window.Telegram.WebApp.BiometricManager.authenticate({ reason: 'Подтвердите вывод средств.' }, (success, token) => {
             if (success) {
-              console.log('Аутентификация успешна, токен:', token);
               // @ts-ignore
-              alert(window.Telegram.WebApp.BiometricManager.deviceId);
+              const confirm = await apiService.postDeviceId(window.Telegram.WebApp.BiometricManager.deviceId);
+              if(confirm.data == "true") {
+                withdraw();
+               } else {
+                alert('Аутентификация не пройдена. Возможно, это устройство использовалось на другом аккаунте.');
+              }
+              // @ts-ignore
+              // alert(window.Telegram.WebApp.BiometricManager.deviceId);
             } else {
               alert('Аутентификация не пройдена.');
             }
@@ -99,27 +105,29 @@ export default defineComponent({
 
     const confirm = () => {
       biometricRequest();
-      //
-      // events.emit('hidePopup');
-      // let data = {
-      //   to_addr: walletAddress.value,
-      //   code: cryptoTypeMapping[cryptoNetwork.value],
-      //   amount: withdrawAmount.value
-      // }
-      //
-      // apiService.withdraw(data).then(response => {
-      //   if(response.success)
-      //     events.emit('showNotification', {title: "Вывод выполнен!", subtitle: `Вывод успешно выполнен. Ваш баланс: $${ response.data.balance }.`, icon: "withdraw",  sticker: 'money_duck'});
-      //   else
-      //     events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `${response.error}`, icon: 'withdraw', sticker: 'block_duck'});
-      //
-      // }).catch( error => {
-      //   events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `К сожалению, произошла ошибка вывода.`, icon: 'withdraw', sticker: 'block_duck'});
-      // });
-      //
-      //   apiService.postVisit('withdrawal');
-      //   events.emit('showNotification', {title: "Запрос принят!", subtitle: `Запрос на вывод ${ withdrawAmount.value } ${ cryptoName.value } принят.`, icon: "withdraw",  sticker: 'like_duck'});
     };
+
+    function withdraw(){
+      events.emit('hidePopup');
+      let data = {
+        to_addr: walletAddress.value,
+        code: cryptoTypeMapping[cryptoNetwork.value],
+        amount: withdrawAmount.value
+      }
+
+      apiService.withdraw(data).then(response => {
+        if(response.success)
+          events.emit('showNotification', {title: "Вывод выполнен!", subtitle: `Вывод успешно выполнен. Ваш баланс: $${ response.data.balance }.`, icon: "withdraw",  sticker: 'money_duck'});
+        else
+          events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `${response.error}`, icon: 'withdraw', sticker: 'block_duck'});
+
+      }).catch( error => {
+        events.emit('showNotification', {title: "Ошибка вывода!", subtitle: `К сожалению, произошла ошибка вывода.`, icon: 'withdraw', sticker: 'block_duck'});
+      });
+
+        apiService.postVisit('withdrawal');
+        events.emit('showNotification', {title: "Запрос принят!", subtitle: `Запрос на вывод ${ withdrawAmount.value } ${ cryptoName.value } принят.`, icon: "withdraw",  sticker: 'like_duck'});
+    }
 
     return {
       withdrawAmount,

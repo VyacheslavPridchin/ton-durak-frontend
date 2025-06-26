@@ -1,12 +1,24 @@
 <template>
   <header class="header">
     <!-- Кнопка слева -->
-<!--    <button class="circle-button" @click="handleButtonClick">-->
-<!--      <img :src="gameInProgress ? '/assets/icons/flag-icon.svg' : '/assets/icons/exit-icon.svg'" alt="Action Icon" class="icon" />-->
-<!--    </button>-->
+    <!--    <button class="circle-button" @click="handleButtonClick">-->
+    <!--      <img :src="gameInProgress ? '/assets/icons/flag-icon.svg' : '/assets/icons/exit-icon.svg'" alt="Action Icon" class="icon" />-->
+    <!--    </button>-->
 
     <!-- Баланс справа -->
     <div v-if="balanceVisible" class="balance-panel">
+      <img
+          v-if="gameType === 0"
+          src="@/assets/icons/lobby/classic-icon.svg"
+          alt="Classic Icon"
+          class="balance-icon"
+      />
+      <img
+          v-else-if="gameType === 1"
+          src="@/assets/icons/lobby/transfer-icon.svg"
+          alt="Transfer Icon"
+          class="balance-icon"
+      />
       <span class="balance-value">{{ balance }}</span>
     </div>
 
@@ -21,6 +33,7 @@ import PlayersController from './PlayersController.vue';
 import { EventService, EventType } from '../../../network/EventService';
 import NetworkManager from "../../../network/NetworkManager";
 import { useRouter } from "vue-router";
+import PlayerSettingsStorage from "@/game/network/PlayerSettingsStorage.ts";
 
 // Ссылка на контроллер, чтобы при желании менять кол-во игроков
 const playersCtrl = ref<InstanceType<typeof PlayersController> | null>(null);
@@ -32,6 +45,8 @@ const balanceVisible = ref(false);  // Переменная для отобра�
 const router = useRouter();
 
 const balanceClickCount = ref(0); // Счетчик кликов
+
+const gameType = PlayerSettingsStorage.gameType; // 0 — классическая, 1 — с переводом
 
 const setGameStarted = () => window.gameInProgress = true;
 const setGameEnded = () => window.gameInProgress = false;
@@ -49,7 +64,6 @@ onUnmounted(() => {
   EventService.Instance.off(EventType.GameEnded, setGameEnded);
   EventService.Instance.off(EventType.WinnerDeclared, setGameEnded);
 });
-
 
 function setBalance(extra: string) {
   if (extra === '') {
@@ -141,6 +155,12 @@ function handleButtonClick() {
   font-family: 'Inter', sans-serif;
   cursor: default;
   z-index: 100;
+}
+
+.balance-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
 }
 
 .balance-value {

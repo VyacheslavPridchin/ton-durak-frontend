@@ -28,13 +28,12 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, onUnmounted, computed} from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import PlayersController from './PlayersController.vue';
 import { EventService, EventType } from '../../../network/EventService';
 import NetworkManager from "../../../network/NetworkManager";
 import { useRouter } from "vue-router";
 import PlayerSettingsStorage from "@/game/network/PlayerSettingsStorage.ts";
-
 // Ссылка на контроллер, чтобы при желании менять кол-во игроков
 const playersCtrl = ref<InstanceType<typeof PlayersController> | null>(null);
 
@@ -46,7 +45,7 @@ const router = useRouter();
 
 const balanceClickCount = ref(0); // Счетчик кликов
 
-const gameType = computed(() => PlayerSettingsStorage.gameType); // 0 — классическая, 1 — с переводом
+const gameType = PlayerSettingsStorage.gameType; // 0 — классическая, 1 — с переводом
 
 const setGameStarted = () => window.gameInProgress = true;
 const setGameEnded = () => window.gameInProgress = false;
@@ -147,7 +146,7 @@ function handleButtonClick() {
   position: fixed;
   transform: translateY(-50%);
   display: flex;
-  align-items: baseline;
+  align-items: center; /* Центрируем иконку и текст по вертикали */
   background-color: rgba(249, 251, 250, 0.3);
   padding: 6px 12px;
   border-radius: 20px;
@@ -158,14 +157,14 @@ function handleButtonClick() {
 }
 
 .balance-icon {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   margin-right: 6px;
 }
 
 .balance-value {
   font-size: 1.25vh;
-  font-weight: 700;
+  font-weight: normal;
   color: #ffffff;
   pointer-events: none;
 }

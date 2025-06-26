@@ -17,7 +17,7 @@
     </div>
     <div class="details-row" style="margin-bottom: 1.5vh;">
       <h2 class="details-title">Ваша награда:</h2>
-      <a class="details-value">{{ reward }}</a>
+      <a class="details-value">${{ reward }}</a>
     </div>
 
     <button class="main-button animate-press" @click="closePopup">
@@ -83,8 +83,8 @@ export default defineComponent({
 }
 
 .badge {
-  width: 60px;
-  height: 60px;
+  width: 150px;
+  height: 150px;
   margin: 0 auto 1.5vh;
 }
 

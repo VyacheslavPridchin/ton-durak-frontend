@@ -86,7 +86,7 @@ export default defineComponent({
             if (success) {
               // @ts-ignore
               apiService.postDeviceId(window.Telegram.WebApp.BiometricManager.deviceId).then((response) => {
-                if(response.data == "true") {
+                if(response.data.success == true) {
                   withdraw();
                 } else {
                   alert('Аутентификация не пройдена. Возможно, это устройство использовалось на другом аккаунте.');

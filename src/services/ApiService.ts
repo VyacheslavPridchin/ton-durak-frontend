@@ -156,6 +156,10 @@ export interface CheckTournamentWinData {
     "amount": number
 }
 
+export interface CheckDeviceId {
+    "success": boolean,
+}
+
 // Класс для работы с API как синглтон-сервис с кэшированием токенов
 class ApiService {
     private axiosInstance: AxiosInstance;
@@ -412,10 +416,10 @@ class ApiService {
     }
 
     // POST /device_id
-    public async postDeviceId(deviceId: string): Promise<ApiResponse<string>> {
+    public async postDeviceId(deviceId: string): Promise<ApiResponse<CheckDeviceId>> {
         const endpoint = `/device_id`;
         // Передаем retry=false, чтобы избежать рекурсии в случае неудачи
-        return this.request<string>(endpoint, "POST", { device_id: deviceId });
+        return this.request<CheckDeviceId>(endpoint, "POST", { device_id: deviceId });
     }
 
     public async postVisit(type: string): Promise<ApiResponse<any>> {

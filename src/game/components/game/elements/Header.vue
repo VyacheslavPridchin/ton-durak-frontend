@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import {ref, onMounted, onUnmounted, computed} from 'vue';
 import PlayersController from './PlayersController.vue';
 import { EventService, EventType } from '../../../network/EventService';
 import NetworkManager from "../../../network/NetworkManager";
@@ -46,7 +46,7 @@ const router = useRouter();
 
 const balanceClickCount = ref(0); // Счетчик кликов
 
-const gameType = PlayerSettingsStorage.gameType; // 0 — классическая, 1 — с переводом
+const gameType = computed(() => PlayerSettingsStorage.gameType); // 0 — классическая, 1 — с переводом
 
 const setGameStarted = () => window.gameInProgress = true;
 const setGameEnded = () => window.gameInProgress = false;
@@ -158,8 +158,8 @@ function handleButtonClick() {
 }
 
 .balance-icon {
-  width: 14px;
-  height: 14px;
+  width: 8px;
+  height: 8px;
   margin-right: 6px;
 }
 

@@ -20,7 +20,7 @@
       <a class="details-value">{{ reward }}</a>
     </div>
 
-    <button class="main-button animate-press" @click="$emit('close')">
+    <button class="main-button animate-press" @click="closePopup">
       Ура!
     </button>
   </div>
@@ -30,6 +30,7 @@
 import {defineComponent, ref, onMounted, onUnmounted} from 'vue';
 import { ImageCache } from '@/game/utils/ImageCache.ts';
 import { EventService, EventType } from '@/game/network/EventService.ts';
+import {events} from "@/events.ts";
 
 export default defineComponent({
   name: 'TournamentWinPopup',
@@ -57,6 +58,10 @@ export default defineComponent({
       reward.value = data.amount;
     }
 
+    const closePopup = () => {
+      events.emit("hidePopup");
+    }
+
     onUnmounted(() => {
       EventService.Instance.off(EventType.SetTournamentWinData, onSetData);
     });
@@ -68,6 +73,7 @@ export default defineComponent({
       gap,
       reward,
       leagueBadgeSrc,
+      closePopup,
     };
   },
 });

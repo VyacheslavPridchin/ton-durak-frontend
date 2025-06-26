@@ -79,14 +79,6 @@ export default defineComponent({
   flex-direction: column;
   padding: 0 2vh;
   margin: 0 auto;
-  background: white;
-  border-radius: 1vh;
-  width: 280px;
-}
-
-.secondary-text {
-  font-size: 1.75vh;
-  color: var(--secondary-text-color);
 }
 
 .badge {
@@ -96,13 +88,14 @@ export default defineComponent({
 }
 
 .details-row {
+  margin-top: 0.25vh;
   display: flex;
   align-items: center;
   gap: 0.8vh;
-  margin-top: 0.25vh;
 }
 
 .details-title {
+  text-align: left;
   font-size: 1.75vh;
   color: var(--secondary-text-color);
 }
@@ -110,17 +103,5 @@ export default defineComponent({
 .details-value {
   margin-left: auto;
   font-size: 1.75vh;
-  font-weight: bold;
-}
-
-.main-button {
-  margin-top: 1vh;
-  padding: 1.5vh 0;
-  font-size: 1.75vh;
-  background: linear-gradient(90deg,#3FA9F5 0%,#2979FF 100%);
-  color: white;
-  border: none;
-  border-radius: 1vh;
-  cursor: pointer;
 }
 </style>

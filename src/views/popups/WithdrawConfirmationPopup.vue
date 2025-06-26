@@ -85,12 +85,15 @@ export default defineComponent({
           window.Telegram.WebApp.BiometricManager.authenticate({ reason: 'Подтвердите вывод средств.' }, (success, token) => {
             if (success) {
               // @ts-ignore
-              const confirm = await apiService.postDeviceId(window.Telegram.WebApp.BiometricManager.deviceId);
-              if(confirm.data == "true") {
-                withdraw();
-               } else {
-                alert('Аутентификация не пройдена. Возможно, это устройство использовалось на другом аккаунте.');
-              }
+              apiService.postDeviceId(window.Telegram.WebApp.BiometricManager.deviceId).then((response) => {
+                if(response.data == "true") {
+                  withdraw();
+                } else {
+                  alert('Аутентификация не пройдена. Возможно, это устройство использовалось на другом аккаунте.');
+                }
+              }).catch(() => {
+                alert('Произошла ошибка. Повторите попытку аутентификации.');
+              });
               // @ts-ignore
               // alert(window.Telegram.WebApp.BiometricManager.deviceId);
             } else {

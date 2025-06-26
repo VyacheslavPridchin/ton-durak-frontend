@@ -411,7 +411,7 @@ class ApiService {
         return this.request<CheckTournamentWinData>(endpoint, "POST", undefined);
     }
 
-    // POST /check_tournament_win
+    // POST /device_id
     public async postDeviceId(): Promise<ApiResponse<string>> {
         const endpoint = `/device_id`;
         // Передаем retry=false, чтобы избежать рекурсии в случае неудачи

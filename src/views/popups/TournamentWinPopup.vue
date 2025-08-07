@@ -28,8 +28,8 @@
 
 <script lang="ts">
 import {defineComponent, ref, onMounted, onUnmounted} from 'vue';
-import { ImageCache } from '@/game/utils/ImageCache.ts';
-import { EventService, EventType } from '@/game/network/EventService.ts';
+import { ImageCache } from '@/in-game/utils/ImageCache.ts';
+import { EventService, EventType } from '@/in-game/network/EventService.ts';
 import {events} from "@/events.ts";
 
 export default defineComponent({

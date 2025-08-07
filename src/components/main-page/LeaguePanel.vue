@@ -31,7 +31,7 @@
 <script lang="ts">
 import {defineComponent, computed, ref, watch} from 'vue';
 import { events } from "@/events.ts";
-import { ImageCache } from "@/game/utils/ImageCache.ts";
+import { ImageCache } from "@/in-game/utils/ImageCache.ts";
 
 export default defineComponent({
   name: 'LeaguePanel',

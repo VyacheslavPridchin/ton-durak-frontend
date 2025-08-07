@@ -6,7 +6,7 @@
       <FullscreenLayout :excludePaths="roots" />
       <SliderLayout :sliderPaths="roots" />
     </div>
-    <Footer :excludePaths="['/game']"/>
+    <Footer :excludePaths="['/in-game']"/>
   </div>
 </template>
 
@@ -18,11 +18,11 @@ import FullscreenLayout from "@/layouts/FullscreenLayout.vue";
 import SliderLayout from "@/layouts/slider/SliderLayout.vue";
 import Footer from "@/layouts/FooterLayout.vue";
 import NotificationLayout from "@/layouts/NotificationLayout.vue";
-import {EventService, EventType} from "@/game/network/EventService.ts";
-import NetworkManager from "@/game/network/NetworkManager.ts";
+import {EventService, EventType} from "@/in-game/network/EventService.ts";
+import NetworkManager from "@/in-game/network/NetworkManager.ts";
 import {events} from "@/events.ts";
 import apiService from "@/services/ApiService.ts";
-import PlayerSettingsStorage from "@/game/network/PlayerSettingsStorage.ts";
+import PlayerSettingsStorage from "@/in-game/network/PlayerSettingsStorage.ts";
 
 const router = useRouter();
 const route = useRoute();
@@ -63,7 +63,7 @@ onMounted(async () => {
 
   // @ts-ignore
   window.Telegram.WebApp.BackButton.onClick(() => {
-    if(route.path === "/game"){
+    if(route.path === "/in-game"){
       if (window.gameInProgress) {
         EventService.Instance.emit(EventType.ShowTryLeavePopup, undefined);
       } else {
